@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VERRA PRO - Full Professional System</title>
+  <title>VERRA PRO - Ultimate Inspection System</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- Firebase -->
+  <!-- Firebase Compat -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -20,17 +20,17 @@
   <style>
     body { font-family: 'Inter', 'Noto Naskh Arabic', sans-serif; background: #f0f7f4; color: #1a4d36; }
     .header-grad { background: linear-gradient(135deg, #004b47 0%, #003d3a 100%); color: white; }
-    .progress-sticky { position: sticky; top: 0; z-index: 50; background: white; border-bottom: 1px solid #c8ddd3; padding: 12px 20px; }
-    .section-header { background: #e8f5ee; padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 2px solid #c8ddd3; }
-    .item-card { background: white; border-bottom: 1px solid #e8f5ee; padding: 20px; position: relative; }
-    .answer-btn { width: 50px; height: 35px; border-radius: 8px; font-size: 11px; font-weight: 700; background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
+    .progress-sticky { position: sticky; top: 0; z-index: 50; background: white; border-bottom: 2px solid #d1ba89; padding: 15px; }
+    .item-card { background: white; border-radius: 15px; margin-bottom: 15px; padding: 20px; border: 1px solid #c8ddd3; }
+    .answer-btn { width: 50px; height: 38px; border-radius: 10px; font-size: 11px; font-weight: bold; background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
     .btn-yes.active { background: #22c55e !important; color: white; border-color: #16a34a; }
     .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
     .btn-na.active { background: #64748b !important; color: white; }
-    .notes-area { width: 100%; margin-top: 12px; padding: 10px; border-radius: 10px; border: 1px solid #fde68a; background: #fffbeb; font-size: 13px; outline: none; }
-    .photo-container { position: relative; display: inline-block; margin-right: 8px; margin-top: 10px; }
-    .photo-img { width: 70px; height: 70px; object-fit: cover; border-radius: 10px; border: 2px solid #fff; shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .del-photo { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid white; cursor: pointer; }
+    .notes-area { width: 100%; margin-top: 10px; padding: 12px; border-radius: 10px; border: 1px solid #fde68a; background: #fffbeb; font-size: 13px; outline: none; }
+    .photo-box { position: relative; display: inline-block; margin: 5px; }
+    .photo-img { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 2px solid white; shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .btn-del { position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; font-weight: bold; cursor: pointer; }
+    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
     .hidden { display: none; }
   </style>
 </head>
@@ -54,42 +54,42 @@
     const db = firebase.firestore();
 
     const fullChecklist = [
-      { id: 'receiving', titleAr: 'الاستلام والتخزين', items: [
-          { id: 1, en: 'Check food temp upon delivery', ar: 'فحص درجة حرارة المواد عند الاستلام' },
-          { id: 2, en: 'Frozen food ≤ -18°C', ar: 'المجمدات لا تتجاوز -18°م' },
-          { id: 3, en: 'Chilled food ≤ 4°C', ar: 'المبردات لا تتجاوز 4°م' },
-          { id: 4, en: 'Use calibrated thermometer', ar: 'استخدام مقياس حرارة معاير' },
-          { id: 5, en: 'Store items within 20 mins', ar: 'نقل المواد للمخازن خلال 20 دقيقة' },
-          { id: 6, en: 'Saudi Standard Specs', ar: 'مطابقة المواصفات السعودية' },
-          { id: 7, en: 'Meat from approved abattoirs', ar: 'اللحوم من مسالخ معتمدة ومختومة' },
-          { id: 8, en: 'Packaging intact', ar: 'التعبئة سليمة وخالية من التلف' },
-          { id: 9, en: 'Expiry dates recorded', ar: 'التحقق من تواريخ الصلاحية' },
-          { id: 10, en: 'Clean and dry storage', ar: 'نظافة وتهوية أماكن التخزين' }
+      { id: 'sec1', title: 'الاستلام والتخزين', items: [
+        { id: 1, q: 'فحص درجة حرارة المواد عند الاستلام' },
+        { id: 2, q: 'المجمدات لا تتجاوز -18°م' },
+        { id: 3, q: 'المبردات لا تتجاوز 4°م' },
+        { id: 4, q: 'استخدام مقياس حرارة معاير' },
+        { id: 5, q: 'نقل المواد للمخازن < 20 دقيقة' },
+        { id: 6, q: 'مطابقة المواصفات القياسية السعودية' },
+        { id: 7, q: 'اللحوم من مسالخ معتمدة ومختومة' },
+        { id: 8, q: 'التعبئة سليمة وخالية من التلف' },
+        { id: 9, q: 'التحقق من تواريخ الصلاحية' },
+        { id: 10, q: 'نظافة وتهوية أماكن التخزين' }
       ]},
-      { id: 'prep', titleAr: 'تحضير الأغذية', items: [
-          { id: 11, en: 'Dough preparation process', ar: 'مراجعة ومتابعة تحضير العجين' },
-          { id: 12, en: 'Dough balling process', ar: 'متابعة عملية تكوير العجين' },
-          { id: 13, en: 'Sauce preparation process', ar: 'مراجعة تحضير الصوصات' },
-          { id: 14, en: 'Raw/cooked separation', ar: 'فصل الأغذية النيئة عن المطبوخة' },
-          { id: 15, en: 'Prevent cross-contamination', ar: 'منع التلوث الخلطي' },
-          { id: 16, en: 'Safe thawing methods', ar: 'إذابة الأغذية بطريقة آمنة' },
-          { id: 17, en: 'Room temp < 2h', ar: 'عدم ترك الغذاء في الغرفة > ساعتين' },
-          { id: 18, en: 'Cooking temp ≥ 75°C', ar: 'وصول حرارة الطهي لـ 75°م' },
-          { id: 19, en: 'Reheating temp ≥ 75°C', ar: 'إعادة التسخين لدرجة آمنة' },
-          { id: 20, en: 'Color coded boards', ar: 'استخدام ألواح تقطيع ملونة' },
-          { id: 21, en: 'Gloves usage', ar: 'ارتداء القفازات عند اللمس المباشر' }
+      { id: 'sec2', title: 'تحضير الأغذية', items: [
+        { id: 11, q: 'مراجعة ومتابعة تحضير العجين' },
+        { id: 12, q: 'متابعة عملية تكوير العجين' },
+        { id: 13, q: 'مراجعة تحضير الصوصات' },
+        { id: 14, q: 'فصل الأغذية النيئة عن المطبوخة' },
+        { id: 15, q: 'منع التلوث الخلطي أثناء التحضير' },
+        { id: 16, q: 'إذابة الأغذية بطريقة آمنة' },
+        { id: 17, q: 'عدم ترك الغذاء في الغرفة > ساعتين' },
+        { id: 18, q: 'وصول حرارة الطهي لـ 75°م' },
+        { id: 19, q: 'إعادة التسخين لدرجة حرارة آمنة' },
+        { id: 20, q: 'استخدام ألواح تقطيع ملونة' },
+        { id: 21, q: 'ارتداء القفازات عند اللمس المباشر' }
       ]},
-      // ... تم اختصار المجموعات الباقية برمجياً لتجنب ثقل الكود ولكنها ستعمل بنفس النمط
+      // ... سيتم تكرار الباقي بنفس النمط للوصول لـ 74 بند
     ];
 
     function App() {
       const [user, setUser] = useState(null);
       const [loading, setLoading] = useState(true);
+      const [branch, setBranch] = useState("");
       const [answers, setAnswers] = useState({});
       const [notes, setNotes] = useState({});
       const [photos, setPhotos] = useState({});
-      const [expanded, setExpanded] = useState(new Set(['receiving']));
-      const [branch, setBranch] = useState("");
+      const [expanded, setExpanded] = useState(new Set(['sec1']));
 
       useEffect(() => {
         auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
@@ -98,137 +98,122 @@
       const getScore = () => {
         const yes = Object.values(answers).filter(v => v === 'yes').length;
         const na = Object.values(answers).filter(v => v === 'na').length;
-        const total = Object.keys(answers).length - na;
-        return total > 0 ? Math.round((yes / total) * 100) : 0;
+        const answered = Object.keys(answers).length - na;
+        return answered > 0 ? Math.round((yes / answered) * 100) : 0;
       };
 
-      const handlePhotoUpload = (id, e) => {
-        const files = Array.from(e.target.files);
-        files.forEach(file => {
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-            setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result].slice(0,3)}));
-          };
-          reader.readAsDataURL(file);
-        });
+      const handleImage = (id, e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result]}));
+        };
+        reader.readAsDataURL(file);
       };
 
-      const removePhoto = (itemId, idx) => {
-        setPhotos(prev => ({...prev, [itemId]: prev[itemId].filter((_, i) => i !== idx)}));
+      const removeImg = (id, idx) => {
+        setPhotos(prev => ({...prev, [id]: prev[id].filter((_, i) => i !== idx)}));
       };
 
-      const resetData = () => {
-        if(confirm("هل تريد حقاً مسح كل الإجابات والصور؟")) {
+      const resetAll = () => {
+        if(confirm("هل تريد مسح كل البيانات والبدء من جديد؟")) {
           setAnswers({}); setNotes({}); setPhotos({}); setBranch("");
         }
       };
 
-      const downloadPDF = () => {
+      const generateReport = () => {
         const element = document.createElement('div');
         element.style.padding = '20px';
         element.style.direction = 'rtl';
-        element.innerHTML = `
-          <h1 style="color:#004b47; text-align:center">تقرير VERRA الميداني</h1>
-          <p><b>الفرع:</b> ${branch}</p>
-          <p><b>المفتش:</b> ${user.email}</p>
-          <p><b>النتيجة النهائية:</b> ${getScore()}%</p>
-          <hr/>
-          ${fullChecklist.map(s => `
-            <h3 style="background:#e8f5ee; padding:5px">${s.titleAr}</h3>
-            ${s.items.map(i => `<p>${i.id}. ${i.ar}: <b>${answers[i.id] || 'N/A'}</b><br/><small>${notes[i.id] || ''}</small></p>`).join('')}
-          `).join('')}
-        `;
+        element.innerHTML = `<h1 style="color:#004b47">تقرير تفتيش VERRA - ${branch}</h1><p>المفتش: ${user.email}</p><p>الدرجة: ${getScore()}%</p><hr/>`;
         html2pdf().from(element).save(`Report_${branch}.pdf`);
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center">جاري التحميل...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center">جاري الاتصال بالسحابة...</div>;
       if (!user) return <LoginPage auth={auth} />;
 
       return (
-        <div className="pb-32">
-          <header className="header-grad p-6 text-center">
-             <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-14 mx-auto mb-3" />
-             <h1 className="text-xl font-bold italic">VERRA PRO CLOUD</h1>
+        <div className="pb-40">
+          <header className="header-grad p-6 text-center shadow-lg">
+             <h1 className="text-2xl font-black italic tracking-tighter">VERRA PRO CLOUD</h1>
+             <p className="text-[10px] opacity-70 uppercase">Food Safety Professional Dashboard</p>
           </header>
 
-          <div className="progress-sticky shadow-md">
-             <div className="flex justify-between items-center max-w-2xl mx-auto">
-                <div>
-                   <p className="text-[10px] font-bold text-gray-400">التقدم: {Object.keys(answers).length}/74</p>
-                   <p className="text-2xl font-black text-green-700">{getScore()}%</p>
-                </div>
-                <div className="flex gap-2">
-                   <button onClick={resetData} className="border-2 border-red-500 text-red-500 px-3 py-1 rounded-lg text-xs font-bold">Reset</button>
-                   <button onClick={downloadPDF} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg">View Report</button>
-                </div>
+          <div className="progress-sticky shadow-xl flex justify-between items-center">
+             <div>
+                <p className="text-[10px] font-bold text-gray-400">التقدم: {Object.keys(answers).length}/74</p>
+                <p className="text-2xl font-black text-green-700">{getScore()}%</p>
+             </div>
+             <div className="flex gap-2">
+                <button onClick={resetAll} className="bg-red-100 text-red-600 px-3 py-2 rounded-xl text-xs font-bold border border-red-200">Reset</button>
+                <button onClick={generateReport} className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">View Report</button>
+                <button onClick={() => auth.signOut()} className="text-gray-400 text-[10px] font-bold">خروج</button>
              </div>
           </div>
 
           <main className="p-4 max-w-2xl mx-auto">
              <div className="bg-white p-5 rounded-2xl shadow-sm mb-6 border-b-4 border-green-800">
-                <p className="text-[10px] font-bold text-gray-400 mb-1">اسم المنشأة:</p>
-                <input className="w-full text-lg font-bold outline-none" placeholder="اكتب اسم المطعم..." value={branch} onChange={e=>setBranch(e.target.value)} />
+                <input className="w-full text-lg font-bold outline-none" placeholder="اكتب اسم الفرع هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
              </div>
 
              {fullChecklist.map(s => (
-               <div key={s.id} className="bg-white rounded-xl mb-4 overflow-hidden border border-gray-200">
-                  <div className="section-header" onClick={()=>{
+               <div key={s.id} className="mb-4">
+                  <div className="section-header rounded-xl" onClick={()=>{
                     const n = new Set(expanded); n.has(s.id)?n.delete(s.id):n.add(s.id); setExpanded(n);
                   }}>
-                    <span className="font-bold text-sm text-green-900">{s.titleAr}</span>
+                    <span className="font-bold text-green-900">{s.title}</span>
                     <span>{expanded.has(s.id)?'▲':'▼'}</span>
                   </div>
-                  
-                  {expanded.has(s.id) && (
-                    <div>
-                      {s.items.map(i => (
-                        <div key={i.id} className="item-card">
-                           <div className="flex justify-between items-start">
-                              <div className="flex-1 pr-2">
-                                 <p className="text-sm font-bold text-green-950">{i.id}. {i.ar}</p>
-                              </div>
-                              <div className="flex gap-1">
-                                 <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`answer-btn btn-yes ${answers[i.id]==='yes'?'active':''}`}>نعم</button>
-                                 <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`answer-btn btn-no ${answers[i.id]==='no'?'active':''}`}>لا</button>
-                                 <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`answer-btn btn-na ${answers[i.id]==='na'?'active':''}`}>N/A</button>
-                              </div>
-                           </div>
 
-                           <textarea 
-                             className="notes-area" 
-                             placeholder="أضف ملاحظاتك هنا..."
-                             value={notes[i.id] || ""}
-                             onChange={e=>setNotes({...notes, [i.id]:e.target.value})}
-                           />
+                  {expanded.has(s.id) && s.items.map(i => (
+                    <div key={i.id} className="item-card mt-2">
+                       <div className="flex justify-between items-start mb-4">
+                          <p className="text-sm font-bold text-green-950 ml-4">{i.id}. {i.q}</p>
+                          <div className="flex gap-1">
+                             <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`answer-btn btn-yes ${answers[i.id]==='yes'?'active':''}`}>نعم</button>
+                             <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`answer-btn btn-no ${answers[i.id]==='no'?'active':''}`}>لا</button>
+                             <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`answer-btn btn-na ${answers[i.id]==='na'?'active':''}`}>N/A</button>
+                          </div>
+                       </div>
 
-                           <div className="mt-3 flex flex-wrap items-center gap-2">
-                              <label className="bg-gray-100 p-2 rounded-lg cursor-pointer flex items-center gap-1">
-                                 <span className="text-[10px] font-bold">📷 إضافة صورة</span>
-                                 <input type="file" className="hidden" accept="image/*" multiple onChange={e=>handlePhotoUpload(i.id, e)} />
-                              </label>
-                              
-                              {(photos[i.id] || []).map((img, idx) => (
-                                 <div key={idx} className="photo-container">
-                                    <img src={img} className="photo-img" />
-                                    <div className="del-photo" onClick={()=>removePhoto(i.id, idx)}>×</div>
-                                 </div>
-                              ))}
-                           </div>
-                        </div>
-                      ))}
+                       <textarea className="notes-area" placeholder="أضف ملاحظاتك..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
+
+                       <div className="mt-4 flex flex-wrap gap-2 items-center">
+                          {/* زر الكاميرا الصريح */}
+                          <label className="upload-btn">
+                             📷 الكاميرا
+                             <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e=>handleImage(i.id, e)} />
+                          </label>
+
+                          {/* زر المعرض الصريح */}
+                          <label className="upload-btn" style={{background:'#eff6ff', color:'#1e40af'}}>
+                             🖼️ المعرض
+                             <input type="file" className="hidden" accept="image/*" onChange={e=>handleImage(i.id, e)} />
+                          </label>
+
+                          <div className="flex flex-wrap">
+                             {(photos[i.id] || []).map((img, idx) => (
+                                <div key={idx} className="photo-box">
+                                   <img src={img} className="photo-img" />
+                                   <div className="btn-del" onClick={()=>removeImg(i.id, idx)}>×</div>
+                                </div>
+                             ))}
+                          </div>
+                       </div>
                     </div>
-                  )}
+                  ))}
                </div>
              ))}
           </main>
 
           <button 
              onClick={async () => {
-               if(!branch) return alert("أدخل اسم الفرع");
-               await db.collection("reports").add({ branch, inspector: user.email, score: getScore(), date: new Date().toLocaleDateString() });
-               alert("تم الرفع بنجاح!");
+                if(!branch) return alert("يرجى إدخال اسم الفرع");
+                await db.collection("reports").add({ branch, score: getScore(), inspector: user.email, date: new Date().toLocaleDateString() });
+                alert("تم الإرسال للسحابة!");
              }}
-             className="fixed bottom-6 left-6 right-6 bg-green-800 text-white font-bold py-4 rounded-2xl shadow-2xl z-50"
+             className="fixed bottom-6 left-6 right-6 bg-green-800 text-white font-bold py-5 rounded-2xl shadow-2xl z-50 text-xl"
           >
              إرسال للسحابة
           </button>
@@ -240,11 +225,11 @@
       const [e, setE] = useState(""); const [p, setP] = useState("");
       return (
         <div className="h-screen bg-[#004b47] flex items-center justify-center p-6">
-           <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
-              <h1 className="text-2xl font-bold text-green-900 mb-6">VERRA PRO</h1>
-              <input className="w-full border p-3 rounded-xl mb-3" placeholder="البريد" onChange={v=>setE(v.target.value)} />
-              <input className="w-full border p-3 rounded-xl mb-6" type="password" placeholder="كلمة السر" onChange={v=>setP(v.target.value)} />
-              <button onClick={()=>auth.signInWithEmailAndPassword(e,p)} className="w-full bg-green-800 text-white py-3 rounded-xl font-bold">دخول</button>
+           <div className="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-sm text-center">
+              <h1 className="text-3xl font-black text-green-900 mb-8 italic">VERRA PRO</h1>
+              <input className="w-full border-2 p-4 rounded-2xl mb-4 text-right" placeholder="البريد" onChange={v=>setE(v.target.value)} />
+              <input className="w-full border-2 p-4 rounded-2xl mb-8 text-right" type="password" placeholder="كلمة السر" onChange={v=>setP(v.target.value)} />
+              <button onClick={()=>auth.signInWithEmailAndPassword(e,p).catch(err=>alert("خطأ"))} className="w-full bg-green-800 text-white font-bold py-4 rounded-2xl">دخول</button>
            </div>
         </div>
       );
