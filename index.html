@@ -1,1 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>نظام VERRA PRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #004b47; margin: 0; }
+        .hidden { display: none; }
+        .audit-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-right: 5px solid #d1ba89; }
+    </style>
+</head>
+<body>
 
+    <!-- صفحة تسجيل الدخول -->
+    <div id="loginPage" class="h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
+            <h1 class="text-3xl font-bold text-green-900 mb-2">VERRA PRO</h1>
+            <p class="text-gray-500 mb-8 text-sm font-bold">دخول المفتشين السحابي</p>
+            <input id="email" type="email" placeholder="البريد الإلكتروني" class="w-full border-2 p-3 rounded-xl mb-4 outline-none focus:border-green-600">
+            <input id="password" type="password" placeholder="كلمة المرور" class="w-full border-2 p-3 rounded-xl mb-6 outline-none focus:border-green-600">
+            <button onclick="handleLogin()" id="loginBtn" class="w-full bg-green-800 text-white font-bold py-4 rounded-xl shadow-lg">دخول النظام</button>
+        </div>
+    </div>
+
+    <!-- لوحة تحكم المفتش -->
+    <div id="dashboardPage" class="hidden min-h-screen bg-gray-50">
+        <nav class="bg-white p-4 shadow-md flex justify-between items-center sticky top-0 z-50">
+            <span class="font-bold text-green-800 italic text-xl">VERRA PRO</span>
+            <button onclick="handleLogout()" class="text-red-500 font-bold text-sm">خروج</button>
+        </nav>
+        
+        <div class="p-4 max-w-2xl mx-auto">
+            <div id="mainDashboard">
+                <div class="bg-green-800 p-6 rounded-2xl text-white mb-6 shadow-xl">
+                    <h2 id="welcomeMsg" class="text-xl font-bold">مرحباً بك</h2>
+                    <p class="text-sm opacity-80">جاهز لبدء جولة تفتيشية جديدة؟</p>
+                </div>
+                <button onclick="showAuditForm()" class="w-full bg-white border-2 border-green-800 text-green-800 font-bold py-5 rounded-2xl mb-6 shadow-sm">
+                    + بدء فحص ميداني جديد
+                </button>
+            </div>
+
+            <!-- نموذج الفحص (مخفي ويظهر عند الضغط على الزر) -->
+            <div id="auditForm" class="hidden">
+                <h2 class="font-bold text-xl mb-4 text-green-900">نموذج التفتيش الصحي</h2>
+                <input id="branchName" placeholder="اسم الفرع / المطعم" class="w-full p-4 rounded-xl border-2 mb-6 outline-none focus:border-green-700">
+                
+                <div class="space-y-4">
+                    <div class="audit-card flex justify-between items-center">
+                        <span class="text-sm font-bold">1. درجة حرارة الثلاجات (أقل من 5°م)</span>
+                        <div class="flex gap-2">
+                            <button class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-bold">نعم</button>
+                            <button class="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-bold">لا</button>
+                        </div>
+                    </div>
+                    <div class="audit-card flex justify-between items-center">
+                        <span class="text-sm font-bold">2. نظافة الأسطح والأدوات</span>
+                        <div class="flex gap-2">
+                            <button class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-bold">نعم</button>
+                            <button class="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-bold">لا</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="submitReport()" id="submitBtn" class="w-full bg-green-800 text-white font-bold py-4 rounded-2xl mt-8 shadow-lg">
+                    إرسال التقرير النهائي للسحابة
+                </button>
+                <button onclick="hideAuditForm()" class="w-full text-gray-500 mt-4 text-sm">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // إعدادات Firebase الخاصة بك
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
+            authDomain: "verra-system-828f2.firebaseapp.com",
+            projectId: "verra-system-828f2",
+            storageBucket: "verra-system-828f2.firebasestorage.app",
+            messagingSenderId: "961104891607",
+            appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // متابعة حالة المستخدم
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('dashboardPage').classList.remove('hidden');
+                document.getElementById('welcomeMsg').innerText = "أهلاً بك: " + user.email.split('@')[0];
+            } else {
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('dashboardPage').classList.add('hidden');
+            }
+        });
+
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            btn.innerText = "جاري التحقق...";
+            try {
+                await auth.signInWithEmailAndPassword(email, pass);
+            } catch (err) {
+                alert("خطأ: " + err.message);
+                btn.innerText = "دخول النظام";
+            }
+        }
+
+        function handleLogout() { auth.signOut(); }
+        function showAuditForm() { 
+            document.getElementById('mainDashboard').classList.add('hidden');
+            document.getElementById('auditForm').classList.remove('hidden');
+        }
+        function hideAuditForm() { 
+            document.getElementById('mainDashboard').classList.remove('hidden');
+            document.getElementById('auditForm').classList.add('hidden');
+        }
+
+        async function submitReport() {
+            const branch = document.getElementById('branchName').value;
+            if(!branch) return alert("يرجى كتابة اسم الفرع");
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "جاري الرفع للسحابة...";
+            
+            try {
+                await db.collection("inspections").add({
+                    branchName: branch,
+                    date: new Date().toLocaleString('ar-EG'),
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    inspector: auth.currentUser.email
+                });
+                alert("تم حفظ التقرير بنجاح!");
+                location.reload();
+            } catch (e) {
+                alert("فشل الحفظ: " + e.message);
+                btn.innerText = "إرسال التقرير النهائي";
+            }
+        }
+    </script>
+</body>
+</html>
