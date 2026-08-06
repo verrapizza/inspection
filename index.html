@@ -3,45 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VERRA - Food Safety PRO</title>
+  <title>VERRA PRO - Full Inspection System</title>
   
-  <!-- نفس المكتبات الأصلية للتصميم -->
+  <!-- المكتبات الأساسية -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- مكتبات Firebase السحابية -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    /* نفس تنسيقات التصميم الفخم الذي أرسلته */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', 'Noto Naskh Arabic', sans-serif; background: #f0f7f4; color: #1a4d36; line-height: 1.6; }
-    .header { background: linear-gradient(135deg, #004b47 0%, #003d3a 100%); color: white; padding: 20px; }
+    body { font-family: 'Inter', 'Noto Naskh Arabic', sans-serif; background: #f0f7f4; color: #1a4d36; }
+    .header-grad { background: linear-gradient(135deg, #004b47 0%, #003d3a 100%); color: white; }
     .gold-text { color: #d1ba89; }
-    .progress-bar { background: white; border-bottom: 1px solid #c8ddd3; padding: 15px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-    .section-header { background: #e8f5ee; padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #c8ddd3; }
-    .item-card { background: white; border-bottom: 1px solid #e8f5ee; padding: 16px 20px; transition: 0.2s; }
-    .answer-btn { width: 50px; height: 36px; border-radius: 8px; border: none; font-size: 11px; font-weight: 700; background: #e8f5ee; color: #94a3b8; }
-    .btn-yes.active { background: #4ade80 !important; color: white; }
-    .btn-no.active { background: #ef4444 !important; color: white; }
+    .progress-sticky { position: sticky; top: 0; z-index: 50; background: white; border-bottom: 1px solid #c8ddd3; }
+    .section-header { background: #e8f5ee; padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 2px solid #c8ddd3; }
+    .item-card { background: white; border-bottom: 1px solid #e8f5ee; padding: 20px; }
+    .answer-btn { width: 50px; height: 35px; border-radius: 8px; font-size: 11px; font-weight: 700; background: #e8f5ee; color: #94a3b8; }
+    .btn-yes.active { background: #4ade80 !important; color: white; box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3); }
+    .btn-no.active { background: #ef4444 !important; color: white; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); }
     .btn-na.active { background: #64748b !important; color: white; }
-    .floating-score { position: fixed; bottom: 24px; right: 24px; width: 72px; height: 72px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: 800; box-shadow: 0 4px 20px rgba(0,0,0,0.3); border: 4px solid white; z-index: 50; background: #004b47; cursor: pointer; }
+    .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 8px; border: 1px solid #fde68a; background: #fefce8; font-size: 12px; }
+    .photo-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
   </style>
 </head>
 <body>
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+    const { useState, useEffect } = React;
 
-    // --- إعدادات Firebase ---
+    // --- إعدادات Firebase الخاصة بك ---
     const firebaseConfig = {
       apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
       authDomain: "verra-system-828f2.firebaseapp.com",
@@ -55,168 +54,212 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // --- الـ 74 بنداً كاملة بالأقسام ---
-    const fullInspectionData = [
+    // --- قائمة الـ 74 بنداً الكاملة ---
+    const fullChecklist = [
       { id: 'receiving', titleEn: 'Receiving & Storage', titleAr: 'الاستلام والتخزين', items: [
-          { id: 1, en: 'Food checked for temp', ar: 'فحص درجات حرارة المواد الموردة' },
-          { id: 2, en: 'Frozen ≤ -18°C', ar: 'المجمدات لا تتجاوز -18°م' },
-          { id: 3, en: 'Chilled ≤ 4°C', ar: 'المبردات لا تتجاوز 4°م' },
-          { id: 4, en: 'Calibrated thermometer', ar: 'استخدام مقياس حرارة معاير' },
-          { id: 5, en: 'Stored < 20 mins', ar: 'نقل المواد للمخازن خلال 20 دقيقة' },
-          { id: 6, en: 'Saudi Specifications', ar: 'مطابقة المواصفات السعودية' },
-          { id: 7, en: 'Meat from abattoirs', ar: 'اللحوم من مسالخ معتمدة' },
-          { id: 8, en: 'Intact packaging', ar: 'التعبئة سليمة وخالية من التلف' },
-          { id: 9, en: 'Expiry recorded', ar: 'التحقق من تواريخ الصلاحية' },
-          { id: 10, en: 'Clean storage', ar: 'نظافة وتهوية أماكن التخزين' }
+          { id: 1, en: 'Check food temp upon delivery', ar: 'فحص درجة حرارة المواد عند الاستلام' },
+          { id: 2, en: 'Frozen food ≤ -18°C', ar: 'المجمدات لا تتجاوز -18°م' },
+          { id: 3, en: 'Chilled food ≤ 4°C', ar: 'المبردات لا تتجاوز 4°م' },
+          { id: 4, en: 'Use calibrated thermometer', ar: 'استخدام مقياس حرارة معاير' },
+          { id: 5, en: 'Store items within 20 mins', ar: 'نقل المواد للمخازن خلال 20 دقيقة' },
+          { id: 6, en: 'Saudi Standard Specifications', ar: 'مطابقة المواصفات القياسية السعودية' },
+          { id: 7, en: 'Fresh meat from approved abattoirs', ar: 'اللحوم من مسالخ معتمدة ومختومة' },
+          { id: 8, en: 'Packaging intact and pest-free', ar: 'التعبئة سليمة وخالية من الآفات' },
+          { id: 9, en: 'Expiry dates recorded', ar: 'التحقق من تواريخ الصلاحية' },
+          { id: 10, en: 'Clean and dry storage', ar: 'نظافة وتهوية أماكن التخزين' }
       ]},
-      { id: 'prep', titleEn: 'Food Preparation', titleAr: 'تحضير الأغذية', items: [
-          { id: 11, en: 'Dough prep process', ar: 'مراجعة ومتابعة تحضير العجين' },
-          { id: 12, en: 'Dough balling', ar: 'متابعة عملية تكوير العجين' },
-          { id: 13, en: 'Sauce preparation', ar: 'مراجعة تحضير الصوصات' },
+      { id: 'preparation', titleEn: 'Food Preparation', titleAr: 'تحضير الأغذية', items: [
+          { id: 11, en: 'Dough preparation process', ar: 'مراجعة ومتابعة تحضير العجين' },
+          { id: 12, en: 'Dough balling process', ar: 'متابعة عملية تكوير العجين' },
+          { id: 13, en: 'Sauce preparation process', ar: 'مراجعة تحضير الصوصات' },
           { id: 14, en: 'Raw/cooked separation', ar: 'فصل الأغذية النيئة عن المطبوخة' },
-          { id: 15, en: 'Prevent cross-contamination', ar: 'منع التلوث الخلطي' },
-          { id: 16, en: 'Safe thawing', ar: 'إذابة الأغذية بطريقة آمنة' },
-          { id: 17, en: 'Room temp < 2h', ar: 'عدم ترك الغذاء في الغرفة > ساعتين' },
-          { id: 18, en: 'Cooking ≥ 75°C', ar: 'حرارة الطهي تصل لـ 75°م' },
-          { id: 19, en: 'Reheating ≥ 75°C', ar: 'إعادة التسخين لدرجة آمنة' },
+          { id: 15, en: 'Prevent cross-contamination', ar: 'منع التلوث المتبادل أثناء التحضير' },
+          { id: 16, en: 'Safe thawing methods', ar: 'إذابة الأغذية بطريقة آمنة' },
+          { id: 17, en: 'Time/temp control', ar: 'عدم ترك الغذاء في الغرفة > ساعتين' },
+          { id: 18, en: 'Cooking temp ≥ 75°C', ar: 'وصول حرارة الطهي لـ 75°م' },
+          { id: 19, en: 'Reheating temp ≥ 75°C', ar: 'إعادة التسخين لدرجة حرارة آمنة' },
           { id: 20, en: 'Color coded boards', ar: 'استخدام ألواح تقطيع ملونة' },
-          { id: 21, en: 'Glove usage', ar: 'ارتداء القفازات عند اللمس' }
+          { id: 21, en: 'Gloves for ready-to-eat', ar: 'ارتداء القفازات عند اللمس المباشر' }
       ]},
       { id: 'quality', titleEn: 'Product Quality', titleAr: 'جودة المنتج', items: [
           { id: 22, en: 'Pasta Section Quality', ar: 'معاينة جودة قسم الباستا' },
           { id: 23, en: 'Pizza Section Quality', ar: 'معاينة جودة قسم البيتزا' },
-          { id: 24, en: 'WhatsApp Photos', ar: 'رفع صور المنتج على الواتساب' }
+          { id: 24, en: 'WhatsApp final product photo', ar: 'رفع صورة المنتج على الواتساب' }
       ]},
       { id: 'facility', titleEn: 'Facility & Environment', titleAr: 'المنشأة والبيئة', items: [
           { id: 25, en: 'Pollution source distance', ar: 'المنشأة بعيدة عن مصادر التلوث' },
-          { id: 26, en: 'No cracks in walls', ar: 'خلو الجدران من التشققات' },
-          { id: 27, en: 'Automatic doors', ar: 'الأبواب تغلق تلقائياً' },
+          { id: 26, en: 'No cracks in walls/floors', ar: 'خلو الجدران والأرضيات من التشققات' },
+          { id: 27, en: 'Auto-closing doors', ar: 'الأبواب محكمة وتغلق تلقائياً' },
           { id: 28, en: 'Window mesh screens', ar: 'النوافذ مزودة بشبكات معدنية' },
-          { id: 29, en: 'Proper drainage slope', ar: 'ميل مناسب للصرف' },
-          { id: 30, en: 'Efficient A/C', ar: 'أجهزة التكييف فعالة' },
+          { id: 29, en: 'Proper drainage slope', ar: 'ميل مناسب للصرف في كل المناطق' },
+          { id: 30, en: 'Efficient A/C', ar: 'أجهزة التكييف فعالة وتعمل' },
           { id: 31, en: 'Smoke extractors', ar: 'وجود شفاطات فوق الأفران' },
-          { id: 32, en: 'Adequate lighting', ar: 'إضاءة كافية في العمل' },
-          { id: 33, en: 'Non-slip floors', ar: 'الأرضيات مقاومة للانزلاق' }
+          { id: 32, en: 'Adequate lighting', ar: 'إضاءة كافية في مناطق العمل' },
+          { id: 33, en: 'Waterproof floors', ar: 'الأرضيات مقاومة للماء وغير زلقة' }
       ]},
       { id: 'cleaning', titleEn: 'Cleaning & Sanitation', titleAr: 'التنظيف والتعقيم', items: [
-          { id: 34, en: 'Cleaning schedule', ar: 'جدول التنظيف موثق' },
-          { id: 35, en: 'Food-safe sanitizers', ar: 'المطهرات آمنة للأغذية' },
-          { id: 36, en: 'Clean after use', ar: 'تعقيم المعدات بعد الاستخدام' },
-          { id: 37, en: 'Daily deep cleaning', ar: 'التنظيف العميق يومياً' },
+          { id: 34, en: 'Documented schedule', ar: 'جدول التنظيف موثق ومتبع' },
+          { id: 35, en: 'Food-safe sanitizers', ar: 'المطهرات آمنة وبالتركيز الصحيح' },
+          { id: 36, en: 'Clean equipment after use', ar: 'تنظيف وتعقيم المعدات بعد كل استخدام' },
+          { id: 37, en: 'Daily deep cleaning', ar: 'التنظيف العميق يومياً للأسطح' },
           { id: 38, en: 'Foot-operated bins', ar: 'حاويات نفايات تفتح بالقدم' },
-          { id: 39, en: 'Waste disposal', ar: 'التخلص الآمن من النفايات' },
-          { id: 40, en: 'Pest control contract', ar: 'عقد مكافحة آفات ساري' },
-          { id: 41, en: 'No rodent evidence', ar: 'عدم وجود دلائل حشرات' }
+          { id: 39, en: 'Waste disposal safety', ar: 'التخلص من النفايات بطريقة آمنة' },
+          { id: 40, en: 'Pest control contract', ar: 'عقد مكافحة آفات ساري المفعول' },
+          { id: 41, en: 'No rodent/insect evidence', ar: 'عدم وجود دلائل على وجود حشرات' }
       ]},
       { id: 'personal', titleEn: 'Personal Hygiene', titleAr: 'النظافة الشخصية', items: [
-          { id: 42, en: 'Clean uniforms', ar: 'ارتداء زي نظيف وغطاء شعر' },
-          { id: 43, en: 'Mouth masks', ar: 'ارتداء الكمامات عند اللزوم' },
-          { id: 44, en: 'Hand wash stations', ar: 'محطات غسيل اليدين مكتملة' },
-          { id: 45, en: 'Wash hands after breaks', ar: 'غسل اليدين بعد الاستراحة' },
-          { id: 46, en: 'No jewelry', ar: 'عدم ارتداء المجوهرات والطلاء' },
-          { id: 47, en: 'Pre-employment check', ar: 'فحوصات طبية قبل التوظيف' },
-          { id: 48, en: 'Annual routine health', ar: 'فحوصات طبية روتينية سنوياً' },
-          { id: 49, en: 'Exclude sick workers', ar: 'استبعاد العاملين المصابين' }
+          { id: 42, en: 'Clean uniforms/hair covers', ar: 'زي نظيف وغطاء للشعر لجميع العمال' },
+          { id: 43, en: 'Mouth masks usage', ar: 'ارتداء الكمامات في مناطق العمل' },
+          { id: 44, en: 'Hand wash stations supplies', ar: 'محطات غسل اليدين مكتملة الأدوات' },
+          { id: 45, en: 'Wash hands after breaks', ar: 'غسل اليدين قبل العمل وبعد الاستراحة' },
+          { id: 46, en: 'No jewelry or polish', ar: 'عدم ارتداء المجوهرات أو طلاء الأظافر' },
+          { id: 47, en: 'Pre-employment health check', ar: 'فحوصات طبية قبل التوظيف' },
+          { id: 48, en: 'Annual routine health check', ar: 'فحوصات طبية روتينية سنوية' },
+          { id: 49, en: 'Exclude sick workers', ar: 'استبعاد العمال المصابين بأمراض' }
       ]},
       { id: 'equipment', titleEn: 'Equipment & Utensils', titleAr: 'المعدات والأدوات', items: [
-          { id: 50, en: 'Food-grade materials', ar: 'المعدات مصنوعة من مواد آمنة' },
-          { id: 51, en: 'Functioning thermometers', ar: 'المقاييس تعمل بشكل صحيح' },
-          { id: 52, en: 'Fridge temp records', ar: 'الثلاجات تحافظ على الحرارة' },
-          { id: 53, en: 'Twice daily logs', ar: 'سجلات الحرارة مرتين يومياً' },
-          { id: 54, en: 'Maintain cooking tools', ar: 'صيانة أدوات الطهي بانتظام' },
-          { id: 55, en: 'Smooth surfaces', ar: 'الأسطح ناعمة وسهلة المسح' }
+          { id: 50, en: 'Food-grade materials', ar: 'المعدات مصنوعة من مواد آمنة للغذاء' },
+          { id: 51, en: 'Functioning thermometers', ar: 'مقاييس الحرارة تعمل ومعايرة' },
+          { id: 52, en: 'Correct storage temp', ar: 'الثلاجات تحافظ على الحرارة المطلوبة' },
+          { id: 53, en: 'Daily temperature logs', ar: 'سجلات الحرارة مرتين يومياً' },
+          { id: 54, en: 'Cooking tools maintenance', ar: 'صيانة أدوات الطهي بانتظام' },
+          { id: 55, en: 'Smooth contact surfaces', ar: 'الأسطح الملامسة ناعمة وبدون شقوق' }
       ]},
-      { id: 'traceability', titleEn: 'Traceability', titleAr: 'التتبع والتوثيق', items: [
-          { id: 56, en: 'Quality control logs', ar: 'الالتزام بسجلات الجودة' },
-          { id: 57, en: 'Daily checklists', ar: 'رفع لوائح التشييك يومياً' },
-          { id: 58, en: 'Traceability guide', ar: 'دليل تتبع الأغذية متاح' },
-          { id: 59, en: '180 days records', ar: 'حفظ السجلات لـ 180 يوماً' },
-          { id: 60, en: 'Product coding', ar: 'ترميز المنتجات وتاريخها' },
-          { id: 61, en: 'Supplier certificates', ar: 'شهادات اعتماد الموردين' },
-          { id: 62, en: 'Valid health cards', ar: 'شهادات صحية سارية للعمال' },
-          { id: 63, en: 'HACCP plan review', ar: 'خطة HACCP موثقة ومعتمدة' },
-          { id: 64, en: 'Sanitation logs', ar: 'سجلات التعقيم مكتملة' },
+      { id: 'traceability', titleEn: 'Traceability & Docs', titleAr: 'التتبع والتوثيق', items: [
+          { id: 56, en: 'Quality control logs', ar: 'الالتزام بسجلات مراقبة الجودة' },
+          { id: 57, en: 'WhatsApp daily checklist', ar: 'رفع لوائح التشييك يومياً على الواتساب' },
+          { id: 58, en: 'Traceability guide', ar: 'دليل تتبع الأغذية متاح وكامل' },
+          { id: 59, en: 'Records kept for 180 days', ar: 'حفظ السجلات لـ 180 يوماً' },
+          { id: 60, en: 'Product batch coding', ar: 'ترميز المنتجات وتحديد الدفعة' },
+          { id: 61, en: 'Supplier certificates', ar: 'سجلات وشهادات اعتماد الموردين' },
+          { id: 62, en: 'Valid health certificates', ar: 'جميع العاملين يحملون كروت صحية' },
+          { id: 63, en: 'Approved HACCP plan', ar: 'خطة HACCP موثقة ومعتمدة' },
+          { id: 64, en: 'Sanitation logs', ar: 'سجلات التنظيف والتعقيم محدثة' },
           { id: 65, en: 'Signed temp records', ar: 'سجلات مراقبة الحرارة موقعة' }
       ]},
       { id: 'water', titleEn: 'Water Supply', titleAr: 'إمداد المياه والسباكة', items: [
-          { id: 66, en: 'Clean potable water', ar: 'إمداد مياه الشرب كافٍ' },
+          { id: 66, en: 'Clean potable water', ar: 'إمداد مياه الشرب كافٍ ونظيف' },
           { id: 67, en: 'Water filter maintenance', ar: 'فلاتر المياه نظيفة ومصانة' },
-          { id: 68, en: 'No sewage leaks', ar: 'عدم وجود تسربات صرف صحي' },
+          { id: 68, en: 'No sewage leaks', ar: 'عدم وجود تسربات في مواسير الصرف' },
           { id: 69, en: 'Closed sewage holes', ar: 'فتحات الصرف مغلقة بإحكام' },
-          { id: 70, en: 'Wash basins drying', ar: 'أحواض غسل اليدين بها تجفيف' }
+          { id: 70, en: 'Hand wash drying', ar: 'توفر أجهزة تجفيف اليدين' }
       ]},
       { id: 'allergen', titleEn: 'Allergen Management', titleAr: 'إدارة مسببات الحساسية', items: [
-          { id: 71, en: 'Allergen labels', ar: 'معلومات الحساسية على الملصق' },
+          { id: 71, en: 'Allergen labels', ar: 'معلومات الحساسية على الملصقات' },
           { id: 72, en: 'Separate prep area', ar: 'مناطق تحضير خالية من الحساسية' },
           { id: 73, en: 'Dedicated utensils', ar: 'أدوات مخصصة للأغذية الخاصة' },
-          { id: 74, en: 'Staff allergen training', ar: 'تدريب الموظفين على التوعية' }
+          { id: 74, en: 'Allergen training', ar: 'تدريب العمال على مسببات الحساسية' }
       ]}
     ];
 
     function App() {
       const [user, setUser] = useState(null);
       const [loading, setLoading] = useState(true);
+      const [view, setView] = useState('dashboard');
       const [answers, setAnswers] = useState({});
+      const [notes, setNotes] = useState({});
+      const [photos, setPhotos] = useState({});
       const [expanded, setExpanded] = useState(new Set(['receiving']));
       const [branch, setBranch] = useState("");
-      const [saving, setSaving] = useState(false);
 
       useEffect(() => {
         auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
       }, []);
 
-      const getScore = () => {
-        const vals = Object.values(answers);
-        const yes = vals.filter(v => v === 'yes').length;
-        const total = vals.filter(v => v !== 'na').length;
-        return total > 0 ? Math.round((yes / total) * 100) : 0;
+      const getStats = () => {
+        const total = 74;
+        const answered = Object.keys(answers).length;
+        const yes = Object.values(answers).filter(v => v === 'yes').length;
+        const na = Object.values(answers).filter(v => v === 'na').length;
+        const score = (answered - na) > 0 ? Math.round((yes / (answered - na)) * 100) : 0;
+        return { total, answered, score };
       };
 
-      const handleSave = async () => {
-        if(!branch) return alert("أدخل اسم الفرع");
-        setSaving(true);
-        try {
-          await db.collection("reports").add({
-            branch, inspector: user.email, score: getScore(),
-            date: new Date().toLocaleDateString('ar-EG'),
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          alert("تم الإرسال للسحابة!");
-          location.reload();
-        } catch(e) { alert(e.message); }
-        setSaving(false);
+      const handlePhoto = (id, e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result].slice(0,3)}));
+        };
+        reader.readAsDataURL(file);
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center">جاري التحميل...</div>;
+      const handleReset = () => {
+        if(confirm("هل أنت متأكد من مسح جميع البيانات؟")) {
+          setAnswers({}); setNotes({}); setPhotos({}); setBranch("");
+        }
+      };
+
+      const generatePDF = () => {
+        const element = document.createElement('div');
+        element.style.padding = '30px';
+        element.style.direction = 'rtl';
+        const stats = getStats();
+        
+        element.innerHTML = `
+          <div style="text-align:center; border-bottom: 5px solid #004b47; padding-bottom:20px;">
+            <h1 style="color:#004b47; font-size:28px;">تقرير تفتيش سلامة الأغذية</h1>
+            <p>المنشأة: ${branch}</p>
+            <p>المفتش: ${user.email}</p>
+            <p>التاريخ: ${new Date().toLocaleDateString('ar-EG')}</p>
+            <h2 style="color:${stats.score >= 70 ? 'green':'red'}">درجة الامتثال: ${stats.score}%</h2>
+          </div>
+          <div style="margin-top:20px;">
+            ${fullChecklist.map(s => `
+              <h3 style="background:#e8f5ee; padding:10px;">${s.titleAr}</h3>
+              ${s.items.map(i => `
+                <div style="padding:10px; border-bottom:1px solid #eee;">
+                  <p><b>${i.id}. ${i.ar}</b> [${answers[i.id] || 'لم يجب'}]</p>
+                  ${notes[i.id] ? `<p style="font-size:12px; color:gray;">ملاحظة: ${notes[i.id]}</p>` : ''}
+                </div>
+              `).join('')}
+            `).join('')}
+          </div>
+        `;
+
+        html2pdf().set({
+          margin: 10,
+          filename: `VERRA_Report_${branch}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(element).save();
+      };
+
+      if (loading) return <div className="h-screen flex items-center justify-center">جاري الاتصال بالسحابة...</div>;
       if (!user) return <LoginPage auth={auth} />;
+
+      const stats = getStats();
 
       return (
         <div className="pb-24">
-          <header className="header text-center shadow-2xl">
-             <div className="flex justify-center mb-4">
-                <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-16" />
-             </div>
-             <h1 className="text-2xl font-black gold-text">VERRA PRO</h1>
-             <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest">Food Safety & Quality Inspection</p>
-             <div className="mt-4 bg-white/10 p-3 rounded-2xl flex justify-between text-[10px] font-bold">
-                <span>👤 {user.email.split('@')[0]}</span>
-                <span>📅 {new Date().toLocaleDateString()}</span>
-             </div>
+          <header className="header-grad p-6 text-center shadow-xl">
+             <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-16 mx-auto mb-4" />
+             <h1 className="text-2xl font-black gold-text italic">VERRA PRO</h1>
+             <p className="text-[10px] font-bold opacity-70">SCloud-Based Inspection System</p>
           </header>
 
-          <div className="progress-bar flex justify-between items-center px-6">
-             <div className="text-xs font-bold text-gray-500">التقدم: {Object.keys(answers).length}/74</div>
-             <div className="text-2xl font-black text-green-700">الدرجة: {getScore()}%</div>
-             <button onClick={() => auth.signOut()} className="text-red-500 text-xs font-bold">خروج</button>
+          <div className="progress-sticky px-4 py-3 shadow-sm">
+             <div className="flex justify-between items-center max-w-2xl mx-auto">
+                <div>
+                   <p className="text-[10px] font-bold text-gray-400">التقدم: {stats.answered}/74</p>
+                   <p className="text-xl font-black text-green-700">{stats.score}%</p>
+                </div>
+                <div className="flex gap-2">
+                   <button onClick={handleReset} className="bg-red-50 p-2 rounded-lg text-red-600"><i data-lucide="refresh-ccw" className="w-4 h-4"></i></button>
+                   <button onClick={generatePDF} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg">View Report</button>
+                </div>
+             </div>
           </div>
 
           <main className="p-4 max-w-2xl mx-auto">
              <div className="bg-white p-5 rounded-2xl shadow-sm mb-6 border-b-4 border-green-800">
-                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">الفرع المستهدف</label>
-                <input className="w-full text-lg font-bold outline-none" placeholder="اسم المطعم..." onChange={e=>setBranch(e.target.value)} />
+                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">اسم الفرع المستهدف</label>
+                <input className="w-full text-lg font-bold outline-none" placeholder="اكتب اسم المطعم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
              </div>
 
-             {fullInspectionData.map(s => (
+             {fullChecklist.map(s => (
                <div key={s.id} className="bg-white rounded-2xl mb-4 overflow-hidden shadow-sm border border-gray-100">
                   <div className="section-header" onClick={()=>{
                     const n = new Set(expanded); n.has(s.id)?n.delete(s.id):n.add(s.id); setExpanded(n);
@@ -225,21 +268,43 @@
                        <h3 className="text-sm font-bold text-green-900">{s.titleEn}</h3>
                        <p className="text-[11px] text-gray-500 font-bold">{s.titleAr}</p>
                     </div>
-                    <span>{expanded.has(s.id)?'▲':'▼'}</span>
+                    <i data-lucide={expanded.has(s.id)?'chevron-up':'chevron-down'} className="text-gray-400 w-5"></i>
                   </div>
                   
                   {expanded.has(s.id) && (
-                    <div className="bg-white">
+                    <div>
                       {s.items.map(i => (
-                        <div key={i.id} className="item-card flex justify-between items-center">
-                           <div className="flex-1 pr-3">
-                              <p className="text-xs font-bold text-green-950 mb-1">{i.id}. {i.en}</p>
-                              <p className="text-[11px] text-gray-500 font-medium">{i.ar}</p>
+                        <div key={i.id} className="item-card">
+                           <div className="flex justify-between items-start mb-4">
+                              <div className="flex-1 pl-4">
+                                 <p className="text-sm font-bold text-green-950 mb-1">{i.id}. {i.en}</p>
+                                 <p className="text-[11px] text-gray-500 font-medium">{i.ar}</p>
+                              </div>
+                              <div className="flex gap-1">
+                                 <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`answer-btn btn-yes ${answers[i.id]==='yes'?'active':''}`}>نعم</button>
+                                 <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`answer-btn btn-no ${answers[i.id]==='no'?'active':''}`}>لا</button>
+                                 <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`answer-btn btn-na ${answers[i.id]==='na'?'active':''}`}>N/A</button>
+                              </div>
                            </div>
-                           <div className="flex gap-1">
-                              <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`answer-btn btn-yes ${answers[i.id]==='yes'?'active':''}`}>نعم</button>
-                              <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`answer-btn btn-no ${answers[i.id]==='no'?'active':''}`}>لا</button>
-                              <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`answer-btn btn-na ${answers[i.id]==='na'?'active':''}`}>N/A</button>
+
+                           <textarea 
+                             className="notes-input outline-none focus:border-gold-500" 
+                             placeholder="اكتب ملاحظاتك أو المخالفة هنا..."
+                             value={notes[i.id] || ""}
+                             onChange={e=>setNotes({...notes, [i.id]:e.target.value})}
+                           />
+
+                           <div className="mt-3 flex items-center gap-3">
+                              <label className="bg-gray-100 p-2 rounded-lg cursor-pointer flex items-center gap-2">
+                                 <i data-lucide="camera" className="w-4 h-4 text-gray-600"></i>
+                                 <span className="text-[10px] font-bold text-gray-600">إضافة صورة</span>
+                                 <input type="file" className="hidden" accept="image/*" onChange={e=>handlePhoto(i.id, e)} />
+                              </label>
+                              <div className="flex gap-1">
+                                 {(photos[i.id] || []).map((img, idx) => (
+                                    <img key={idx} src={img} className="photo-preview" />
+                                 ))}
+                              </div>
                            </div>
                         </div>
                       ))}
@@ -249,10 +314,19 @@
              ))}
           </main>
 
-          <div className="floating-score" onClick={handleSave}>
-             <span className="text-[10px] opacity-70 uppercase">إرسال</span>
-             <span className="text-xl">{getScore()}%</span>
-          </div>
+          <button 
+             onClick={async () => {
+               if(!branch) return alert("أدخل اسم الفرع");
+               await db.collection("reports").add({
+                 branch, inspector: user.email, score: stats.score, date: new Date().toLocaleDateString(), timestamp: firebase.firestore.FieldValue.serverTimestamp()
+               });
+               alert("تم الرفع للسحابة بنجاح!");
+               location.reload();
+             }}
+             className="fixed bottom-6 left-6 right-6 bg-green-800 text-white font-bold py-4 rounded-2xl shadow-2xl z-50 flex justify-center items-center gap-2"
+          >
+             <i data-lucide="cloud-upload" className="w-5 h-5"></i> إرسال التقرير النهائي للسحابة
+          </button>
         </div>
       );
     }
@@ -260,18 +334,19 @@
     function LoginPage({ auth }) {
       const [e, setE] = useState(""); const [p, setP] = useState("");
       return (
-        <div className="h-screen bg-[#004b47] flex items-center justify-center p-6">
-           <div className="bg-white p-10 rounded-[40px] shadow-2xl w-full max-w-sm text-center">
+        <div className="h-screen bg-[#004b47] flex items-center justify-center p-6 text-right">
+           <div className="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-sm text-center">
               <h1 className="text-3xl font-black text-green-900 mb-8 italic">VERRA PRO</h1>
-              <input className="w-full border-2 p-4 rounded-2xl mb-4 outline-none focus:border-green-600 text-right" placeholder="البريد الإلكتروني" onChange={v=>setE(val.target.value)} />
-              <input className="w-full border-2 p-4 rounded-2xl mb-8 outline-none focus:border-green-600 text-right" type="password" placeholder="كلمة المرور" onChange={v=>setP(val.target.value)} />
-              <button onClick={()=>auth.signInWithEmailAndPassword(e,p).catch(err=>alert("خطأ بالدخول"))} className="w-full bg-green-800 text-white font-bold py-5 rounded-2xl shadow-lg">دخول النظام</button>
+              <input className="w-full border-2 p-4 rounded-2xl mb-4 outline-none focus:border-green-600 text-right" placeholder="البريد الإلكتروني" onChange={v=>setE(v.target.value)} />
+              <input className="w-full border-2 p-4 rounded-2xl mb-8 outline-none focus:border-green-600 text-right" type="password" placeholder="كلمة المرور" onChange={v=>setP(v.target.value)} />
+              <button onClick={()=>auth.signInWithEmailAndPassword(e,p).catch(err=>alert("خطأ بالدخول"))} className="w-full bg-green-800 text-white font-bold py-4 rounded-2xl shadow-lg transition">دخول النظام السحابي</button>
            </div>
         </div>
       );
     }
 
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    setTimeout(() => lucide.createIcons(), 1000);
   </script>
 </body>
 </html>
