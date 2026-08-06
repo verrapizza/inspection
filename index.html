@@ -1,199 +1,230 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VERRA PRO - Full System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
-        body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; }
-        .verra-bg { background-color: #004b47; }
-        .gold-border { border-right: 5px solid #d1ba89; }
-        .sticky-score { position: sticky; top: 70px; z-index: 40; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VERRA PRO - نظام التفتيش السحابي</title>
+  
+  <!-- المكتبات المطلوبة للتصميم والوظائف -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', 'Noto Naskh Arabic', sans-serif; background: #f0f7f4; color: #1a4d36; }
+    .header { background: linear-gradient(135deg, #004b47 0%, #003d3a 100%); color: white; padding: 20px; }
+    .gold-text { color: #d1ba89; }
+    .btn-primary { background: #004b47; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; }
+    .section-card { background: white; border-radius: 12px; margin-bottom: 15px; border: 1px solid #c8ddd3; overflow: hidden; }
+    .sticky-bar { position: sticky; top: 0; z-index: 100; background: white; border-bottom: 1px solid #c8ddd3; padding: 10px; }
+    .answer-btn { width: 60px; height: 35px; border-radius: 8px; font-size: 11px; font-weight: bold; border: 1px solid #ddd; }
+    .active-yes { background: #22c55e !important; color: white !important; }
+    .active-no { background: #ef4444 !important; color: white !important; }
+    .active-na { background: #64748b !important; color: white !important; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
-    <div id="root"></div>
+  <div id="root"></div>
 
-    <script type="text/babel">
-        // 1. إعدادات Firebase الخاصة بك
-        const firebaseConfig = {
-            apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
-            authDomain: "verra-system-828f2.firebaseapp.com",
-            projectId: "verra-system-828f2",
-            storageBucket: "verra-system-828f2.firebasestorage.app",
-            messagingSenderId: "961104891607",
-            appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
-        };
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
+    // --- إعدادات FIREBASE الخاصة بك ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
+      authDomain: "verra-system-828f2.firebaseapp.com",
+      projectId: "verra-system-828f2",
+      storageBucket: "verra-system-828f2.firebasestorage.app",
+      messagingSenderId: "961104891607",
+      appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
+    };
 
-        // 2. مصفوفة البيانات الضخمة (الـ 74 بنداً)
-        const categories = [
-            { title: "الاستلام والتخزين", items: [
-                "فحص درجات حرارة المواد الموردة عند الاستلام",
-                "المجمدات لا تتجاوز -18 درجة مئوية",
-                "المبردات لا تتجاوز 4 درجات مئوية",
-                "استخدام مقياس حرارة معاير للأغذية عالية الخطورة",
-                "نقل المواد للمخازن خلال أقل من 20 دقيقة",
-                "مطابقة المنتجات للمواصفات السعودية",
-                "اللحوم الطازجة من مسالخ معتمدة ومختومة",
-                "التعبئة سليمة وخالية من الآفات",
-                "التحقق من تواريخ الصلاحية وتسجيلها",
-                "نظافة وتهوية أماكن التخزين"
-            ]},
-            { title: "تحضير الأغذية", items: [
-                "متابعة عملية تحضير العجين",
-                "متابعة عملية تكوير العجين",
-                "مراجعة تحضير الصوصات",
-                "فصل مناطق تحضير الخام عن المطبوخ",
-                "منع التلوث الخلطي أثناء التحضير",
-                "إذابة الأغذية (Defrost) بطريقة آمنة",
-                "عدم ترك الغذاء في حرارة الغرفة > ساعتين",
-                "وصول حرارة الطهي لـ 75 درجة مئوية",
-                "استخدام ألواح تقطيع ملونة (Color Coded)",
-                "ارتداء القفازات عند ملامسة الغذاء الجاهز"
-            ]},
-            // ... (باقي الأقسام سيتم عرضها ديناميكياً)
-        ];
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-        const App = () => {
-            const [user, setUser] = React.useState(null);
-            const [view, setView] = React.useState('dashboard'); // dashboard, audit, history
-            const [answers, setAnswers] = React.useState({});
-            const [branch, setBranch] = React.useState("");
-            const [uploading, setUploading] = React.useState(false);
+    // --- بيانات الفحص (74 بنداً) ---
+    const inspectionData = [
+      { id: 'receiving', titleAr: 'الاستلام والتخزين', items: [
+        { id: 1, text: "يتم فحص جميع المواد الغذائية الواردة لدرجة الحرارة عند التسليم" },
+        { id: 2, text: "لا تتجاوز درجة حرارة المجمدات -18°م عند الاستلام" },
+        { id: 3, text: "لا تتجاوز درجة حرارة المبردات 4°م عند الاستلام" },
+        { id: 4, text: "فحص الأغذية عالية الخطورة بمقياس حرارة معاير" },
+        { id: 5, text: "نقل الأغذية المبردة إلى التخزين خلال 20 دقيقة" },
+        { id: 6, text: "جميع المنتجات مطابقة للمواصفات القياسية السعودية" },
+        { id: 7, text: "اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً" },
+        { id: 8, text: "التعبئة سليمة وخالية من الآفات أو التلف" },
+        { id: 9, text: "التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام" },
+        { id: 10, text: "أماكن التخزين نظيفة وجافة وجيدة التهوية" }
+      ]},
+      { id: 'prep', titleAr: 'تحضير الأغذية', items: [
+        { id: 11, text: "مراجعة ومتابعة بروسيس تحضير العجين" },
+        { id: 12, text: "متابعة بروسيس تكوير العجين" },
+        { id: 13, text: "مراجعة تحضير الصوصات" },
+        { id: 14, text: "تحضير الأغذية النيئة والمطبوخة في مناطق منفصلة" },
+        { id: 15, text: "منع التلوث المتبادل أثناء التحضير" },
+        { id: 16, text: "إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ" },
+        { id: 17, text: "عدم ترك الأغذية المحضرة في الغرفة > ساعتين" },
+        { id: 18, text: "وصول درجات حرارة الطهي لـ (≥75°م)" },
+        { id: 19, text: "إعادة التسخين لدرجة حرارة لا تقل عن 75°م" },
+        { id: 20, text: "استخدام لوحات تقطيع ملونة لأنواع مختلفة" },
+        { id: 21, text: "ارتداء القفازات عند لمس الأغذية الجاهزة" }
+      ]},
+      // ... يمكن إضافة باقي الأقسام هنا بنفس النمط
+    ];
 
-            React.useEffect(() => {
-                auth.onAuthStateChanged(u => setUser(u));
-            }, []);
+    function App() {
+      const [user, setUser] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [sections, setSections] = useState(inspectionData.map(s => ({...s, items: s.items.map(i => ({...i, answer: null, notes: ''}))})));
+      const [location, setLocation] = useState("جاري تحديد الموقع...");
+      const [branch, setBranch] = useState("");
+      const [isSaving, setIsSaving] = useState(false);
 
-            // حساب النتيجة تلقائياً
-            const calculateScore = () => {
-                const vals = Object.values(answers);
-                const yesCount = vals.filter(v => v === 'yes').length;
-                const totalAnswered = vals.filter(v => v !== 'na').length;
-                return totalAnswered > 0 ? Math.round((yesCount / totalAnswered) * 100) : 0;
-            };
+      // مراقبة الدخول وتحديد الموقع
+      useEffect(() => {
+        auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
+        
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(pos => {
+            setLocation(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
+          });
+        }
+      }, []);
 
-            const submitAudit = async () => {
-                if(!branch) return alert("يرجى كتابة اسم الفرع");
-                setUploading(true);
-                try {
-                    await db.collection("inspections").add({
-                        branchName: branch,
-                        score: calculateScore(),
-                        answers: answers,
-                        inspector: user.email,
-                        date: new Date().toLocaleString('ar-EG'),
-                        reportID: "VER-" + Math.random().toString(36).substr(2, 9).toUpperCase(),
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    alert("تم إرسال التقرير النهائي للسحابة بنجاح!");
-                    location.reload();
-                } catch (e) {
-                    alert("خطأ: " + e.message);
-                }
-                setUploading(false);
-            };
+      const updateAnswer = (sId, itemId, ans) => {
+        setSections(prev => prev.map(s => s.id === sId ? {...s, items: s.items.map(i => i.id === itemId ? {...i, answer: ans} : i)} : s));
+      };
 
-            if (!user) return <LoginPage auth={auth} />;
+      const calculateStats = () => {
+        let total = 0, answered = 0, score = 0;
+        sections.forEach(s => s.items.forEach(i => {
+          total++;
+          if(i.answer) answered++;
+          if(i.answer === 'yes') score++;
+        }));
+        const finalScore = answered > 0 ? Math.round((score / answered) * 100) : 0;
+        return { total, answered, finalScore };
+      };
 
-            return (
-                <div className="min-h-screen pb-20">
-                    {/* Header */}
-                    <nav className="verra-bg p-4 text-white flex justify-between items-center sticky top-0 z-50">
-                        <span className="font-bold text-xl gold-text italic">VERRA PRO</span>
-                        <button onClick={() => auth.signOut()} className="text-xs bg-red-500 px-3 py-1 rounded">خروج</button>
-                    </nav>
+      const handleSave = async () => {
+        if(!branch) return alert("يرجى كتابة اسم الفرع أولاً");
+        setIsSaving(true);
+        try {
+          await db.collection("inspections").add({
+            branch: branch,
+            inspector: user.email,
+            location: location,
+            score: calculateStats().finalScore,
+            data: sections,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          alert("تم حفظ التقرير بنجاح في السحابة!");
+        } catch (e) {
+          alert("خطأ: " + e.message);
+        }
+        setIsSaving(false);
+      };
 
-                    {view === 'dashboard' ? (
-                        <div className="p-4">
-                            <div className="bg-white rounded-3xl p-6 shadow-lg mb-6 border-b-4 border-green-800">
-                                <h1 className="text-xl font-bold text-green-900 mb-2">أهلاً بك، شيف {user.email.split('@')[0]}</h1>
-                                <p className="text-sm text-gray-500">لديك 0 تقارير معلقة لليوم</p>
-                            </div>
-                            <button onClick={() => setView('audit')} className="w-full bg-green-800 text-white font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-2">
-                                <i data-lucide="plus-circle"></i> بدء تفتيش ميداني جديد
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="p-4 max-w-2xl mx-auto">
-                            <div className="bg-white p-4 rounded-2xl shadow-sm mb-4 sticky-score border-2 border-green-800 flex justify-between items-center">
-                                <span className="font-bold">درجة الامتثال:</span>
-                                <span className="text-3xl font-black text-green-700">{calculateScore()}%</span>
-                            </div>
+      if (loading) return <div className="h-screen flex items-center justify-center">جاري تحميل النظام...</div>;
 
-                            <input 
-                                placeholder="اسم المنشأة / الفرع" 
-                                className="w-full p-4 rounded-2xl border-2 mb-6 outline-none focus:border-green-600 font-bold"
-                                onChange={(e) => setBranch(e.target.value)}
-                            />
+      if (!user) return <Login auth={auth} />;
 
-                            {categories.map((cat, cIdx) => (
-                                <div key={cIdx} className="mb-8">
-                                    <h3 className="font-bold text-green-900 mb-4 border-b-2 border-green-100 pb-2">{cat.title}</h3>
-                                    {cat.items.map((item, iIdx) => {
-                                        const id = `${cIdx}-${iIdx}`;
-                                        return (
-                                            <div key={id} className="bg-white p-4 rounded-xl shadow-sm mb-3 gold-border">
-                                                <p className="text-sm font-bold mb-3">{item}</p>
-                                                <div className="flex gap-2">
-                                                    <button onClick={() => setAnswers({...answers, [id]: 'yes'})} className={`flex-1 py-2 rounded-lg text-xs font-bold ${answers[id] === 'yes' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-400'}`}>مطابق</button>
-                                                    <button onClick={() => setAnswers({...answers, [id]: 'no'})} className={`flex-1 py-2 rounded-lg text-xs font-bold ${answers[id] === 'no' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-400'}`}>مخالف</button>
-                                                    <button onClick={() => setAnswers({...answers, [id]: 'na'})} className={`flex-1 py-2 rounded-lg text-xs font-bold ${answers[id] === 'na' ? 'bg-gray-600 text-white' : 'bg-gray-100 text-gray-400'}`}>N/A</button>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            ))}
+      const stats = calculateStats();
 
-                            <button 
-                                disabled={uploading}
-                                onClick={submitAudit}
-                                className="w-full bg-green-800 text-white font-bold py-5 rounded-2xl shadow-2xl mb-10"
-                            >
-                                {uploading ? 'جاري الحفظ بالسحابة...' : 'إرسال التقرير النهائي'}
-                            </button>
-                        </div>
-                    )}
-                </div>
-            );
-        };
+      return (
+        <div className="min-h-screen pb-20">
+          <header className="header text-center">
+            <h1 className="text-2xl font-bold gold-text">VERRA PRO</h1>
+            <p className="text-xs opacity-80 uppercase tracking-widest">Food Safety & Quality Inspection</p>
+            <div className="mt-4 bg-white/10 p-3 rounded-xl text-sm">
+               👤 {user.email.split('@')[0]} | 📍 {location}
+            </div>
+          </header>
 
-        const LoginPage = ({ auth }) => {
-            const handleLogin = async (e) => {
-                e.preventDefault();
-                try {
-                    await auth.signInWithEmailAndPassword(e.target.email.value, e.target.password.value);
-                } catch (err) { alert("خطأ: " + err.message); }
-            };
-            return (
-                <div className="h-screen verra-bg flex items-center justify-center p-4">
-                    <form onSubmit={handleLogin} className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
-                        <h1 className="text-3xl font-bold text-green-900 mb-6">VERRA PRO</h1>
-                        <input name="email" type="email" placeholder="البريد الإلكتروني" className="w-full border-2 p-3 rounded-xl mb-4 outline-none focus:border-green-600" required />
-                        <input name="password" type="password" placeholder="كلمة المرور" className="w-full border-2 p-3 rounded-xl mb-6 outline-none focus:border-green-600" required />
-                        <button className="w-full bg-green-800 text-white font-bold py-4 rounded-xl shadow-lg">دخول النظام</button>
-                    </form>
-                </div>
-            );
-        };
+          <div className="sticky-bar shadow-sm">
+            <div className="flex justify-between items-center max-w-2xl mx-auto">
+               <div className="text-sm font-bold">التقدم: {stats.answered}/{stats.total}</div>
+               <div className="text-xl font-black text-green-700">الدرجة: {stats.finalScore}%</div>
+               <button onClick={() => auth.signOut()} className="text-red-500 text-xs font-bold">خروج</button>
+            </div>
+          </div>
 
-        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-    </script>
+          <main className="p-4 max-w-2xl mx-auto">
+            <div className="bg-white p-4 rounded-xl shadow-sm mb-6 border-b-4 border-green-800">
+               <label className="block text-xs font-bold text-gray-400 mb-1">اسم الفرع المستهدف:</label>
+               <input 
+                 className="w-full text-lg font-bold outline-none" 
+                 placeholder="اكتب اسم الفرع هنا..." 
+                 value={branch}
+                 onChange={e => setBranch(e.target.value)}
+               />
+            </div>
+
+            {sections.map(s => (
+              <div key={s.id} className="mb-8">
+                <h3 className="font-bold text-green-900 mb-3 border-r-4 border-gold-500 pr-2">{s.titleAr}</h3>
+                {s.items.map(i => (
+                  <div key={i.id} className="section-card p-4">
+                    <p className="text-sm font-bold mb-3">{i.id}. {i.text}</p>
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-2">
+                        <button onClick={() => updateAnswer(s.id, i.id, 'yes')} className={`answer-btn ${i.answer === 'yes' ? 'active-yes' : 'bg-gray-50'}`}>نعم</button>
+                        <button onClick={() => updateAnswer(s.id, i.id, 'no')} className={`answer-btn ${i.answer === 'no' ? 'active-no' : 'bg-gray-50'}`}>لا</button>
+                        <button onClick={() => updateAnswer(s.id, i.id, 'na')} className={`answer-btn ${i.answer === 'na' ? 'active-na' : 'bg-gray-50'}`}>N/A</button>
+                      </div>
+                      <button className="text-gray-300 hover:text-green-600"><i className="lucide-camera w-5"></i></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+
+            <button 
+              disabled={isSaving}
+              onClick={handleSave}
+              className="w-full bg-green-800 text-white font-bold py-5 rounded-2xl shadow-xl fixed bottom-4 left-0 right-0 max-w-xs mx-auto"
+            >
+              {isSaving ? "جاري الرفع..." : "إرسال التقرير للسحابة"}
+            </button>
+          </main>
+        </div>
+      );
+    }
+
+    function Login({ auth }) {
+      const [email, setEmail] = useState("");
+      const [pass, setPass] = useState("");
+      const handleLogin = async (e) => {
+        e.preventDefault();
+        try { await auth.signInWithEmailAndPassword(email, pass); }
+        catch (err) { alert("خطأ: " + err.message); }
+      };
+      return (
+        <div className="h-screen flex items-center justify-center p-4 bg-[#004b47]">
+          <form onSubmit={handleLogin} className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
+            <h1 className="text-3xl font-bold text-green-900 mb-6 italic">VERRA PRO</h1>
+            <input className="w-full border-2 p-3 rounded-xl mb-4 outline-none focus:border-green-600" placeholder="البريد الإلكتروني" onChange={e => setEmail(e.target.value)} />
+            <input className="w-full border-2 p-3 rounded-xl mb-6 outline-none focus:border-green-600" type="password" placeholder="كلمة المرور" onChange={e => setPass(e.target.value)} />
+            <button className="w-full bg-green-800 text-white font-bold py-4 rounded-xl shadow-lg">دخول النظام</button>
+          </form>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
