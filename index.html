@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VERRA PRO - Final Fixed Edition</title>
+  <title>VERRA PRO - Final PDF Fix</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
@@ -29,10 +29,10 @@
     .btn-yes.active { background: #22c55e !important; color: white; }
     .btn-no.active { background: #ef4444 !important; color: white; }
     .btn-na.active { background: #64748b !important; color: white; }
-    .notes-area { width: 100%; margin-top: 10px; padding: 10px; border-radius: 8px; border: 1px solid #fde68a; background: #fffbeb; font-size: 13px; }
+    .notes-area { width: 100%; margin-top: 10px; padding: 10px; border-radius: 8px; border: 1px solid #fde68a; background: #fffbeb; font-size: 13px; outline: none; }
     .photo-box { position: relative; display: inline-block; margin: 5px; }
     .photo-img { width: 70px; height: 70px; object-fit: cover; border-radius: 10px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .del-img-btn { position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; cursor: pointer; }
+    .del-img-btn { position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; cursor: pointer; }
     .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
     .sig-canvas { border: 2px dashed #cbd5e1; background: #fff; border-radius: 12px; width: 100%; height: 180px; touch-action: none; }
     .hidden { display: none; }
@@ -57,6 +57,7 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // القائمة الكاملة بـ 74 بنداً
     const inspectionData = [
       { id: 'S1', title: 'الاستلام والتخزين', items: [
         { id: 1, q: 'فحص درجات حرارة المواد الغذائية الواردة عند التسليم' },
@@ -89,25 +90,25 @@
         { id: 24, q: 'رفع صورة المنتج النهائي على الواتساب' }
       ]},
       { id: 'S4', title: 'المنشأة والبيئة', items: [
-        { id: 25, q: 'المنشأة تقع بعيداً عن مصادر التلوث' },
-        { id: 26, q: 'خلو الجدران والأرضيات والأسقف من التشققات' },
-        { id: 27, q: 'الأبواب محكمة الإغلاق وتغلق تلقائياً' },
-        { id: 28, q: 'النوافذ مزودة بشبكات معدنية سليمة' },
-        { id: 29, q: 'ميل مناسب للصرف في جميع المناطق' },
+        { id: 25, q: 'المنشأة بعيدة عن مصادر التلوث' },
+        { id: 26, q: 'خلو الجدران والأرضيات من التشققات' },
+        { id: 27, q: 'الأبواب محكمة وتغلق تلقائياً' },
+        { id: 28, q: 'النوافذ مزودة بشبكات معدنية' },
+        { id: 29, q: 'ميل مناسب للصرف في كل المناطق' },
         { id: 30, q: 'أجهزة التكييف فعالة وتعمل بشكل صحيح' },
         { id: 31, q: 'وجود شفاطات فوق الأفران والشوايات' },
-        { id: 32, q: 'إضاءة كافية في جميع مناطق التعامل مع الأغذية' },
+        { id: 32, q: 'إضاءة كافية في مناطق التداول' },
         { id: 33, q: 'الأرضيات مقاومة للماء وغير زلقة' }
       ]},
       { id: 'S5', title: 'التنظيف والتعقيم', items: [
         { id: 34, q: 'جدول التنظيف موثق ويتم اتباعه' },
         { id: 35, q: 'المطهرات آمنة وبالتركيزات الصحيحة' },
-        { id: 36, q: 'تنظيف وتعقيم المعدات بعد كل استخدام' },
+        { id: 36, q: 'تنظيف المعدات بعد كل استخدام' },
         { id: 37, q: 'التنظيف العميق يومياً لجميع الأسطح' },
-        { id: 38, q: 'حاويات النفايات تفتح بالقدم وتفرغ بانتظام' },
-        { id: 39, q: 'التخلص من النفايات يمنع تلوث المياه' },
-        { id: 40, q: 'عقد مكافحة آفات ساري مع شركة متخصصة' },
-        { id: 41, q: 'عدم وجود دلائل على القوارض أو الحشرات' }
+        { id: 38, q: 'حاويات النفايات تفتح بالقدم' },
+        { id: 39, q: 'التخلص من النفايات يمنع التلوث' },
+        { id: 40, q: 'عقد مكافحة آفات ساري' },
+        { id: 41, q: 'عدم وجود دلائل حشرات' }
       ]},
       { id: 'S6', title: 'النظافة الشخصية', items: [
         { id: 42, q: 'جميع العاملين يرتدون زياً نظيفاً وأغطية للشعر' },
@@ -120,34 +121,34 @@
         { id: 49, q: 'استبعاد العاملين المصابين بالأمراض المعدية' }
       ]},
       { id: 'S7', title: 'المعدات والأدوات', items: [
-        { id: 50, q: 'المعدات مصنوعة من مواد مقاومة للتآكل' },
+        { id: 50, q: 'المعدات مصنوعة من مواد مقاومة للتآكل وآمنة' },
         { id: 51, q: 'مقاييس الحرارة معايرة وتعمل بشكل صحيح' },
-        { id: 52, q: 'الثلاجات والمجمدات تحافظ على الحرارة' },
+        { id: 52, q: 'الثلاجات والمجمدات تحافظ على حرارة صحيحة' },
         { id: 53, q: 'تسجيل سجلات درجة الحرارة مرتين يومياً' },
         { id: 54, q: 'صيانة وتنظيف معدات الطهي بانتظام' },
         { id: 55, q: 'أسطح ملامسة للأغذية ناعمة وبدون شقوق' }
       ]},
       { id: 'S8', title: 'التتبع والتوثيق', items: [
-        { id: 56, q: 'الالتزام بسجلات مراقبة الجودة' },
-        { id: 57, q: 'رفع لوائح التشييك يومياً على الواتساب' },
+        { id: 56, q: 'الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)' },
+        { id: 57, q: 'رفع لوائح التشييك يومياً على مجموعة الواتساب' },
         { id: 58, q: 'دليل تتبع الأغذية متاح وكامل' },
         { id: 59, q: 'الاحتفاظ بسجلات التتبع 180 يوماً' },
         { id: 60, q: 'ترميز المنتجات لتحديد الدفعة والتاريخ' },
         { id: 61, q: 'سجلات اعتماد الموردين والشهادات' },
-        { id: 62, q: 'جميع العاملين يحملون شهادات صحية' },
-        { id: 63, q: 'خطة HACCP موثقة ومعتمدة' },
+        { id: 62, q: 'جميع العاملين يحملون شهادات صحية سارية' },
+        { id: 63, q: 'خطة HACCP موثقة ومعتمدة ومراجعتها' },
         { id: 64, q: 'سجلات التنظيف والتعقيم محدثة' },
-        { id: 65, q: 'الاحتفاظ بسجلات مراقبة درجة الحرارة' }
+        { id: 65, q: 'الاحتفاظ بسجلات مراقبة درجة الحرارة وتوقيعها' }
       ]},
       { id: 'S9', title: 'إمداد المياه والسباكة', items: [
         { id: 66, q: 'إمداد مياه الشرب كافٍ ونظيف' },
         { id: 67, q: 'تركيب وصيانة فلاتر المياه' },
         { id: 68, q: 'عدم وجود تسربات في مواسير الصرف' },
-        { id: 69, q: 'إغلاق فتحات الصرف أثناء العمل' },
+        { id: 69, q: 'إغلاق فتحات الصرف أثناء ساعات العمل' },
         { id: 70, q: 'أحواض غسل اليدين بها أجهزة تجفيف' }
       ]},
       { id: 'S10', title: 'إدارة مسببات الحساسية', items: [
-        { id: 71, q: 'معلومات الحساسية كاملة على الملصقات' },
+        { id: 71, q: 'معلومات مسببات الحساسية كاملة على الملصقات' },
         { id: 72, q: 'مناطق تحضير منفصلة للأصناف الخاصة' },
         { id: 73, q: 'أدوات مخصصة لتحضير الأغذية الخاصة' },
         { id: 74, q: 'تدريب الموظفين على مسببات الحساسية' }
@@ -194,78 +195,95 @@
       };
 
       const downloadPDF = () => {
+        // 1. العودة لأعلى الصفحة لضمان عدم وجود Scroll Offset
+        window.scrollTo(0,0);
+        
         const score = getScore();
         const scoreColor = score >= 90 ? '#16a34a' : score >= 70 ? '#ca8a04' : '#dc2626';
         const signature = sigPad.current ? sigPad.current.toDataURL() : "";
 
-        // بناء التقرير في حاوية مؤقتة منفصلة تماماً عن الـ DOM الحالي
-        const printContainer = document.createElement('div');
-        printContainer.style.width = '800px';
-        printContainer.style.padding = '40px';
-        printContainer.style.background = 'white';
-        printContainer.style.direction = 'rtl';
-        printContainer.style.position = 'absolute';
-        printContainer.style.left = '-9999px';
-        document.body.appendChild(printContainer);
-
-        printContainer.innerHTML = `
-          <div style="text-align:center; border-bottom: 5px solid #004b47; padding-bottom: 20px;">
-            <h1 style="color:#004b47; font-size:32px; margin:0">تقرير فحص سلامة وجودة الأغذية</h1>
-            <p style="font-size:18px; margin:10px 0">المنشأة: <b>${branch || 'غير محدد'}</b></p>
-            <p>التاريخ: ${new Date().toLocaleDateString('ar-EG')} | المفتش: ${user.email}</p>
-            <div style="background:${scoreColor}; color:white; padding:15px 40px; border-radius:10px; display:inline-block; margin-top:10px">
-              <h2 style="margin:0">درجة الامتثال الكلية: ${score}%</h2>
-            </div>
-          </div>
-          <div style="margin-top:30px">
-            ${inspectionData.map(s => `
-              <div style="background:#e8f5ee; padding:12px; font-weight:bold; border-right:6px solid #004b47; margin-top:20px; font-size:18px">
-                ${s.title}
+        // 2. بناء التقرير في حاوية نظيفة تماماً ومعزولة
+        const printArea = document.createElement('div');
+        printArea.id = "final-pdf-container";
+        printArea.style.cssText = "width:800px; padding:0; margin:0; background:white; direction:rtl; position:absolute; left:-9999px; top:0;";
+        
+        printArea.innerHTML = `
+          <div style="padding:40px; border:1px solid #eee">
+            <div style="text-align:center; border-bottom: 5px solid #004b47; padding-bottom: 20px;">
+              <h1 style="color:#004b47; font-size:32px; margin:0">تقرير فحص سلامة وجدة الأغذية</h1>
+              <p style="font-size:18px; margin:10px 0">المنشأة: <b>${branch || 'غير محدد'}</b></p>
+              <p style="font-size:14px">التاريخ: ${new Date().toLocaleDateString('ar-EG')} | المفتش: ${user.email}</p>
+              <div style="background:${scoreColor}; color:white; padding:10px 40px; border-radius:10px; display:inline-block; margin-top:10px">
+                <h2 style="margin:0">درجة الامتثال الكلية: ${score}%</h2>
               </div>
-              ${s.items.map(i => {
-                const ans = answers[i.id];
-                const note = notes[i.id];
-                const itemPhotos = photos[i.id] || [];
-                return `
-                  <div style="padding:15px; border-bottom:1px solid #eee; page-break-inside: avoid">
-                    <p style="margin:0 0 8px 0; font-size:15px"><b>${i.id}. ${i.q}</b></p>
-                    <p style="margin:0; font-size:14px">الحالة: ${ans === 'yes' ? '<span style="color:green">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red">❌ مخالف</span>' : '⚪ N/A'}</p>
-                    ${note ? `<p style="margin:10px 0; font-size:13px; color:#713f12; background:#fefce8; padding:10px; border-radius:5px; border:1px solid #fde68a">الملاحظة: ${note}</p>` : ''}
-                    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:12px">
-                      ${itemPhotos.map(p => `<img src="${p}" style="width:200px; height:150px; object-fit:cover; border-radius:8px; border:1px solid #ccc" />`).join('')}
+            </div>
+
+            <div style="margin-top:30px">
+              ${inspectionData.map(s => `
+                <div style="background:#e8f5ee; padding:12px; font-weight:bold; border-right:8px solid #004b47; margin-top:25px; font-size:18px; page-break-after: avoid">
+                  ${s.title}
+                </div>
+                ${s.items.map(i => {
+                  const ans = answers[i.id];
+                  const note = notes[i.id];
+                  const itemPhotos = photos[i.id] || [];
+                  return `
+                    <div style="padding:15px; border-bottom:1px solid #eee; page-break-inside: avoid">
+                      <p style="margin:0 0 8px 0; font-size:15px"><b>${i.id}. ${i.q}</b></p>
+                      <p style="margin:0; font-size:14px">الحالة: ${ans === 'yes' ? '<span style="color:green">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red">❌ مخالف</span>' : '⚪ N/A'}</p>
+                      ${note ? `<p style="margin:10px 0; font-size:13px; color:#713f12; background:#fefce8; padding:10px; border-radius:5px; border:1px solid #fde68a">ملاحظة: ${note}</p>` : ''}
+                      ${itemPhotos.length > 0 ? `
+                        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:12px">
+                          ${itemPhotos.map(p => `<img src="${p}" style="width:220px; height:160px; object-fit:cover; border-radius:8px; border:1px solid #ddd" />`).join('')}
+                        </div>
+                      ` : ''}
                     </div>
-                  </div>
-                `;
-              }).join('')}
-            `).join('')}
-          </div>
-          <div style="margin-top:50px; border-top: 2px solid #eee; padding-top:30px; display:flex; justify-content:space-between; align-items:flex-end">
-             <div style="text-align:center">
-                <p style="font-weight:bold; margin-bottom:10px">توقيع المفتش</p>
-                ${signature ? `<img src="${signature}" style="width:200px; border-bottom:2px solid #000" />` : '<div style="height:80px"></div>'}
-                <p style="margin-top:5px; font-size:12px">${user.email}</p>
-             </div>
-             <div style="text-align:left; color:#999; font-size:11px">
-                توليد آلي عبر نظام فيرا PRO <br/> الرقم المرجعي: ${Date.now()}
-             </div>
+                  `;
+                }).join('')}
+              `).join('')}
+            </div>
+
+            <div style="margin-top:50px; border-top: 3px solid #004b47; padding-top:30px; display:flex; justify-content:space-between; align-items:flex-end; page-break-inside: avoid">
+               <div style="text-align:center">
+                  <p style="font-weight:bold; margin-bottom:10px; font-size:16px">توقيع المفتش</p>
+                  ${signature ? `<img src="${signature}" style="width:250px; height:auto; border-bottom:1px solid #000" />` : '<div style="height:100px; width:200px; border-bottom:1px solid #ccc"></div>'}
+                  <p style="margin-top:10px; font-size:12px; color:#666">${user.email}</p>
+               </div>
+               <div style="text-align:left; color:#999; font-size:11px">
+                  رقم المرجع: VERRA-${Date.now()} <br/> تم التوليد عبر نظام فيرا السحابي
+               </div>
+            </div>
           </div>
         `;
 
+        document.body.appendChild(printArea);
+
+        // 3. خيارات الطباعة المحسنة للجوال
         const options = {
-          margin: [10, 10, 10, 10],
-          filename: `VERRA_${branch || 'Report'}.pdf`,
+          margin: [0, 0, 0, 0], // تصفير الهوامش الخارجية لمنع الصفحات البيضاء
+          filename: `VERRA_Report_${branch || 'Export'}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
+          html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            logging: false, 
+            scrollY: 0, 
+            scrollX: 0,
+            windowWidth: 800
+          },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
           pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
-        html2pdf().set(options).from(printContainer).toPdf().get('pdf').then(() => {
-          document.body.removeChild(printContainer); // تنظيف الـ DOM بعد الانتهاء
-        }).save();
+        // 4. تنفيذ التحويل بعد تأخير بسيط لضمان رندر الصور
+        setTimeout(() => {
+          html2pdf().set(options).from(printArea).save().then(() => {
+            document.body.removeChild(printArea);
+          });
+        }, 800);
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center italic text-green-900 animate-pulse">جاري التحميل...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center italic text-green-900 animate-pulse font-bold text-xl">VERRA PRO...</div>;
       if (!user) return <Login auth={auth} />;
 
       return (
@@ -277,19 +295,19 @@
 
           <div className="progress-sticky shadow-md flex justify-between items-center">
              <div>
-                <p className="text-[10px] font-bold text-gray-400">التقدم: {Object.keys(answers).length}/74</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase">Items: {Object.keys(answers).length}/74</p>
                 <p className="text-2xl font-black text-green-700">{getScore()}%</p>
              </div>
              <div className="flex gap-2">
-                <button onClick={() => {if(confirm("مسح الكل؟")) location.reload()}} className="bg-red-500 text-white px-3 py-2 rounded-xl text-[11px] font-bold">Reset</button>
-                <button onClick={downloadPDF} className="bg-blue-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold shadow-lg">View Report</button>
+                <button onClick={() => {if(confirm("مسح الكل؟")) location.reload()}} className="bg-red-500 text-white px-4 py-2 rounded-xl text-[11px] font-bold shadow-md">Reset</button>
+                <button onClick={downloadPDF} className="bg-blue-600 text-white px-5 py-2 rounded-xl text-[11px] font-bold shadow-lg active:scale-95 transition">View Report</button>
              </div>
           </div>
 
           <main className="p-4 max-w-2xl mx-auto">
              <div className="bg-white p-5 rounded-2xl shadow-sm mb-6 border-b-4 border-green-800">
                 <p className="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-widest">اسم المنشأة:</p>
-                <input className="w-full text-lg font-bold outline-none" placeholder="اكتب اسم المطعم..." value={branch} onChange={e=>setBranch(e.target.value)} />
+                <input className="w-full text-lg font-bold outline-none border-b border-gray-100" placeholder="اكتب اسم المطعم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
              </div>
 
              {inspectionData.map(s => (
@@ -341,9 +359,17 @@
 
              <button onClick={async () => {
                  if(!branch) return alert("أدخل اسم الفرع أولاً");
-                 await db.collection("reports").add({ branch, score: getScore(), inspector: user.email, date: new Date().toLocaleDateString('ar-EG'), signature: sigPad.current.toDataURL(), timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-                 alert("تم الحفظ في السحابة بنجاح!");
-                 location.reload();
+                 const btn = event.target; btn.innerText = "جاري الحفظ...";
+                 try {
+                   await db.collection("inspections").add({ 
+                     branch, score: getScore(), inspector: user.email, 
+                     date: new Date().toLocaleDateString('ar-EG'), 
+                     signature: sigPad.current.toDataURL(), 
+                     timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+                   });
+                   alert("تم الحفظ في السحابة بنجاح!");
+                   location.reload();
+                 } catch(e) { alert("خطأ: " + e.message); btn.innerText="إرسال للسحابة"; }
                }} className="w-full bg-green-800 text-white font-bold py-5 rounded-2xl shadow-2xl text-xl mt-8 mb-20"
              >إرسال للسحابة</button>
           </main>
@@ -357,9 +383,9 @@
         <div className="h-screen bg-[#004b47] flex items-center justify-center p-6">
            <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(e, p).catch(err=>alert(err.message))}} className="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-sm text-center">
               <h1 className="text-3xl font-black text-green-900 mb-8 italic">VERRA PRO</h1>
-              <input className="w-full border-2 p-4 rounded-2xl mb-4 text-right outline-none focus:border-green-600" placeholder="البريد الإلكتروني" onChange={v=>setE(v.target.value)} />
-              <input className="w-full border-2 p-4 rounded-2xl mb-8 text-right outline-none focus:border-green-600" type="password" placeholder="كلمة المرور" onChange={v=>setP(v.target.value)} />
-              <button type="submit" className="w-full bg-green-800 text-white font-bold py-4 rounded-2xl shadow-lg transition duration-200">دخول النظام السحابي</button>
+              <input className="w-full border-2 p-4 rounded-2xl mb-4 text-right outline-none focus:border-green-600" placeholder="البريد الإلكتروني" value={e} onChange={v=>setE(v.target.value)} />
+              <input className="w-full border-2 p-4 rounded-2xl mb-8 text-right outline-none focus:border-green-600" type="password" placeholder="كلمة المرور" value={p} onChange={v=>setP(v.target.value)} />
+              <button type="submit" className="w-full bg-green-800 text-white font-bold py-4 rounded-2xl shadow-lg">دخول النظام السحابي</button>
            </form>
         </div>
       );
