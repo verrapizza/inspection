@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VERRA PRO - النسخة النهائية</title>
+  <title>نظام فيرا PRO - النسخة النهائية</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -11,13 +12,16 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f4f7f6; margin: 0; }
+    body { font-family: 'Cairo', sans-serif; background: #f4f7f6; margin: 0; padding: 0; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .gold-text { color: #d1ba89; }
+    .card { background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
     .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin-bottom: 10px; }
     .item-card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 10px; border: 1px solid #e5e7eb; }
     .ans-btn { width: 50px; height: 38px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f3f4f6; border: 1px solid #d1d5db; }
@@ -27,9 +31,10 @@
     .notes-input { width: 100%; margin-top: 8px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
     .sig-canvas { border: 2px dashed #cbd5e1; border-radius: 15px; background: white; width: 100%; height: 180px; touch-action: none; }
     .photo-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; }
-    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 8px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
+    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; z-index: 10; }
+    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 10px 15px; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
@@ -62,7 +67,7 @@
         {id:22, q:"معاينة جودة المنتج النهائي (قسم الباستا)"}, {id:23, q:"معاينة جودة المنتج النهائي (قسم البيتزا)"}, {id:24, q:"رفع صورة المنتج النهائي على الواتساب في كل الفروع"}
       ]},
       { title: "المنشأة والبيئة", items: [
-        {id:25, q:"المنشأة تقع بعيداً عن مصادر التلوث"}, {id:26, q:"خلو الجدران والأرضيات والأسقف من التشققات"}, {id:27, q:"الأبواب محكمة الإغلاق وتغلق تلقائياً"}, {id:28, q:"النوافذ مزودة بشبكات معدنية سليمة"}, {id:29, q:"ميل مناسب للصرف في جميع المناطق"}, {id:30, q:"أجهزة التكييف فعالة وتعمل بشكل صحيح"}, {id:31, q:"وجود شفاطات دخان فوق الأفران والشوايات"}, {id:32, q:"إضاءة كافية في جميع مناطق التعامل مع الأغذية"}, {id:33, q:"الأرضيات مقاومة للماء وغير زلقة وسهلة التنظيف"}
+        {id:25, q:"المنشأة تقع بعيداً عن مصادر التلوث"}, {id:26, q:"خلو الجدران والأرضيات والأسقف من التشققات"}, {id:27, q:"الأبواب محكمة الإغلاق وتغلق تلقائياً"}, {id:28, q:"النوافذ مزودة بشبكات معدنية سليمة"}, {id:29, q:"ميل مناسب للصرف في جميع المناطق"}, {id:30, q:"أجهزة التكييف فعالة وتعمل بشكل صحيح"}, {id:31, q:"وجود شفاطات فوق الأفران والشوايات"}, {id:32, q:"إضاءة كافية في جميع مناطق التعامل مع الأغذية"}, {id:33, q:"الأرضيات مقاومة للماء وغير زلقة وسهلة التنظيف"}
       ]},
       { title: "التنظيف والتعقيم", items: [
         {id:34, q:"جدول التنظيف موثق ويتم اتباعه بدقة"}, {id:35, q:"المطهرات آمنة للأغذية وبالتركيزات الصحيحة"}, {id:36, q:"تنظيف وتعقيم المعدات بعد كل استخدام"}, {id:37, q:"التنظيف العميق يومياً لجميع الأسطح الملامسة"}, {id:38, q:"حاويات النفايات تفتح بالقدم وتفرغ بانتظام"}, {id:39, q:"التخلص من النفايات يمنع تلوث المياه أو الأغذية"}, {id:40, q:"عقد مكافحة آفات ساري مع شركة متخصصة"}, {id:41, q:"عدم وجود دلائل على القوارض أو الحشرات"}
@@ -100,7 +105,7 @@
         auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(pos => {
-            setLocation(`Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`);
+            setLocation(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
           });
         }
       }, []);
@@ -131,57 +136,89 @@
         const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
         const signature = sigPad.current ? sigPad.current.toDataURL() : "";
 
-        // بناء التقرير في متغير HTML لضمان عدم وجود Scroll Offset
-        const reportHTML = `
-          <div style="padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif;">
-            <div style="text-align: center; border-bottom: 4px solid #004b47; padding-bottom: 20px;">
-              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 80px;" />
-              <h1 style="color: #004b47; font-size: 28px; margin: 10px 0;">تقرير فحص الجودة والسلامة</h1>
+        // بناء حاوية التقرير بعيداً عن شاشة العرض الحالية لتجنب مشاكل القص والصفحات البيضاء
+        const printArea = document.createElement('div');
+        printArea.id = "final-report-print";
+        printArea.style.cssText = "width:800px; padding:30px; background:white; direction:rtl; font-family: 'Cairo', sans-serif; position:fixed; top:0; left:-5000px; z-index:-1000;";
+        
+        printArea.innerHTML = `
+          <div style="padding:40px; background:white; border:2px solid #004b47; border-radius:10px;">
+            <div style="text-align:center; border-bottom: 5px solid #004b47; padding-bottom: 20px;">
+              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 100px; margin-bottom: 10px" />
+              <h1 style="color:#004b47; font-size:32px; margin:0">تقرير فحص الجودة والسلامة الغذائية</h1>
+              <p style="color:#666">نظام فيرا PRO السحابي</p>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 20px; background: #f8fafc; padding: 20px; border-radius: 10px;">
-              <div>
-                <p><b>🏢 المنشأة:</b> ${branch || 'غير محدد'}</p>
-                <p><b>👤 المفتش:</b> ${user.email.split('@')[0].toUpperCase()}</p>
-                <p><b>📍 الموقع:</b> ${location}</p>
-                <p><b>📅 التاريخ:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
-              </div>
-              <div style="text-align: center;">
-                <p style="font-weight: bold; color: #64748b;">النتيجة</p>
-                <div style="font-size: 36px; font-weight: 900; color: ${scoreColor}">${score}%</div>
-              </div>
+
+            <div style="display:flex; justify-content:space-between; margin-top:30px; background:#f8fafc; padding:20px; border-radius:15px; border:1px solid #e2e8f0">
+               <div>
+                  <p style="margin:5px 0"><b>🏢 المنشأة:</b> ${branch || 'غير محدد'}</p>
+                  <p style="margin:5px 0"><b>👤 المفتش:</b> ${user.email}</p>
+                  <p style="margin:5px 0"><b>📍 الموقع:</b> ${location}</p>
+                  <p style="margin:5px 0"><b>📅 التاريخ:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
+               </div>
+               <div style="text-align:center; border-right:2px solid #eee; padding-right:30px">
+                  <p style="color:#64748b; font-weight:bold">درجة الامتثال</p>
+                  <div style="font-size:48px; font-weight:900; color:${scoreColor}">${score}%</div>
+               </div>
             </div>
-            <div style="margin-top: 20px;">
-              ${sectionsData.map(sec => `
-                <div style="background: #e8f5ee; padding: 8px; font-weight: bold; margin-top: 15px; border-right: 5px solid #d1ba89;">${sec.title}</div>
-                ${sec.items.map(i => {
+
+            <div style="margin-top:30px">
+              ${sectionsData.map(s => `
+                <div style="background:#e8f5ee; padding:10px; font-weight:bold; border-right:8px solid #d1ba89; margin-top:20px; font-size:18px; color:#004b47">
+                  ${s.title}
+                </div>
+                ${s.items.map(i => {
                   const ans = answers[i.id];
                   const note = notes[i.id];
                   const itemPhotos = photos[i.id] || [];
                   return `
-                    <div style="padding: 10px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
-                      <p style="margin: 0; font-size: 14px;"><b>${i.id}. ${i.q}</b></p>
-                      <p style="font-size: 12px; margin: 3px 0;">الحالة: ${ans === 'yes' ? '✅ مطابق' : ans === 'no' ? '❌ مخالف' : '⚪ N/A'}</p>
-                      ${note ? `<div style="background: #fffbeb; padding: 5px; font-size: 11px; margin: 5px 0;">ملاحظة: ${note}</div>` : ''}
-                      <div style="display: flex; gap: 5px; margin-top: 5px;">
-                        ${itemPhotos.map(p => `<img src="${p}" style="width: 150px; height: 110px; object-fit: cover; border-radius: 5px;" />`).join('')}
+                    <div style="padding:15px; border-bottom:1px solid #eee; page-break-inside: avoid">
+                      <p style="margin:0"><b>${i.id}. ${i.q}</b></p>
+                      <p style="margin:5px 0; font-size:14px">الحالة: ${ans === 'yes' ? '<span style="color:green">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red">❌ مخالف</span>' : '⚪ N/A'}</p>
+                      ${note ? `<div style="background:#fffbeb; padding:10px; border-radius:8px; border:1px solid #fde68a; font-size:13px; margin:10px 0">ملاحظة: ${note}</div>` : ''}
+                      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px">
+                        ${itemPhotos.map(p => `<img src="${p}" style="width:230px; height:160px; object-fit:cover; border-radius:10px; border:1px solid #ddd" />`).join('')}
                       </div>
                     </div>
                   `;
                 }).join('')}
               `).join('')}
             </div>
-            <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
-              <div style="text-align: center;">
-                <p>توقيع المفتش</p>
-                <img src="${signature}" style="width: 180px; border-bottom: 2px solid #004b47;" />
-              </div>
-              <p style="font-size: 10px; color: #999;">توليد آلي - نظام VERRA PRO</p>
+
+            <div style="margin-top:50px; border-top:3px solid #004b47; padding-top:30px; display:flex; justify-content:space-between; align-items:flex-end">
+               <div style="text-align:center">
+                  <p style="font-weight:bold">توقيع المفتش المعتمد</p>
+                  ${signature ? `<img src="${signature}" style="width:250px; border-bottom:2px solid #000" />` : '<div style="height:100px; width:200px; border-bottom:1px solid #eee"></div>'}
+                  <p style="font-size:12px; color:#666; margin-top:10px">${user.email}</p>
+               </div>
+               <p style="color:#999; font-size:10px">ID: VERRA-${Date.now()}</p>
             </div>
           </div>
         `;
 
-        const opt = { margin: 10, filename: `Report_${branch}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-        html2pdf().from(reportHTML).set(opt).save();
+        document.body.appendChild(printArea);
+
+        const options = {
+          margin: 0,
+          filename: `VERRA_Report_${branch}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            scrollY: 0, 
+            scrollX: 0,
+            windowWidth: 800 
+          },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        // تأخير بسيط لضمان تحميل الصور في الـ PrintArea
+        setTimeout(() => {
+          html2pdf().set(options).from(printArea).save().then(() => {
+            document.body.removeChild(printArea);
+          });
+        }, 1000);
       };
 
       if (loading) return <div className="h-screen flex items-center justify-center font-bold text-green-900 animate-pulse text-2xl">جاري التحميل...</div>;
@@ -189,9 +226,8 @@
 
       return (
         <div className="pb-40">
-          <div className="verra-gradient p-8 text-center rounded-b-[2rem] shadow-xl">
+          <div className="verra-gradient p-8 text-center shadow-xl rounded-b-[3rem]">
             <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-20 mx-auto mb-4" />
-            <h1 className="text-2xl font-black gold-text italic tracking-widest uppercase">Verra Pro</h1>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] font-bold text-white border border-white/20 uppercase tracking-widest">👤 {user.email.split('@')[0]}</span>
               <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] font-bold text-white border border-white/20 uppercase tracking-widest">📍 {location}</span>
@@ -200,19 +236,19 @@
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase">Score</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase">Compliance</p>
               <p className="text-3xl font-black text-green-700">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-2.5 rounded-xl shadow-lg active:scale-90 transition"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
-              <button onClick={downloadPDF} className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black shadow-lg text-xs active:scale-95 transition">View Report</button>
+              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-2.5 rounded-xl shadow-lg"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+              <button onClick={downloadPDF} className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black shadow-lg text-xs">View Report</button>
             </div>
           </div>
 
           <main className="p-4 max-w-2xl mx-auto space-y-6">
-            <div className="item-card border-r-[10px] border-green-800 shadow-lg">
-              <p className="text-[10px] font-black text-gray-400 mb-1 uppercase tracking-widest">Target Branch / الفرع المستهدف</p>
-              <input className="w-full text-xl font-bold outline-none text-green-950 bg-transparent" placeholder="اكتب اسم المطعم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
+            <div className="card p-6 border-r-[10px] border-green-800">
+              <p className="text-xs font-black text-gray-400 mb-1 uppercase tracking-widest">اسم المنشأة المستهدفة</p>
+              <input className="w-full text-2xl font-bold outline-none text-green-950 bg-transparent" placeholder="اكتب الاسم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
             </div>
 
             {sectionsData.map(sec => (
@@ -221,11 +257,11 @@
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}>
                   <span>{sec.title}</span>
-                  <span className="text-xs opacity-50 font-bold">{expanded.has(sec.title) ? 'إخفاء ▲' : 'عرض ▼'}</span>
+                  <span className="text-xs opacity-50">{expanded.has(sec.title) ? 'إخفاء ▲' : 'عرض ▼'}</span>
                 </div>
 
                 {expanded.has(sec.title) && sec.items.map((i, idx) => (
-                  <div key={i.id} className="item-card shadow-sm">
+                  <div key={i.id} className="item-card">
                     <div className="flex justify-between items-start mb-4">
                       <p className="text-sm font-bold text-green-950 ml-4 leading-relaxed">{i.id}. {i.q}</p>
                       <div className="flex gap-1">
@@ -235,14 +271,11 @@
                       </div>
                     </div>
                     <textarea className="notes-input" placeholder="اكتب ملاحظة أو مخالفة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
-                    <div className="mt-4 flex flex-wrap gap-2 items-center">
-                      <label className="upload-btn">📷 الكاميرا
-                        <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e=>handlePhoto(i.id, e)} />
-                      </label>
-                      <label className="upload-btn" style={{background:'#eff6ff', color:'#1e40af'}}>🖼️ المعرض
+                    <div className="mt-4 flex flex-wrap gap-3 items-center">
+                      <label className="upload-btn">📷 إضافة صورة
                         <input type="file" className="hidden" accept="image/*" onChange={e=>handlePhoto(i.id, e)} />
                       </label>
-                      <div className="flex flex-wrap">
+                      <div className="flex flex-wrap gap-2">
                         {(photos[i.id] || []).map((img, idx) => (
                           <div key={idx} className="relative m-1">
                             <img src={img} className="photo-thumb" />
@@ -256,18 +289,26 @@
               </div>
             ))}
 
-            <div className="item-card border-2 border-dashed border-gray-300">
-              <h3 className="font-bold text-center text-green-900 mb-4">توقيع المفتش المعتمد</h3>
+            <div className="card p-8 border-2 border-dashed border-gray-300 text-center">
+              <h3 className="font-bold text-green-900 mb-4 uppercase tracking-widest">توقيع المفتش المعتمد</h3>
               <canvas ref={canvasRef} className="sig-canvas"></canvas>
-              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-2 underline block mx-auto">مسح التوقيع</button>
+              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-sm font-bold mt-4 underline">مسح التوقيع</button>
             </div>
 
             <button onClick={async () => {
-                if(!branch) return alert("أدخل اسم الفرع");
-                await db.collection("inspections").add({ branch, score: getScore(), inspector: user.email, date: new Date().toLocaleDateString('ar-EG'), signature: sigPad.current.toDataURL(), location: location, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-                alert("تم الإرسال للسحابة!"); location.reload();
+                if(!branch) return alert("أدخل اسم الفرع أولاً");
+                try {
+                  await db.collection("inspections").add({ 
+                    branch, score: getScore(), inspector: user.email, 
+                    date: new Date().toLocaleDateString('ar-EG'), 
+                    signature: sigPad.current.toDataURL(), 
+                    location: location, timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+                  });
+                  alert("تم الحفظ في السحابة بنجاح!");
+                  location.reload();
+                } catch(e) { alert("خطأ: " + e.message); }
             }} className="w-full verra-gradient text-white font-black py-5 rounded-[2rem] shadow-2xl text-xl mt-8 mb-20 active:scale-95 transition"
-            >إرسال التقرير النهائي للسحابة</button>
+            >إرسال التقرير النهائي</button>
           </main>
         </div>
       );
@@ -278,10 +319,10 @@
       return (
         <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
            <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(e, p).catch(err=>alert(err.message))}} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
-              <h1 className="text-3xl font-black text-green-900 mb-8 italic">VERRA PRO</h1>
-              <input className="w-full border-2 p-4 rounded-2xl mb-4 text-right outline-none focus:border-green-600" placeholder="البريد الإلكتروني" value={e} onChange={v=>setE(v.target.value)} />
-              <input className="w-full border-2 p-4 rounded-2xl mb-8 text-right outline-none focus:border-green-600" type="password" placeholder="كلمة المرور" value={p} onChange={v=>setP(v.target.value)} />
-              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl">دخول النظام السحابي</button>
+              <h1 className="text-3xl font-black text-green-900 mb-8 italic tracking-tighter">VERRA PRO</h1>
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600" placeholder="البريد الإلكتروني" value={e} onChange={v=>setE(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600" type="password" placeholder="كلمة المرور" value={p} onChange={v=>setP(v.target.value)} />
+              <button type="submit" className="w-full verra-gradient text-white font-black py-5 rounded-2xl">دخول النظام السحابي</button>
            </form>
         </div>
       );
