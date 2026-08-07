@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>نظام VERRA PRO - الإصدار النهائي</title>
+  <title>نظام فيرا PRO - النسخة المتكاملة المستقلة</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
-  <!-- Firebase -->
+  <!-- Firebase Compat -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -25,11 +25,12 @@
     .card { background: white; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
     .section-title { background: #e8f5ee; border-right: 6px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; }
     .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
-    .ans-btn { width: 52px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; transition: 0.2s; }
+    .ans-btn { width: 52px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; }
     .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
     .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
     .btn-na.active { background: #64748b !important; color: white; }
     .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
+    .sig-canvas { border: 2px dashed #cbd5e1; border-radius: 15px; background: white; width: 100%; height: 180px; touch-action: none; }
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; z-index: 60; }
     .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 15px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
@@ -55,8 +56,10 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // إيميل المدير (المرخص له بدخول الداشبورد)
     const ADMIN_EMAIL = "ch3f.ramzi@gmail.com"; 
 
+    // البنود الـ 74 كاملة
     const sectionsData = [
       { title: "الاستلام والتخزين", items: [
         {id:1, q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"}, {id:2, q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"}, {id:3, q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"}, {id:4, q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"}, {id:5, q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"}, {id:6, q:"مطابقة المنتجات للمواصفات القياسية السعودية"}, {id:7, q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"}, {id:8, q:"التعبئة سليمة وخالية من الآفات أو التلف"}, {id:9, q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"}, {id:10, q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}
@@ -90,19 +93,20 @@
       ]}
     ];
 
+    // --- محرك الـ PDF الثابت والموسط (النسخة الناجحة) ---
     const buildReportHTML = (branch, email, location, score, answers, notes, photos, signature) => {
         const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
         return `
           <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box; text-align: right;">
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
-              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 100px; display: block; margin: 0 auto 10px;" />
+              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 100px; margin: 0 auto 10px;" />
               <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
               <p style="color: #666; font-size: 14px;">نظام فيرا PRO السحابي المتكامل</p>
             </div>
             <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; direction: rtl; width: 100%; box-sizing: border-box;">
               <div style="flex: 1; text-align: right; line-height: 2">
                 <p><b>🏢 المنشأة:</b> ${branch || 'غير محدد'}</p>
-                <p><b>👤 المفتش المعتمد:</b> ${email}</p>
+                <p><b>👤 المفتش:</b> ${email}</p>
                 <p><b>📍 الموقع الجغرافي:</b> ${location}</p>
                 <p><b>📅 تاريخ الفحص:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
               </div>
@@ -124,7 +128,7 @@
                       <p style="font-size: 13px; margin: 8px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green; font-weight:bold;">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red; font-weight:bold;">❌ مخالف</span>' : '⚪ لم يتم الإجابة'}</p>
                       ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0; line-height: 1.6; color: #713f12;"><b>الملاحظة:</b> ${note}</div>` : ''}
                       <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; justify-content: flex-start;">
-                        ${itemPhotos.map(p => `<img src="${p}" style="width: 210px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd" />`).join('')}
+                        ${itemPhotos.map(p => `<img src="${p}" style="width: 220px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd" />`).join('')}
                       </div>
                     </div>
                   `;
@@ -133,7 +137,7 @@
             </div>
             <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; direction: rtl; border-top: 3px solid #004b47; padding-top: 30px;">
               <div style="text-align: center;">
-                <p style="font-weight: bold; color: #004b47; margin-bottom: 15px">توقيع المفتش المعتمد</p>
+                <p style="font-weight: 900; color: #004b47; margin-bottom: 15px">توقيع المفتش المعتمد</p>
                 <img src="${signature}" style="width: 200px; border-bottom: 2px solid #004b47" />
                 <p style="font-size: 11px; margin-top: 8px; color: #666;">${email}</p>
               </div>
@@ -148,6 +152,7 @@
       const [userRole, setUserRole] = useState("inspector");
       const [loading, setLoading] = useState(true);
       const [view, setView] = useState("inspector");
+      
       const [branch, setBranch] = useState("");
       const [location, setLoc] = useState("جاري التحديد...");
       const [answers, setAnswers] = useState({});
@@ -192,13 +197,13 @@
       };
 
       const InspectorUI = () => (
-        <div className="pb-40 animate-in fade-in duration-500">
+        <div className="pb-40">
           <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[4rem]">
             <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-28 mx-auto mb-4 drop-shadow-2xl" />
             <div className="flex flex-wrap justify-center gap-3 mt-6 text-white text-right">
-              <span className="bg-white/10 px-4 py-2 rounded-full text-[11px] font-bold border border-white/20 uppercase">👤 {user.email.split('@')[0]}</span>
-              <span className="bg-white/10 px-4 py-2 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-tighter">📍 {location}</span>
-              {userRole === 'admin' && <button onClick={()=>setView("admin")} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-full text-xs font-black shadow-lg hover:scale-105 transition">لوحة الإدارة ⚙️</button>}
+              <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase">👤 {user.email.split('@')[0]}</span>
+              <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-tighter">📍 {location}</span>
+              {userRole === 'admin' && <button onClick={()=>setView("admin")} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-full text-xs font-black shadow-lg">لوحة الإدارة ⚙️</button>}
             </div>
           </div>
 
@@ -208,7 +213,7 @@
               <p className="text-3xl font-black text-green-700 leading-none">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-2.5 rounded-xl shadow active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" strokeWidth="2"></path></svg></button>
+              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-2.5 rounded-xl shadow active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" strokeWidth="2" strokeLinecap="round"></path></svg></button>
               <button onClick={() => {
                   const signature = sigPad.current ? sigPad.current.toDataURL() : "";
                   const html = buildReportHTML(branch, user.email, location, getScore(), answers, notes, photos, signature);
@@ -241,7 +246,7 @@
                         <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn btn-na ${answers[i.id]==='na'?'active':''}`}>N/A</button>
                       </div>
                     </div>
-                    <textarea className="notes-input shadow-inner text-right" placeholder="اكتب ملاحظة أو مخالفة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
+                    <textarea className="notes-input shadow-inner text-right" placeholder="الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
                     <div className="mt-4 flex flex-wrap gap-2 items-center justify-end">
                         <label className="upload-btn">📷 الكاميرا
                           <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} />
@@ -274,14 +279,15 @@
                 try {
                   await db.collection("inspections").add({ branch, score: getScore(), inspector: user.email, date: new Date().toLocaleDateString('ar-EG'), signature: sigPad.current.toDataURL(), location: location, timestamp: firebase.firestore.FieldValue.serverTimestamp(), answers, notes, photos });
                   alert("تم الإرسال للسحابة!"); location.reload();
-                } catch(e) { alert("خطأ في الاتصال بالسحابة"); }
+                } catch(e) { alert("خطأ في الاتصال"); }
             }} className="w-full verra-gradient text-white font-black py-7 rounded-[2.5rem] shadow-2xl text-2xl active:scale-95 transition"
             >إرسال التقرير النهائي</button>
           </main>
         </div>
       );
 
-      const AdminDashboard = () => {
+      // لوحة الإدارة
+      const AdminUI = () => {
         const [allReports, setAllReports] = useState([]);
         useEffect(() => {
           db.collection("inspections").orderBy("timestamp", "desc").get().then(snap => setAllReports(snap.docs.map(d => ({id: d.id, ...d.data()}))));
@@ -293,10 +299,10 @@
                 <button onClick={()=>setView("inspector")} className="bg-gray-100 text-gray-600 px-4 py-2 rounded-2xl text-xs font-bold shadow-sm active:scale-95">⬅️ الميدان</button>
              </header>
              <div className="grid grid-cols-2 gap-4 mb-8 text-right">
-                <div className="card p-6 border-r-8 border-blue-500"><p className="text-gray-400 font-bold text-[10px] uppercase">إجمالي التقارير</p><p className="text-3xl font-black">{allReports.length}</p></div>
-                <div className="card p-6 border-r-8 border-green-500"><p className="text-gray-400 font-bold text-[10px] uppercase">الجودة العامة</p><p className="text-3xl font-black text-green-600">{allReports.length > 0 ? Math.round(allReports.reduce((acc, r) => acc + r.score, 0) / allReports.length) : 0}%</p></div>
+                <div className="card p-6 border-r-8 border-blue-500"><p className="text-gray-400 font-bold text-[10px] uppercase text-right">إجمالي التقارير</p><p className="text-3xl font-black text-right">{allReports.length}</p></div>
+                <div className="card p-6 border-r-8 border-green-500"><p className="text-gray-400 font-bold text-[10px] uppercase text-right">الجودة العامة</p><p className="text-3xl font-black text-green-600 text-right">{allReports.length > 0 ? Math.round(allReports.reduce((acc, r) => acc + r.score, 0) / allReports.length) : 0}%</p></div>
              </div>
-             <h2 className="font-bold text-xl mb-4 text-green-950 px-2 text-right">السجل السحابي:</h2>
+             <h2 className="font-bold text-xl mb-4 text-green-950 px-2 text-right">سجل التقارير:</h2>
              <div className="space-y-4">
                 {allReports.map(rep => (
                   <div key={rep.id} className="card p-5 flex justify-between items-center border-r-8 border-green-800 hover:bg-green-50 transition-all">
@@ -307,8 +313,7 @@
                      <div className="flex items-center gap-3">
                         <span className={`text-xl font-black ${rep.score >= 70 ? 'text-green-600':'text-red-600'}`}>{rep.score}%</span>
                         <button onClick={() => {
-                           const signature = rep.signature || "";
-                           const html = buildReportHTML(rep.branch, rep.inspector, rep.location, rep.score, rep.answers, rep.notes, rep.photos, signature);
+                           const html = buildReportHTML(rep.branch, rep.inspector, rep.location, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
                            html2pdf().from(html).set({margin:0, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2, useCORS:true, scrollY:0}, jsPDF:{unit:'mm', format:'a4'}}).save();
                         }} className="bg-gray-50 border p-3 rounded-2xl text-blue-600 shadow-sm active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"></path></svg></button>
                      </div>
@@ -319,23 +324,20 @@
         );
       };
 
-      return view === "admin" ? <AdminDashboard /> : <InspectorRoom />;
+      return view === "admin" ? <AdminUI /> : <InspectorUI />;
     }
 
     function Login({ auth }) {
-      const [email, setLocalEmail] = useState(""); const [pass, setLocalPass] = useState("");
-      const handleLogin = (ev) => {
-          ev.preventDefault();
-          auth.signInWithEmailAndPassword(email, pass).catch(err=>alert("بيانات الدخول غير صحيحة"));
-      };
+      const [email, setEmail] = useState(""); 
+      const [pass, setPass] = useState("");
       return (
         <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
-           <form onSubmit={handleLogin} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
+           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(err=>alert("بيانات الدخول غير صحيحة"))}} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
               <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-16 mx-auto mb-6" />
               <h1 className="text-3xl font-black text-green-900 mb-10 italic uppercase">VERRA PRO</h1>
-              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" value={email} onChange={v=>setLocalEmail(v.target.value)} />
-              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setLocalPass(v.target.value)} />
-              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition">دخول النظام السحابي</button>
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" value={email} onChange={v=>setEmail(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
+              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition">دخول النظام</button>
            </form>
         </div>
       );
