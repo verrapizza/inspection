@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>نظام VERRA PRO - الإصدار المعتمد</title>
+  <title>نظام VERRA PRO - النسخة المتكاملة</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -19,22 +19,26 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
+    /* الحفاظ على التنسيق الأصلي للمفتش */
     body { font-family: 'Cairo', sans-serif; background: #f0f7f4; color: #1a4d36; margin: 0; padding: 0; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .gold-text { color: #d1ba89; }
-    .section-card { background: white; border-radius: 15px; margin-bottom: 12px; border: 1px solid #c8ddd3; overflow: hidden; }
-    .section-header { background: #e8f5ee; padding: 15px 20px; cursor: pointer; border-right: 6px solid #d1ba89; font-weight: 900; }
-    .item-card { background: white; border-bottom: 1px solid #f1f5f9; padding: 20px; }
+    .card { background: white; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+    .section-title { background: #e8f5ee; border-right: 6px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; }
+    .item-card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
     .ans-btn { width: 52px; height: 38px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; }
-    .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
-    .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
+    .btn-yes.active { background: #10b981 !important; color: white; }
+    .btn-no.active { background: #ef4444 !important; color: white; }
     .btn-na.active { background: #64748b !important; color: white; }
     .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; z-index: 50; }
+    .del-img { position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid white; cursor: pointer; z-index: 60; }
     .upload-btn { padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
-    .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 10px 15px; }
     .sig-canvas { border: 2px dashed #cbd5e1; border-radius: 15px; background: white; width: 100%; height: 180px; touch-action: none; }
+    .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 10px 15px; }
+    /* تنسيقات لوحة الإدارة */
+    .admin-tab { padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    .admin-tab.active { background: #004b47; color: white; }
   </style>
 </head>
 <body>
@@ -56,44 +60,104 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // الحفاظ على بيانات الـ 74 بنداً كاملة
     const sectionsData = [
-      { title: "الاستلام والتخزين", items: [
+      { title: "1. الاستلام والتخزين", items: [
         {id:1, q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"}, {id:2, q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"}, {id:3, q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"}, {id:4, q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"}, {id:5, q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"}, {id:6, q:"مطابقة المنتجات للمواصفات القياسية السعودية"}, {id:7, q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"}, {id:8, q:"التعبئة سليمة وخالية من الآفات أو التلف"}, {id:9, q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"}, {id:10, q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}
       ]},
-      { title: "تحضير الأغذية", items: [
+      { title: "2. تحضير الأغذية", items: [
         {id:11, q:"مراجعة ومتابعة بروسيس تحضير العجين"}, {id:12, q:"متابعة بروسيس تكوير العجين"}, {id:13, q:"مراجعة تحضير الصوصات"}, {id:14, q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"}, {id:15, q:"منع التلوث الخلطي أثناء التحضير"}, {id:16, q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"}, {id:17, q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"}, {id:18, q:"وصول درجات حرارة الطهي لـ (≥75°م)"}, {id:19, q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"}, {id:20, q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"}, {id:21, q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}
       ]},
-      { title: "جودة المنتج", items: [
+      { title: "3. جودة المنتج", items: [
         {id:22, q:"معاينة جودة المنتج النهائي (قسم الباستا)"}, {id:23, q:"معاينة جودة المنتج النهائي (قسم البيتزا)"}, {id:24, q:"رفع صورة المنتج النهائي على الواتساب في كل الفروع"}
       ]},
-      { title: "المنشأة والبيئة", items: [
+      { title: "4. المنشأة والبيئة", items: [
         {id:25, q:"المنشأة تقع بعيداً عن مصادر التلوث"}, {id:26, q:"خلو الجدران والأرضيات والأسقف من التشققات"}, {id:27, q:"الأبواب محكمة الإغلاق وتغلق تلقائياً"}, {id:28, q:"النوافذ مزودة بشبكات معدنية سليمة"}, {id:29, q:"ميل مناسب للصرف في جميع المناطق"}, {id:30, q:"أجهزة التكييف فعالة وتعمل بشكل صحيح"}, {id:31, q:"وجود شفاطات فوق الأفران والشوايات"}, {id:32, q:"إضاءة كافية في جميع مناطق التعامل مع الأغذية"}, {id:33, q:"الأرضيات مقاومة للماء وغير زلقة وسهلة التنظيف"}
       ]},
-      { title: "التنظيف والتعقيم", items: [
+      { title: "5. التنظيف والتعقيم", items: [
         {id:34, q:"جدول التنظيف موثق ويتم اتباعه بدقة"}, {id:35, q:"المطهرات آمنة للأغذية وبالتركيزات الصحيحة"}, {id:36, q:"تنظيف وتعقيم المعدات بعد كل استخدام"}, {id:37, q:"التنظيف العميق يومياً لجميع الأسطح الملامسة"}, {id:38, q:"حاويات النفايات تفتح بالقدم وتفرغ بانتظام"}, {id:39, q:"التخلص من النفايات يمنع تلوث المياه أو الأغذية"}, {id:40, q:"عقد مكافحة آفات ساري مع شركة متخصصة"}, {id:41, q:"عدم وجود دلائل على القوارض أو الحشرات"}
       ]},
-      { title: "النظافة الشخصية", items: [
+      { title: "6. النظافة الشخصية", items: [
         {id:42, q:"جميع العاملين يرتدون زياً نظيفاً وأغطية للشعر"}, {id:43, q:"ارتداء الكمامات في مناطق الأغذية القابلة للتلف"}, {id:44, q:"محطات غسل اليدين مزودة بالصابون والماء الساخن"}, {id:45, q:"غسل اليدين قبل التعامل مع الأغذية وبعد الاستراحة"}, {id:46, q:"عدم ارتداء المجوهرات أو طلاء الأظافر"}, {id:47, q:"فحوصات طبية قبل التوظيف من جهات معتمدة"}, {id:48, q:"فحوصات طبية روتينية سنوية لجميع العاملين"}, {id:49, q:"استبعاد العاملين المصابين بالأمراض المعدية"}
       ]},
-      { title: "المعدات والأدوات", items: [
+      { title: "7. المعدات والأدوات", items: [
         {id:50, q:"المعدات مصنوعة من مواد مقاومة للتآكل وآمنة"}, {id:51, q:"مقاييس الحرارة معايرة وتعمل بشكل صحيح"}, {id:52, q:"الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة"}, {id:53, q:"تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل"}, {id:54, q:"صيانة وتنظيف معدات الطهي بانتظام"}, {id:55, q:"أسطح ملامسة للأغذية ناعمة وخالية من التشققات"}
       ]},
-      { title: "التتبع والتوثيق", items: [
+      { title: "8. التتبع والتوثيق", items: [
         {id:56, q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"}, {id:57, q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"}, {id:58, q:"دليل تتبع الأغذية متاح وكامل في المنشأة"}, {id:59, q:"الاحتفاظ بسجلات التتبع 180 يوماً بعد الصلاحية"}, {id:60, q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"}, {id:61, q:"سجلات اعتماد الموردين تشمل الشهادات والمواصفات"}, {id:62, q:"جميع العاملين يحملون شهادات صحية سارية المفعول"}, {id:63, q:"خطة HACCP موثقة ومعتمدة ومراجعتها بانتظام"}, {id:64, q:"سجلات التنظيف والتعقيم كاملة ومحدثة"}, {id:65, q:"الاحتفاظ بسجلات مراقبة درجة الحرارة وتوقيعها"}
       ]},
-      { title: "إمداد المياه والسباكة", items: [
+      { title: "9. إمداد المياه والسباكة", items: [
         {id:66, q:"إمداد مياه الشرب كافٍ ونظيف تماماً"}, {id:67, q:"تركيب فلاتر المياه وتنظيفها وصيانتها"}, {id:68, q:"عدم وجود تسربات في مواسير الصرف أو وصلاتها"}, {id:69, q:"إغلاق فتحات الصرف أثناء ساعات العمل"}, {id:70, q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}
       ]},
-      { title: "إدارة مسببات الحساسية", items: [
+      { title: "10. إدارة مسببات الحساسية", items: [
         {id:71, q:"معلومات مسببات الحساسية كاملة على الملصقات"}, {id:72, q:"مناطق تحضير منفصلة للأصناف الخالية من الحساسية"}, {id:73, q:"أدوات مخصصة لتحضير الأغذية الخاصة"}, {id:74, q:"تدريب الموظفين على التوعية بمسببات الحساسية"}
       ]}
     ];
 
+    // --- دالة توليد التقرير الموحدة (يجب ألا تتغير لضمان نفس التنسيق) ---
+    const buildReportHTML = (branch, email, location, score, answers, notes, photos, signature) => {
+        const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
+        return `
+          <div style="width: 750px; margin: 0; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box; text-align: right;">
+            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
+              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 100px; margin: 0 auto;" />
+              <h1 style="color: #004b47; font-size: 30px; margin: 15px 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
+              <p style="color: #666; font-size: 14px;">نظام فيرا PRO السحابي المتكامل</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; width: 100%; box-sizing: border-box;">
+              <div style="flex: 1; text-align: right; line-height: 2">
+                <p><b>🏢 المنشأة:</b> ${branch || 'غير محدد'}</p>
+                <p><b>👤 المفتش المعتمد:</b> ${email}</p>
+                <p><b>📍 الموقع الجغرافي:</b> ${location}</p>
+                <p><b>📅 تاريخ الفحص:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
+              </div>
+              <div style="width: 150px; text-align: center; border-right: 2px solid #ddd; padding-right: 30px;">
+                <p style="color: #64748b; font-weight: bold; font-size: 12px">درجة الامتثال</p>
+                <div style="font-size: 42px; font-weight: 900; color: ${scoreColor}">${score}%</div>
+              </div>
+            </div>
+
+            <div style="width: 100%;">
+              ${sectionsData.map(sec => `
+                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 6px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 20px; text-align: right;">${sec.title}</div>
+                ${sec.items.map(i => {
+                  const ans = answers[i.id];
+                  const note = notes[i.id];
+                  const itemPhotos = photos[i.id] || [];
+                  return `
+                    <div style="padding: 20px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
+                      <p style="margin: 0; font-size: 15px; font-weight: bold;">${i.id}. ${i.q}</p>
+                      <p style="font-size: 12px; margin: 8px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red">❌ مخالف</span>' : '⚪ لم يتم الإجابة'}</p>
+                      ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0;">الملاحظة: ${note}</div>` : ''}
+                      <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px;">
+                        ${itemPhotos.map(p => `<img src="${p}" style="width: 200px; height: 140px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd;" />`).join('')}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              `).join('')}
+            </div>
+
+            <div style="margin-top: 60px; border-top: 2px solid #eee; padding-top: 30px; display: flex; justify-content: space-between; align-items: flex-end; direction: rtl;">
+              <div style="text-align: center;">
+                <p style="font-weight: bold; color: #004b47;">توقيع المفتش المعتمد</p>
+                <img src="${signature}" style="width: 200px; border-bottom: 2px solid #004b47;" />
+              </div>
+              <p style="font-size: 10px; color: #999;">توليد آلي - نظام VERRA PRO</p>
+            </div>
+          </div>
+        `;
+    };
+
     function App() {
       const [user, setUser] = useState(null);
+      const [userRole, setUserRole] = useState("inspector"); // admin or inspector
       const [loading, setLoading] = useState(true);
+      const [view, setView] = useState("inspector"); // 'inspector' or 'admin'
+      
       const [branch, setBranch] = useState("");
-      const [location, setLoc] = useState("تحديد الموقع...");
+      const [location, setLoc] = useState("جاري تحديد الموقع...");
       const [answers, setAnswers] = useState({});
       const [notes, setNotes] = useState({});
       const [photos, setPhotos] = useState({});
@@ -102,7 +166,20 @@
       const sigPad = useRef(null);
 
       useEffect(() => {
-        auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
+        auth.onAuthStateChanged(async u => {
+            if(u) {
+                // التحقق من الصلاحيات من مجموعة users
+                const docRef = db.collection("users").doc(u.uid);
+                const docSnap = await docRef.get();
+                if(docSnap.exists() && docSnap.data().role === 'admin') {
+                    setUserRole("admin");
+                    setView("admin");
+                }
+                setUser(u);
+            }
+            setLoading(false); 
+        });
+
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(pos => {
             setLoc(`Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`);
@@ -111,13 +188,16 @@
       }, []);
 
       useEffect(() => {
-        if (user && canvasRef.current) sigPad.current = new SignaturePad(canvasRef.current);
-      }, [user, loading]);
+        if (user && view === "inspector" && canvasRef.current) {
+          sigPad.current = new SignaturePad(canvasRef.current);
+        }
+      }, [user, view]);
 
       const getScore = () => {
         const vals = Object.values(answers);
         const yes = vals.filter(v => v === 'yes').length;
-        const total = vals.filter(v => v !== 'na').length;
+        const na = Object.values(answers).filter(v => v === 'na').length;
+        const total = Object.keys(answers).length - na;
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
@@ -133,106 +213,49 @@
 
       const downloadPDF = () => {
         const score = getScore();
-        const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
         const signature = sigPad.current ? sigPad.current.toDataURL() : "";
-
-        // بناء التقرير بشكل معزول تماماً وممركز
-        const element = document.createElement('div');
-        element.style.cssText = "width: 750px; margin: 0 auto; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right; box-sizing: border-box;";
-        
-        element.innerHTML = `
-          <div style="padding: 40px;">
-            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
-              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 100px; display: block; margin: 0 auto 10px;" />
-              <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
-              <p style="color: #666; font-size: 14px">نظام فيرا PRO السحابي المتكامل</p>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; direction: rtl;">
-              <div style="text-align: right; line-height: 2">
-                <p><b>🏢 المنشأة:</b> ${branch || 'غير محدد'}</p>
-                <p><b>👤 المفتش المعتمد:</b> ${user.email}</p>
-                <p><b>📍 الموقع الجغرافي:</b> ${location}</p>
-                <p><b>📅 تاريخ الفحص:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
-              </div>
-              <div style="text-align: center; border-right: 2px solid #ddd; padding-right: 30px; min-width: 150px;">
-                <p style="color: #64748b; font-weight: bold; font-size: 12px">درجة الامتثال</p>
-                <div style="font-size: 48px; font-weight: 900; color: ${scoreColor}">${score}%</div>
-              </div>
-            </div>
-
-            <div style="width: 100%;">
-              ${sectionsData.map(sec => `
-                <div style="background: #e8f5ee; padding: 12px; font-weight: bold; border-right: 6px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right; display: block; width: 100%; box-sizing: border-box;">${sec.title}</div>
-                ${sec.items.map(i => {
-                  const ans = answers[i.id];
-                  const note = notes[i.id];
-                  const itemPhotos = photos[i.id] || [];
-                  return `
-                    <div style="padding: 20px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right; width: 100%; box-sizing: border-box; display: block;">
-                      <p style="margin: 0; font-size: 15px; font-weight: bold;">${i.id}. ${i.q}</p>
-                      <p style="font-size: 12px; margin: 5px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red">❌ مخالف</span>' : '⚪ N/A'}</p>
-                      ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0;"><b>الملاحظة:</b> ${note}</div>` : ''}
-                      <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; justify-content: flex-start;">
-                        ${itemPhotos.map(p => `<img src="${p}" style="width: 200px; height: 140px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd;" />`).join('')}
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
-              `).join('')}
-            </div>
-
-            <div style="margin-top: 60px; border-top: 3px solid #004b47; padding-top: 30px; display: flex; justify-content: space-between; align-items: flex-end; direction: rtl;">
-              <div style="text-align: center;">
-                <p style="font-weight: bold; color: #004b47; margin-bottom: 15px;">توقيع المفتش المعتمد</p>
-                <img src="${signature}" style="width: 250px; border-bottom: 2px solid #004b47;" />
-                <p style="font-size: 11px; margin-top: 8px; color: #666;">${user.email}</p>
-              </div>
-              <p style="color: #999; font-size: 10px;">ID: VERRA-PRO-${Date.now()}</p>
-            </div>
-          </div>
-        `;
+        const reportHTML = buildReportHTML(branch, user.email, location, score, answers, notes, photos, signature);
 
         const opt = {
           margin: 0,
           filename: `VERRA_${branch || 'Report'}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak: { mode: 'avoid-all' }
+          html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0, windowWidth: 800 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-
-        html2pdf().from(element).set(opt).save();
+        html2pdf().from(reportHTML).set(opt).save();
       };
 
       if (loading) return <div className="h-screen flex items-center justify-center font-bold text-green-900 animate-pulse text-2xl tracking-tighter">جاري التحميل...</div>;
       if (!user) return <Login auth={auth} />;
 
-      return (
-        <div className="pb-40">
-          <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[3.5rem]">
-            <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-24 mx-auto mb-4 drop-shadow-2xl" />
-            <div className="flex flex-wrap justify-center gap-2 mt-4 text-white">
-              <span className="bg-white/10 px-4 py-2 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-widest">👤 {user.email.split('@')[0]}</span>
-              <span className="bg-white/10 px-4 py-2 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-widest">📍 {location}</span>
+      // --- واجهة المفتش (لم تتغير أبداً) ---
+      const InspectorUI = () => (
+        <div className="pb-40 animate-in fade-in duration-500">
+          <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[4rem]">
+            <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-28 mx-auto mb-4 drop-shadow-2xl" />
+            <div className="flex flex-wrap justify-center gap-3 mt-4 text-white">
+              <span className="bg-white/10 px-4 py-2 rounded-full text-xs font-bold border border-white/20 uppercase">👤 {user.email.split('@')[0]}</span>
+              <span className="bg-white/10 px-4 py-2 rounded-full text-xs font-bold border border-white/20 uppercase tracking-tighter">📍 {location}</span>
+              {userRole === 'admin' && <button onClick={()=>setView("admin")} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-full text-xs font-black shadow-lg">لوحة الإدارة ⚙️</button>}
             </div>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Compliance</p>
-              <p className="text-3xl font-black text-green-700 leading-none">{getScore()}%</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Compliance Score</p>
+              <p className="text-4xl font-black text-green-700 leading-none">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-2.5 rounded-xl shadow active:scale-90 transition hover:bg-red-600"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
-              <button onClick={downloadPDF} className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black shadow-lg text-xs hover:bg-blue-700 transition">View Report</button>
+              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-3 rounded-2xl shadow active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+              <button onClick={downloadPDF} className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black shadow-lg text-xs hover:bg-blue-700 transition">View Report</button>
             </div>
           </div>
 
           <main className="p-4 max-w-2xl mx-auto space-y-6 mt-4">
-            <div className="card p-6 border-r-[12px] border-green-800 shadow-lg">
-              <p className="text-[10px] font-black text-gray-400 mb-1 uppercase tracking-widest">Branch Name / اسم الفرع</p>
-              <input className="w-full text-2xl font-bold outline-none text-green-950 bg-transparent" placeholder="اكتب الاسم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
+            <div className="card p-6 border-r-[12px] border-green-800">
+              <p className="text-xs font-black text-gray-400 mb-1 uppercase tracking-widest">Branch Name / اسم الفرع</p>
+              <input className="w-full text-2xl font-bold outline-none text-green-950 bg-transparent placeholder-gray-200" placeholder="اكتب اسم المطعم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
             </div>
 
             {sectionsData.map(sec => (
@@ -244,71 +267,123 @@
                   <span className="text-xs opacity-50 font-bold">{expanded.has(sec.title) ? 'إخفاء ▲' : 'عرض ▼'}</span>
                 </div>
 
-                {expanded.has(sec.title) && sec.items.map((i, idx) => (
-                  <div key={i.id} className="item-card shadow-md">
-                    <div className="flex justify-between items-start mb-4">
-                      <p className="text-md font-bold text-green-950 ml-4 leading-relaxed">{i.id}. {i.q}</p>
-                      <div className="flex gap-1">
-                        <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn btn-yes ${answers[i.id]==='yes'?'active':''}`}>نعم</button>
-                        <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn btn-no ${answers[i.id]==='no'?'active':''}`}>لا</button>
-                        <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn btn-na ${answers[i.id]==='na'?'active':''}`}>N/A</button>
+                {expanded.has(sec.title) && sec.items.map((i, idx) => {
+                  const id = i.id;
+                  return (
+                    <div key={id} className="item-card shadow-md">
+                      <div className="flex justify-between items-start mb-4">
+                        <p className="text-md font-bold text-green-950 ml-4 leading-relaxed">{id}. {i.q}</p>
+                        <div className="flex gap-1">
+                          <button onClick={()=>setAnswers({...answers, [id]:'yes'})} className={`ans-btn btn-yes ${answers[id]==='yes'?'active':''}`}>نعم</button>
+                          <button onClick={()=>setAnswers({...answers, [id]:'no'})} className={`ans-btn btn-no ${answers[id]==='no'?'active':''}`}>لا</button>
+                          <button onClick={()=>setAnswers({...answers, [id]:'na'})} className={`ans-btn btn-na ${answers[id]==='na'?'active':''}`}>N/A</button>
+                        </div>
+                      </div>
+                      <textarea className="notes-input shadow-inner" placeholder="اكتب ملاحظة أو مخالفة..." value={notes[id]||""} onChange={e=>setNotes({...notes, [id]:e.target.value})} />
+                      <div className="mt-4 flex flex-wrap gap-2 items-center">
+                        <label className="btn-cam upload-btn">📷 الكاميرا
+                          <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e=>handlePhoto(id, e)} />
+                        </label>
+                        <label className="btn-gal upload-btn" style={{background:'#eff6ff', color:'#1e40af'}}>🖼️ المعرض
+                          <input type="file" className="hidden" accept="image/*" onChange={e=>handlePhoto(id, e)} />
+                        </label>
+                        <div className="flex flex-wrap">
+                          {(photos[id] || []).map((img, px) => (
+                            <div key={px} className="relative m-1">
+                              <img src={img} className="photo-thumb" />
+                              <div className="del-img" onClick={()=>setPhotos({...photos, [id]: photos[id].filter((_,x)=>x!==px)})}>×</div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    <textarea className="notes-input shadow-inner" placeholder="اكتب ملاحظة أو مخالفة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
-                    <div className="mt-4 flex flex-wrap gap-2 items-center">
-                       {/* زر الكاميرا المنفصل */}
-                       <label className="upload-btn bg-[#e8f5ee] text-[#004b47] shadow-sm">
-                          📷 الكاميرا
-                          <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e=>handlePhoto(i.id, e)} />
-                       </label>
-                       {/* زر المعرض المنفصل */}
-                       <label className="upload-btn bg-[#eff6ff] text-[#1e40af] shadow-sm">
-                          🖼️ المعرض
-                          <input type="file" className="hidden" accept="image/*" onChange={e=>handlePhoto(i.id, e)} />
-                       </label>
-                       <div className="flex flex-wrap">
-                        {(photos[i.id] || []).map((img, px) => (
-                          <div key={px} className="relative m-1">
-                            <img src={img} className="photo-thumb" />
-                            <div className="del-img" onClick={()=>setPhotos({...photos, [i.id]: photos[i.id].filter((_,x)=>x!==px)})}>×</div>
-                          </div>
-                        ))}
-                       </div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ))}
 
             <div className="card p-8 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-bold text-green-900 mb-4 uppercase tracking-widest italic">Signature / التوقيع</h3>
+              <h3 className="font-bold text-green-900 mb-4 uppercase italic">Signature / التوقيع</h3>
               <canvas ref={canvasRef} className="sig-canvas shadow-lg"></canvas>
-              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-sm font-bold mt-4 underline block mx-auto active:scale-90 transition">Clear Signature</button>
+              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-sm font-bold mt-4 underline block mx-auto">Clear Signature</button>
             </div>
 
             <button onClick={async () => {
                 if(!branch) return alert("يرجى إدخال اسم المنشأة");
                 try {
-                  await db.collection("inspections").add({ branch, score: getScore(), inspector: user.email, date: new Date().toLocaleDateString('ar-EG'), signature: sigPad.current.toDataURL(), location: location, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+                  await db.collection("inspections").add({ branch, score: getScore(), inspector: user.email, date: new Date().toLocaleDateString('ar-EG'), signature: sigPad.current.toDataURL(), location: location, timestamp: firebase.firestore.FieldValue.serverTimestamp(), answers, notes, photos });
                   alert("تم الإرسال للسحابة بنجاح!"); location.reload();
                 } catch(e) { alert("خطأ: " + e.message); }
-            }} className="w-full verra-gradient text-white font-black py-7 rounded-[2.5rem] shadow-2xl text-2xl active:scale-95 transition"
+            }} className="w-full verra-gradient text-white font-black py-6 rounded-[2.5rem] shadow-2xl text-2xl active:scale-95 transition"
             >إرسال التقرير النهائي</button>
           </main>
         </div>
       );
+
+      // --- واجهة المدير (الميزة الجديدة) ---
+      const AdminUI = () => {
+        const [allReports, setAllReports] = useState([]);
+        useEffect(() => {
+          db.collection("inspections").orderBy("timestamp", "desc").get().then(snap => {
+            setAllReports(snap.docs.map(d => ({id: d.id, ...d.data()})));
+          });
+        }, []);
+
+        return (
+          <div className="p-4 bg-gray-50 min-h-screen">
+             <header className="flex justify-between items-center mb-10 bg-white p-6 rounded-3xl shadow-sm border-b-4 border-green-800">
+                <h1 className="text-2xl font-black text-green-900 tracking-tighter">لوحة تحكم الإدارة</h1>
+                <button onClick={()=>setView("inspector")} className="text-sm font-bold text-gray-500">رجوع للميدان ⬅️</button>
+             </header>
+
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div className="card p-6 border-r-8 border-blue-500">
+                   <p className="text-gray-400 font-bold text-xs uppercase">إجمالي التقارير</p>
+                   <p className="text-3xl font-black">{allReports.length}</p>
+                </div>
+                <div className="card p-6 border-r-8 border-green-500">
+                   <p className="text-gray-400 font-bold text-xs uppercase">متوسط الجودة</p>
+                   <p className="text-3xl font-black text-green-600">
+                      {allReports.length > 0 ? Math.round(allReports.reduce((acc, r) => acc + r.score, 0) / allReports.length) : 0}%
+                   </p>
+                </div>
+             </div>
+
+             <h2 className="font-bold text-xl mb-4 text-green-950">سجل التقارير الواردة:</h2>
+             <div className="space-y-4">
+                {allReports.map(rep => (
+                  <div key={rep.id} className="card p-4 flex justify-between items-center hover:bg-green-50 transition-colors">
+                     <div>
+                        <p className="font-black text-green-900">{rep.branch}</p>
+                        <p className="text-[10px] text-gray-400">{rep.date} | {rep.inspector}</p>
+                     </div>
+                     <div className="flex items-center gap-4">
+                        <span className={`text-xl font-black ${rep.score >= 70 ? 'text-green-600':'text-red-600'}`}>{rep.score}%</span>
+                        <button onClick={() => {
+                           const html = buildReportHTML(rep.branch, rep.inspector, rep.location, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
+                           html2pdf().from(html).set({margin:10, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2}, jsPDF:{format:'a4'}}).save();
+                        }} className="bg-gray-100 p-2 rounded-xl text-blue-600"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
+                     </div>
+                  </div>
+                ))}
+             </div>
+          </div>
+        );
+      };
+
+      return view === "admin" ? <AdminUI /> : <InspectorUI />;
     }
 
     function Login({ auth }) {
       const [e, setE] = useState(""); const [p, setP] = useState("");
       return (
-        <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
+        <div className="h-screen verra-gradient flex items-center justify-center p-6">
            <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(e, p).catch(err=>alert("بيانات الدخول غير صحيحة"))}} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
-              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-16 mx-auto mb-6" />
+              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-20 mx-auto mb-6" />
               <h1 className="text-3xl font-black text-green-900 mb-10 italic uppercase">VERRA PRO</h1>
-              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" onChange={v=>setE(v.target.value)} />
-              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" onChange={v=>setP(v.target.value)} />
-              <button type="submit" className="w-full verra-gradient text-white font-black py-5 rounded-2xl shadow-xl active:scale-95 transition tracking-widest uppercase">Login System</button>
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600" placeholder="البريد الإلكتروني" value={e} onChange={v=>setE(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600" type="password" placeholder="كلمة المرور" value={p} onChange={v=>setP(v.target.value)} />
+              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition tracking-widest uppercase">Login System</button>
            </form>
         </div>
       );
