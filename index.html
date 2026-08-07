@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VERRA PRO - Full Inspection System</title>
+  <title>VERRA PRO - Cloud System</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
@@ -20,21 +20,20 @@
   <style>
     body { font-family: 'Inter', 'Noto Naskh Arabic', sans-serif; background: #f0f7f4; color: #1a4d36; }
     .header-grad { background: linear-gradient(135deg, #004b47 0%, #003d3a 100%); color: white; }
-    .progress-sticky { position: sticky; top: 0; z-index: 50; background: white; border-bottom: 2px solid #d1ba89; padding: 15px; }
+    .progress-sticky { position: sticky; top: 0; z-index: 50; background: white; border-bottom: 2px solid #d1ba89; padding: 12px 20px; }
     .section-card { background: white; border-radius: 15px; margin-bottom: 12px; border: 1px solid #c8ddd3; overflow: hidden; }
     .section-header { background: #e8f5ee; padding: 12px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #c8ddd3; }
-    .item-card { padding: 15px; border-bottom: 1px solid #f1f5f9; }
-    .answer-btn { width: 50px; height: 35px; border-radius: 8px; font-size: 11px; font-weight: bold; background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
+    .item-card { padding: 15px; border-bottom: 1px solid #f1f5f9; background: white; }
+    .answer-btn { width: 52px; height: 38px; border-radius: 8px; font-size: 11px; font-weight: bold; background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
     .btn-yes.active { background: #22c55e !important; color: white; border-color: #16a34a; }
     .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
     .btn-na.active { background: #64748b !important; color: white; }
-    .notes-area { width: 100%; margin-top: 8px; padding: 10px; border-radius: 8px; border: 1px solid #fde68a; background: #fffbeb; font-size: 12px; outline: none; }
-    .photo-preview-box { position: relative; display: inline-block; margin: 4px; }
-    .photo-img { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
-    .btn-del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 1px solid white; cursor: pointer; }
-    .upload-btn { background: #e8f5ee; color: #004b47; padding: 6px 10px; border-radius: 8px; font-size: 10px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
-    #report-template { display: none; }
-    .floating-save { position: fixed; bottom: 20px; left: 20px; right: 20px; z-index: 60; }
+    .notes-area { width: 100%; margin-top: 10px; padding: 10px; border-radius: 8px; border: 1px solid #fde68a; background: #fffbeb; font-size: 13px; outline: none; }
+    .photo-box { position: relative; display: inline-block; margin: 5px; }
+    .photo-img { width: 70px; height: 70px; object-fit: cover; border-radius: 10px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .del-img-btn { position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; cursor: pointer; z-index: 10; }
+    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #c8ddd3; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
@@ -56,15 +55,15 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // القائمة الكاملة بـ 74 بنداً
-    const inspectionData = [
+    // القائمة الكاملة بـ 74 بنداً حقيقياً
+    const fullData = [
       { id: 'S1', title: 'الاستلام والتخزين', items: [
-        { id: 1, q: 'يتم فحص جميع المواد الغذائية الواردة لدرجة الحرارة عند التسليم' },
-        { id: 2, q: 'لا تتجاوز درجة حرارة المجمدات -18°م عند الاستلام' },
-        { id: 3, q: 'لا تتجاوز درجة حرارة المبردات 4°م عند الاستلام' },
-        { id: 4, q: 'فحص الأغذية عالية الخطورة بمقياس حرارة معاير' },
-        { id: 5, q: 'نقل الأغذية المبردة إلى التخزين خلال 20 دقيقة' },
-        { id: 6, q: 'جميع المنتجات مطابقة للمواصفات السعودية' },
+        { id: 1, q: 'فحص درجات حرارة المواد الغذائية الواردة عند التسليم' },
+        { id: 2, q: 'درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام' },
+        { id: 3, q: 'درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام' },
+        { id: 4, q: 'استخدام مقياس حرارة معاير للأغذية عالية الخطورة' },
+        { id: 5, q: 'نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة' },
+        { id: 6, q: 'مطابقة المنتجات للمواصفات القياسية السعودية' },
         { id: 7, q: 'اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً' },
         { id: 8, q: 'التعبئة سليمة وخالية من الآفات أو التلف' },
         { id: 9, q: 'التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام' },
@@ -74,38 +73,38 @@
         { id: 11, q: 'مراجعة ومتابعة بروسيس تحضير العجين' },
         { id: 12, q: 'متابعة بروسيس تكوير العجين' },
         { id: 13, q: 'مراجعة تحضير الصوصات' },
-        { id: 14, q: 'فصل الأغذية النيئة عن المطبوخة' },
-        { id: 15, q: 'منع التلوث المتبادل أثناء التحضير' },
+        { id: 14, q: 'فصل مناطق تحضير الأغذية النيئة عن المطبوخة' },
+        { id: 15, q: 'منع التلوث الخلطي أثناء التحضير' },
         { id: 16, q: 'إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ' },
-        { id: 17, q: 'عدم ترك الأغذية المحضرة في الغرفة > ساعتين' },
+        { id: 17, q: 'عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين' },
         { id: 18, q: 'وصول درجات حرارة الطهي لـ (≥75°م)' },
         { id: 19, q: 'إعادة التسخين لدرجة حرارة لا تقل عن 75°م' },
         { id: 20, q: 'استخدام لوحات تقطيع ملونة لأنواع مختلفة' },
-        { id: 21, q: 'ارتداء القفازات عند ملامسة الأغذية الجاهزة' }
+        { id: 21, q: 'ارتداء القفازات عند لمس الأغذية الجاهزة' }
       ]},
       { id: 'S3', title: 'جودة المنتج', items: [
         { id: 22, q: 'معاينة جودة المنتج النهائي (قسم الباستا)' },
         { id: 23, q: 'معاينة جودة المنتج النهائي (قسم البيتزا)' },
-        { id: 24, q: 'رفع صورة المنتج النهائي على الواتساب' }
+        { id: 24, q: 'رفع صورة المنتج النهائي على الواتساب في كل الفروع' }
       ]},
       { id: 'S4', title: 'المنشأة والبيئة', items: [
-        { id: 25, q: 'المنشأة بعيدة عن مصادر التلوث' },
-        { id: 26, q: 'خلو الجدران والأرضيات من التشققات' },
-        { id: 27, q: 'الأبواب محكمة وتغلق تلقائياً' },
+        { id: 25, q: 'المنشأة تقع بعيداً عن مصادر التلوث' },
+        { id: 26, q: 'خلو الجدران والأرضيات والأسقف من التشققات' },
+        { id: 27, q: 'الأبواب محكمة الإغلاق وتغلق تلقائياً' },
         { id: 28, q: 'النوافذ مزودة بشبكات معدنية سليمة' },
         { id: 29, q: 'ميل مناسب للصرف في جميع المناطق' },
         { id: 30, q: 'أجهزة التكييف فعالة وتعمل بشكل صحيح' },
         { id: 31, q: 'وجود شفاطات دخان فوق الأفران والشوايات' },
         { id: 32, q: 'إضاءة كافية في جميع مناطق التعامل مع الأغذية' },
-        { id: 33, q: 'الأرضيات مقاومة للماء وغير زلقة' }
+        { id: 33, q: 'الأرضيات مقاومة للماء وغير زلقة وسهلة التنظيف' }
       ]},
       { id: 'S5', title: 'التنظيف والتعقيم', items: [
-        { id: 34, q: 'جدول التنظيف موثق ويتم اتباعه' },
-        { id: 35, q: 'المطهرات آمنة وبالتركيزات الصحيحة' },
+        { id: 34, q: 'جدول التنظيف موثق ويتم اتباعه بدقة' },
+        { id: 35, q: 'المطهرات آمنة للأغذية وبالتركيزات الصحيحة' },
         { id: 36, q: 'تنظيف وتعقيم المعدات بعد كل استخدام' },
-        { id: 37, q: 'التنظيف العميق يومياً لجميع الأسطح' },
-        { id: 38, q: 'حاويات النفايات ذات أغطية تفتح بالقدم' },
-        { id: 39, q: 'التخلص من النفايات يمنع تلوث المياه' },
+        { id: 37, q: 'التنظيف العميق يومياً لجميع الأسطح الملامسة' },
+        { id: 38, q: 'حاويات النفايات تفتح بالقدم وتفرغ بانتظام' },
+        { id: 39, q: 'التخلص من النفايات يمنع تلوث المياه أو الأغذية' },
         { id: 40, q: 'عقد مكافحة آفات ساري مع شركة متخصصة' },
         { id: 41, q: 'عدم وجود دلائل على القوارض أو الحشرات' }
       ]},
@@ -114,7 +113,7 @@
         { id: 43, q: 'ارتداء الكمامات في مناطق الأغذية القابلة للتلف' },
         { id: 44, q: 'محطات غسل اليدين مزودة بالصابون والماء الساخن' },
         { id: 45, q: 'غسل اليدين قبل التعامل مع الأغذية وبعد الاستراحة' },
-        { id: 46, q: 'عدم ارتداء المجوهرات أو طلاء الأظافر' },
+        { id: 46, q: 'عدم ارتداء المجوهرات أو الساعات أو طلاء الأظافر' },
         { id: 47, q: 'فحوصات طبية قبل التوظيف من جهات معتمدة' },
         { id: 48, q: 'فحوصات طبية روتينية سنوية لجميع العاملين' },
         { id: 49, q: 'استبعاد العاملين المصابين بالأمراض المعدية' }
@@ -122,29 +121,29 @@
       { id: 'S7', title: 'المعدات والأدوات', items: [
         { id: 50, q: 'المعدات مصنوعة من مواد مقاومة للتآكل وآمنة' },
         { id: 51, q: 'مقاييس الحرارة معايرة وتعمل بشكل صحيح' },
-        { id: 52, q: 'الثلاجات والمجمدات تحافظ على درجات الحرارة الصحيحة' },
-        { id: 53, q: 'تسجيل سجلات درجة الحرارة مرتين يومياً' },
+        { id: 52, q: 'الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة' },
+        { id: 53, q: 'تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل' },
         { id: 54, q: 'صيانة وتنظيف معدات الطهي بانتظام' },
         { id: 55, q: 'أسطح ملامسة للأغذية ناعمة وخالية من التشققات' }
       ]},
       { id: 'S8', title: 'التتبع والتوثيق', items: [
-        { id: 56, q: 'الالتزام بسجلات مراقبة الجودة (الديفروست، التعقيم، الزيت)' },
+        { id: 56, q: 'الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)' },
         { id: 57, q: 'رفع لوائح التشييك يومياً على مجموعة الواتساب' },
-        { id: 58, q: 'دليل تتبع الأغذية متاح وكامل' },
-        { id: 59, q: 'الاحتفاظ بسجلات التتبع 180 يوماً' },
+        { id: 58, q: 'دليل تتبع الأغذية متاح وكامل في المنشأة' },
+        { id: 59, q: 'الاحتفاظ بسجلات التتبع 180 يوماً بعد الصلاحية' },
         { id: 60, q: 'ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج' },
-        { id: 61, q: 'سجلات اعتماد الموردين تشمل الشهادات' },
-        { id: 62, q: 'جميع العاملين يحملون شهادات صحية سارية' },
+        { id: 61, q: 'سجلات اعتماد الموردين تشمل الشهادات والمواصفات' },
+        { id: 62, q: 'جميع العاملين يحملون شهادات صحية سارية المفعول' },
         { id: 63, q: 'خطة HACCP موثقة ومعتمدة ومراجعتها بانتظام' },
         { id: 64, q: 'سجلات التنظيف والتعقيم كاملة ومحدثة' },
-        { id: 65, q: 'الاحتفاظ بسجلات مراقبة درجة الحرارة وتوثيقها' }
+        { id: 65, q: 'الاحتفاظ بسجلات مراقبة درجة الحرارة وتوقيعها' }
       ]},
       { id: 'S9', title: 'إمداد المياه والسباكة', items: [
-        { id: 66, q: 'إمداد مياه الشرب كافٍ ونظيف' },
+        { id: 66, q: 'إمداد مياه الشرب كافٍ ونظيف تماماً' },
         { id: 67, q: 'تركيب فلاتر المياه وتنظيفها وصيانتها' },
-        { id: 68, q: 'عدم وجود تسربات في مواسير الصرف' },
+        { id: 68, q: 'عدم وجود تسربات في مواسير الصرف أو وصلاتها' },
         { id: 69, q: 'إغلاق فتحات الصرف أثناء ساعات العمل' },
-        { id: 70, q: 'أحواض غسل اليدين مزودة بأجهزة التجفيف' }
+        { id: 70, q: 'أحواض غسل اليدين مزودة بأجهزة تجفيف' }
       ]},
       { id: 'S10', title: 'إدارة مسببات الحساسية', items: [
         { id: 71, q: 'معلومات مسببات الحساسية كاملة على الملصقات' },
@@ -168,13 +167,13 @@
       }, []);
 
       const getScore = () => {
-        const vals = Object.values(answers);
-        const yes = vals.filter(v => v === 'yes').length;
-        const total = vals.filter(v => v !== 'na').length;
+        const yes = Object.values(answers).filter(v => v === 'yes').length;
+        const na = Object.values(answers).filter(v => v === 'na').length;
+        const total = Object.keys(answers).length - na;
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      const handleImage = (id, e) => {
+      const handlePhoto = (id, e) => {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
@@ -185,45 +184,59 @@
         e.target.value = "";
       };
 
-      const delImg = (id, idx) => {
-        setPhotos(prev => ({...prev, [id]: prev[id].filter((_, i) => i !== idx)}));
+      const deletePhoto = (itemId, idx) => {
+        setPhotos(prev => ({...prev, [itemId]: prev[itemId].filter((_, i) => i !== idx)}));
       };
 
       const resetData = () => {
-        if(confirm("سيتم مسح جميع الإجابات والصور. هل أنت متأكد؟")) {
+        if(confirm("سيتم مسح كل البيانات الحالية. هل أنت متأكد؟")) {
           setAnswers({}); setNotes({}); setPhotos({}); setBranch("");
         }
       };
 
       const downloadPDF = () => {
-        const element = document.createElement('div');
-        element.style.padding = '40px';
-        element.style.direction = 'rtl';
-        element.innerHTML = `
-          <div style="border-bottom: 5px solid #004b47; padding-bottom: 20px; text-align:center">
-            <h1 style="color:#004b47; font-size:30px">تقرير تفتيش سلامة الأغذية - VERRA</h1>
-            <p><b>المنشأة:</b> ${branch || 'غير محدد'}</p>
-            <p><b>المفتش:</b> ${user.email}</p>
-            <p><b>التاريخ:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
-            <div style="background:#004b47; color:#fff; padding:10px; margin-top:10px; border-radius:10px">
-              <h2>درجة الامتثال الكلية: ${getScore()}%</h2>
+        const reportDiv = document.createElement('div');
+        reportDiv.style.padding = '30px';
+        reportDiv.style.background = 'white';
+        reportDiv.style.direction = 'rtl';
+        
+        reportDiv.innerHTML = `
+          <div style="text-align:center; border-bottom: 5px solid #004b47; padding-bottom:20px; margin-bottom:30px">
+            <h1 style="color:#004b47; font-size:28px; margin:0">تقرير فحص سلامة وجودة الأغذية</h1>
+            <p style="font-size:18px; margin:10px 0">المنشأة: ${branch || 'لم يحدد'}</p>
+            <p>التاريخ: ${new Date().toLocaleDateString('ar-EG')} | المفتش: ${user.email}</p>
+            <div style="display:inline-block; background:#004b47; color:white; padding:10px 30px; border-radius:10px; margin-top:10px">
+              <h2 style="margin:0">درجة الامتثال: ${getScore()}%</h2>
             </div>
           </div>
-          <div style="margin-top:30px">
-            ${inspectionData.map(s => `
-              <h3 style="background:#e8f5ee; padding:10px; color:#004b47">${s.title}</h3>
+          <div style="width:100%">
+            ${fullData.map(s => `
+              <div style="background:#e8f5ee; padding:10px; margin-top:20px; font-weight:bold; border-right:5px solid #004b47">
+                ${s.title}
+              </div>
               ${s.items.map(i => `
-                <div style="padding:10px; border-bottom:1px solid #eee">
-                  <p><b>${i.id}. ${i.q}</b></p>
-                  <p>الحالة: ${answers[i.id] === 'yes' ? '✅ مطابق' : answers[i.id] === 'no' ? '❌ مخالف' : '⚪ N/A'}</p>
-                  ${notes[i.id] ? `<p style="font-size:12px; color:gray">ملاحظة: ${notes[i.id]}</p>` : ''}
+                <div style="padding:15px; border-bottom:1px solid #eee; page-break-inside: avoid">
+                  <p style="margin:0 0 5px 0"><b>${i.id}. ${i.q}</b></p>
+                  <p style="margin:0; font-size:13px">الحالة: ${answers[i.id] === 'yes' ? '✅ مطابق' : answers[i.id] === 'no' ? '❌ مخالف' : '⚪ N/A'}</p>
+                  ${notes[i.id] ? `<p style="margin:5px 0; font-size:12px; color:#713f12; background:#fefce8; padding:5px; border-radius:5px">الملاحظة: ${notes[i.id]}</p>` : ''}
                 </div>
               `).join('')}
             `).join('')}
           </div>
+          <div style="margin-top:50px; text-align:center; color:#999; font-size:10px; border-top:1px solid #eee; padding-top:20px">
+            تم توليد هذا التقرير آلياً عبر نظام VERRA السحابي
+          </div>
         `;
-        const opt = { margin: 10, filename: `VERRA_${branch}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-        html2pdf().set(opt).from(element).save();
+
+        const options = {
+          margin: 10,
+          filename: `VERRA_Report_${branch || 'unnamed'}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(options).from(reportDiv).save();
       };
 
       if (loading) return <div className="h-screen flex items-center justify-center">جاري الاتصال بالسحابة...</div>;
@@ -233,33 +246,33 @@
         <div className="pb-40">
           <header className="header-grad p-6 text-center shadow-xl">
              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-14 mx-auto mb-3" />
-             <h1 className="text-xl font-bold italic tracking-tighter">VERRA PRO CLOUD</h1>
+             <h1 className="text-xl font-bold italic tracking-widest gold-text">VERRA PRO CLOUD</h1>
           </header>
 
           <div className="progress-sticky shadow-md flex justify-between items-center">
              <div>
-                <p className="text-[10px] font-bold text-gray-400">التقدم: {Object.keys(answers).length}/74</p>
+                <p className="text-[10px] font-bold text-gray-400">البنود المنجزة: {Object.keys(answers).length}/74</p>
                 <p className="text-2xl font-black text-green-700">{getScore()}%</p>
              </div>
              <div className="flex gap-2">
-                <button onClick={resetData} className="bg-red-500 text-white px-3 py-2 rounded-xl text-xs font-bold shadow">Reset</button>
-                <button onClick={downloadPDF} className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">View Report</button>
+                <button onClick={resetData} className="bg-red-500 text-white px-3 py-2 rounded-xl text-[11px] font-bold shadow">Reset</button>
+                <button onClick={downloadPDF} className="bg-blue-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold shadow-lg">View Report</button>
              </div>
           </div>
 
           <main className="p-4 max-w-2xl mx-auto">
              <div className="bg-white p-5 rounded-2xl shadow-sm mb-6 border-b-4 border-green-800">
-                <p className="text-[10px] font-bold text-gray-400 mb-1">اسم المنشأة المستهدفة:</p>
-                <input className="w-full text-lg font-bold outline-none" placeholder="اكتب الاسم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
+                <p className="text-[10px] font-bold text-gray-400 mb-1 tracking-widest uppercase">Target Branch / اسم الفرع</p>
+                <input className="w-full text-lg font-bold outline-none border-b border-gray-100 focus:border-green-500 pb-1" placeholder="اكتب اسم المطعم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
              </div>
 
-             {inspectionData.map(s => (
+             {fullData.map(s => (
                <div key={s.id} className="section-card shadow-sm border border-gray-100">
                   <div className="section-header" onClick={()=>{
                     const n = new Set(expanded); n.has(s.id)?n.delete(s.id):n.add(s.id); setExpanded(n);
                   }}>
                     <span className="font-bold text-sm text-green-900">{s.title}</span>
-                    <span>{expanded.has(s.id)?'▲':'▼'}</span>
+                    <span className="text-xs text-gray-400">{expanded.has(s.id)?'إخفاء ▲':'عرض ▼'}</span>
                   </div>
                   
                   {expanded.has(s.id) && s.items.map(i => (
@@ -273,24 +286,24 @@
                           </div>
                        </div>
 
-                       <textarea className="notes-area shadow-inner" placeholder="اكتب ملاحظاتك أو تفاصيل المخالفة هنا..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
+                       <textarea className="notes-area shadow-inner" placeholder="اكتب ملاحظاتك أو المخالفة هنا..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
 
                        <div className="mt-4 flex flex-wrap gap-2 items-center">
                           <label className="upload-btn shadow-sm">
                              📷 الكاميرا
-                             <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e=>handleImage(i.id, e)} />
+                             <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e=>handlePhoto(i.id, e)} />
                           </label>
 
                           <label className="upload-btn shadow-sm" style={{background:'#eff6ff', color:'#1e40af'}}>
                              🖼️ المعرض
-                             <input type="file" className="hidden" accept="image/*" onChange={e=>handleImage(i.id, e)} />
+                             <input type="file" className="hidden" accept="image/*" onChange={e=>handlePhoto(i.id, e)} />
                           </label>
 
                           <div className="flex flex-wrap mt-2">
                              {(photos[i.id] || []).map((img, idx) => (
-                                <div key={idx} className="photo-preview-box">
+                                <div key={idx} className="photo-box">
                                    <img src={img} className="photo-img shadow-sm" />
-                                   <div className="btn-del-img" onClick={()=>delImg(i.id, idx)}>×</div>
+                                   <div className="del-img-btn" onClick={()=>deletePhoto(i.id, idx)}>×</div>
                                 </div>
                              ))}
                           </div>
@@ -301,20 +314,19 @@
              ))}
           </main>
 
-          <div className="floating-save">
+          <div className="fixed bottom-6 left-6 right-6 z-50">
              <button 
                onClick={async () => {
-                 if(!branch) return alert("يرجى إدخال اسم الفرع");
-                 const btn = event.target; btn.innerText = "جاري الحفظ...";
+                 if(!branch) return alert("يرجى إدخال اسم الفرع أولاً");
                  try {
                    await db.collection("inspections").add({
                      branch, score: getScore(), inspector: user.email,
                      date: new Date().toLocaleDateString('ar-EG'),
                      timestamp: firebase.firestore.FieldValue.serverTimestamp()
                    });
-                   alert("تم الحفظ في السحابة بنجاح!");
+                   alert("تم الحفظ بنجاح!");
                    location.reload();
-                 } catch(e) { alert(e.message); btn.innerText = "إرسال التقرير النهائي"; }
+                 } catch(e) { alert("فشل الحفظ: " + e.message); }
                }}
                className="w-full bg-green-800 text-white font-bold py-5 rounded-2xl shadow-2xl text-xl"
              >
@@ -327,18 +339,17 @@
 
     function Login({ auth }) {
       const [e, setE] = useState(""); const [p, setP] = useState("");
-      const handleLogin = async (ev) => {
+      const loginUser = (ev) => {
         ev.preventDefault();
-        try { await auth.signInWithEmailAndPassword(e, p); }
-        catch (err) { alert("خطأ في الدخول: " + err.message); }
+        auth.signInWithEmailAndPassword(e, p).catch(err => alert("خطأ: " + err.message));
       };
       return (
         <div className="h-screen bg-[#004b47] flex items-center justify-center p-6">
-           <form onSubmit={handleLogin} className="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-sm text-center">
+           <form onSubmit={loginUser} className="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-sm text-center">
               <h1 className="text-3xl font-black text-green-900 mb-8 italic">VERRA PRO</h1>
-              <input className="w-full border-2 p-4 rounded-2xl mb-4 text-right outline-none focus:border-green-600" placeholder="البريد الإلكتروني" value={e} onChange={v=>setE(v.target.value)} />
-              <input className="w-full border-2 p-4 rounded-2xl mb-8 text-right outline-none focus:border-green-600" type="password" placeholder="كلمة المرور" value={p} onChange={v=>setP(v.target.value)} />
-              <button type="submit" className="w-full bg-green-800 text-white font-bold py-4 rounded-2xl shadow-lg">دخول النظام السحابي</button>
+              <input className="w-full border-2 p-4 rounded-2xl mb-4 text-right outline-none focus:border-green-600" placeholder="البريد الإلكتروني" onChange={v=>setE(v.target.value)} />
+              <input className="w-full border-2 p-4 rounded-2xl mb-8 text-right outline-none focus:border-green-600" type="password" placeholder="كلمة المرور" onChange={v=>setP(v.target.value)} />
+              <button type="submit" className="w-full bg-green-800 text-white font-bold py-4 rounded-2xl shadow-lg transition">دخول النظام</button>
            </form>
         </div>
       );
