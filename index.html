@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>نظام VERRA PRO - النسخة المتكاملة</title>
+  <title>نظام VERRA PRO - النسخة النهائية المستقرة</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -23,17 +23,17 @@
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .gold-text { color: #d1ba89; }
     .card { background: white; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; }
+    .section-title { background: #e8f5ee; border-right: 6px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; }
     .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
-    .ans-btn { width: 52px; height: 38px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; }
-    .btn-yes.active { background: #10b981 !important; color: white; }
-    .btn-no.active { background: #ef4444 !important; color: white; }
+    .ans-btn { width: 52px; height: 38px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; transition: 0.2s; }
+    .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
+    .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
     .btn-na.active { background: #64748b !important; color: white; }
     .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
+    .sig-canvas { border: 2px dashed #cbd5e1; border-radius: 15px; background: white; width: 100%; height: 180px; touch-action: none; }
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; z-index: 60; }
     .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 15px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
-    .sig-canvas { border: 2px dashed #cbd5e1; border-radius: 15px; background: white; width: 100%; height: 180px; touch-action: none; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 10px 15px; }
   </style>
 </head>
@@ -56,9 +56,9 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // إيميل المدير الرئيسي - سيفتح لوحة الإدارة تلقائياً لهذا الإيميل
     const ADMIN_EMAIL = "ch3f.ramzi@gmail.com"; 
 
+    // البنود الـ 74 كاملة
     const sectionsData = [
       { title: "الاستلام والتخزين", items: [
         {id:1, q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"}, {id:2, q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"}, {id:3, q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"}, {id:4, q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"}, {id:5, q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"}, {id:6, q:"مطابقة المنتجات للمواصفات القياسية السعودية"}, {id:7, q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"}, {id:8, q:"التعبئة سليمة وخالية من الآفات أو التلف"}, {id:9, q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"}, {id:10, q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}
@@ -82,13 +82,13 @@
         {id:50, q:"المعدات مصنوعة من مواد مقاومة للتآكل وآمنة"}, {id:51, q:"مقاييس الحرارة معايرة وتعمل بشكل صحيح"}, {id:52, q:"الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة"}, {id:53, q:"تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل"}, {id:54, q:"صيانة وتنظيف معدات الطهي بانتظام"}, {id:55, q:"أسطح ملامسة للأغذية ناعمة وخالية من التشققات"}
       ]},
       { title: "التتبع والتوثيق", items: [
-        {id:56, q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"}, {id:57, q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"}, {id:58, q:"دليل تتبع الأغذية متاح وكامل في المنشأة"}, {id:59, q:"الاحتفاظ بسجلات التتبع 180 يوماً بعد الصلاحية"}, {id:60, q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"}, {id:61, q:"سجلات اعتماد الموردين تشمل الشهادات والمواصفات"}, {id:62, q:"جميع العاملين يحملون شهادات صحية سارية المفعول"}, {id:63, q:"خطة HACCP موثقة ومعتمدة ومراجعتها بانتظام"}, {id:64, q:"سجلات التنظيف والتعقيم كاملة ومحدثة"}, {id:65, q:"الاحتفاظ بسجلات مراقبة درجة الحرارة وتوقيعها"}
+        {id:56, q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"}, {id:57, q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"}, {id:58, q:"دليل تتبع الأغذية متاح وكامل في المنشأة"}, {id:59, q:"الاحتفاظ بسجلات تتبع لـ 180 يوماً"}, {id:60, q:"ترميز المنتجات لتحديد الدفعة والتاريخ"}, {id:61, q:"سجلات اعتماد الموردين والشهادات"}, {id:62, q:"جميع العاملين يحملون شهادات صحية سارية"}, {id:63, q:"خطة HACCP موثقة ومعتمدة"}, {id:64, q:"سجلات التنظيف والتعقيم كاملة ومحدثة"}, {id:65, q:"الاحتفاظ بسجلات مراقبة درجة الحرارة"}
       ]},
       { title: "إمداد المياه والسباكة", items: [
-        {id:66, q:"إمداد مياه الشرب كافٍ ونظيف تماماً"}, {id:67, q:"تركيب فلاتر المياه وتنظيفها وصيانتها"}, {id:68, q:"عدم وجود تسربات في مواسير الصرف أو وصلاتها"}, {id:69, q:"إغلاق فتحات الصرف أثناء ساعات العمل"}, {id:70, q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}
+        {id:66, q:"إمداد مياه الشرب كافٍ ونظيف تماماً"}, {id:67, q:"تركيب فلاتر المياه وتنظيفها وصيانتها"}, {id:68, q:"عدم وجود تسربات في مواسير الصرف"}, {id:69, q:"إغلاق فتحات الصرف أثناء ساعات العمل"}, {id:70, q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}
       ]},
       { title: "إدارة مسببات الحساسية", items: [
-        {id:71, q:"معلومات مسببات الحساسية كاملة على الملصقات"}, {id:72, q:"مناطق تحضير منفصلة للأصناف الخالية من الحساسية"}, {id:73, q:"أدوات مخصصة لتحضير الأغذية الخاصة"}, {id:74, q:"تدريب الموظفين على التوعية بمسببات الحساسية"}
+        {id:71, q:"معلومات مسببات الحساسية كاملة على الملصقات"}, {id:72, q:"مناطق تحضير منفصلة للأصناف الخالية"}, {id:73, q:"أدوات مخصصة لتحضير الأغذية الخاصة"}, {id:74, q:"تدريب الموظفين على مسببات الحساسية"}
       ]}
     ];
 
@@ -109,24 +109,24 @@
                 <p><b>📅 تاريخ الفحص:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
               </div>
               <div style="text-align: center; border-right: 2px solid #ddd; padding-right: 30px; min-width: 150px;">
-                <p style="color: #64748b; font-weight: bold; font-size: 12px">درجة الامتثال</p>
-                <div style="font-size: 48px; font-weight: 900; color: ${scoreColor}">${score}%</div>
+                <p style="font-weight: bold; color: #64748b; font-size: 12px">درجة الامتثال</p>
+                <div style="font-size: 52px; font-weight: 900; color: ${scoreColor}">${score}%</div>
               </div>
             </div>
             <div style="width: 100%;">
               ${sectionsData.map(sec => `
-                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right;">${sec.title}</div>
+                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 6px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right;">${sec.title}</div>
                 ${sec.items.map(i => {
                   const ans = answers[i.id];
                   const note = notes[i.id];
                   const itemPhotos = photos[i.id] || [];
                   return `
-                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
+                    <div style="padding: 20px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
                       <p style="margin: 0; font-size: 15px; font-weight: bold;">${i.id}. ${i.q}</p>
-                      <p style="font-size: 12px; margin: 5px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red">❌ مخالف</span>' : '⚪ N/A'}</p>
-                      ${note ? `<div style="background: #fffbeb; padding: 8px; border-radius: 5px; font-size: 11px; margin: 5px 0; border: 1px solid #fde68a"><b>الملاحظة:</b> ${note}</div>` : ''}
-                      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px">
-                        ${itemPhotos.map(p => `<img src="${p}" style="width: 180px; height: 130px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd" />`).join('')}
+                      <p style="font-size: 12px; margin: 8px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red">❌ مخالف</span>' : '⚪ لم يتم الإجابة'}</p>
+                      ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0;"><b>الملاحظة:</b> ${note}</div>` : ''}
+                      <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px;">
+                        ${itemPhotos.map(p => `<img src="${p}" style="width: 210px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd" />`).join('')}
                       </div>
                     </div>
                   `;
@@ -139,7 +139,7 @@
                 <img src="${signature}" style="width: 200px; border-bottom: 2px solid #004b47" />
                 <p style="font-size: 11px; margin-top: 8px; color: #666;">${email}</p>
               </div>
-              <p style="font-size: 10px; color: #999;">توليد آلي - نظام فيرا PRO</p>
+              <p style="font-size: 10px; color: #999;">توليد آلي - نظام VERRA PRO</p>
             </div>
           </div>
         `;
@@ -164,18 +164,9 @@
         auth.onAuthStateChanged(async u => {
             if(u) {
                 setUser(u);
-                // ميزة الذكاء: إذا كان الإيميل هو إيميلك المذكور في الأعلى، افتح لوحة الإدارة فوراً
                 if(u.email === ADMIN_EMAIL) {
                     setUserRole("admin");
                     setView("admin");
-                } else {
-                   // التحقق من قاعدة البيانات للمستخدمين الآخرين
-                   const docRef = db.collection("users").doc(u.uid);
-                   const docSnap = await docRef.get();
-                   if(docSnap.exists() && docSnap.data().role === 'admin') {
-                       setUserRole("admin");
-                       setView("admin");
-                   }
                 }
             }
             setLoading(false); 
@@ -201,24 +192,34 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
+      const handlePhotoAction = (id, e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result].slice(0,3)}));
+        };
+        reader.readAsDataURL(file);
+      };
+
       const InspectorUI = () => (
-        <div className="pb-40 animate-in fade-in duration-500">
-          <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[4rem]">
+        <div className="pb-40">
+          <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[3.5rem]">
             <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-28 mx-auto mb-4 drop-shadow-2xl" />
             <div className="flex flex-wrap justify-center gap-3 mt-6 text-white">
-              <span className="bg-white/10 px-4 py-2 rounded-full text-[11px] font-bold border border-white/20 uppercase">👤 {user.email.split('@')[0]}</span>
-              <span className="bg-white/10 px-4 py-2 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-tighter">📍 {location}</span>
+              <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase">👤 {user.email.split('@')[0]}</span>
+              <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-tighter">📍 {location}</span>
               {userRole === 'admin' && <button onClick={()=>setView("admin")} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-full text-xs font-black shadow-lg">لوحة الإدارة ⚙️</button>}
             </div>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Compliance</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Compliance</p>
               <p className="text-3xl font-black text-green-700 leading-none">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-3 rounded-2xl shadow active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-2.5 rounded-xl shadow active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
               <button onClick={() => {
                   const score = getScore();
                   const signature = sigPad.current ? sigPad.current.toDataURL() : "";
@@ -230,8 +231,8 @@
 
           <main className="p-4 max-w-2xl mx-auto space-y-6 mt-4">
             <div className="card p-6 border-r-[12px] border-green-800 shadow-lg">
-              <p className="text-xs font-black text-gray-400 mb-1 uppercase tracking-widest">اسم المنشأة</p>
-              <input className="w-full text-2xl font-bold outline-none text-green-950 bg-transparent" placeholder="اكتب الاسم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
+              <p className="text-xs font-black text-gray-400 mb-1 uppercase tracking-widest text-right">اسم المنشأة المستهدفة</p>
+              <input className="w-full text-2xl font-bold outline-none text-green-950 bg-transparent text-right" placeholder="اكتب الاسم هنا..." value={branch} onChange={e=>setBranch(e.target.value)} />
             </div>
 
             {sectionsData.map(sec => (
@@ -243,61 +244,50 @@
                   <span className="text-xs opacity-50 font-bold">{expanded.has(sec.title) ? 'إخفاء ▲' : 'عرض ▼'}</span>
                 </div>
 
-                {expanded.has(sec.title) && sec.items.map((i, idx) => {
-                  const id = i.id;
-                  return (
-                    <div key={id} className="item-card shadow-md">
-                      <div className="flex justify-between items-start mb-4">
-                        <p className="text-md font-bold text-green-950 ml-4 leading-relaxed">{id}. {i.q}</p>
-                        <div className="flex gap-1">
-                          <button onClick={()=>setAnswers({...answers, [id]:'yes'})} className={`ans-btn btn-yes ${answers[id]==='yes'?'active':''}`}>نعم</button>
-                          <button onClick={()=>setAnswers({...answers, [id]:'no'})} className={`ans-btn btn-no ${answers[i.id]==='no'?'active':''}`}>لا</button>
-                          <button onClick={()=>setAnswers({...answers, [id]:'na'})} className={`ans-btn btn-na ${answers[id]==='na'?'active':''}`}>N/A</button>
-                        </div>
+                {expanded.has(sec.title) && sec.items.map((i) => (
+                  <div key={i.id} className="item-card shadow-md">
+                    <div className="flex justify-between items-start mb-4">
+                      <p className="text-md font-bold text-green-950 ml-4 leading-relaxed text-right flex-1">{i.id}. {i.q}</p>
+                      <div className="flex gap-1.5 mr-2">
+                        <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn btn-yes ${answers[i.id]==='yes'?'active':''}`}>نعم</button>
+                        <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn btn-no ${answers[i.id]==='no'?'active':''}`}>لا</button>
+                        <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn btn-na ${answers[i.id]==='na'?'active':''}`}>N/A</button>
                       </div>
-                      <textarea className="notes-input shadow-inner" placeholder="اكتب ملاحظة أو مخالفة..." value={notes[id]||""} onChange={e=>setNotes({...notes, [id]:e.target.value})} />
-                      <div className="mt-4 flex flex-wrap gap-2 items-center">
+                    </div>
+                    <textarea className="notes-input shadow-inner text-right" placeholder="اكتب ملاحظة أو مخالفة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
+                    <div className="mt-4 flex flex-wrap gap-2 items-center justify-end">
                         <label className="upload-btn">📷 الكاميرا
-                          <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => {
-                              const file = e.target.files[0]; if(!file) return;
-                              const reader = new FileReader(); reader.onload=(ev)=>setPhotos(prev=>({...prev, [id]:[...(prev[id]||[]), ev.target.result].slice(0,3)}));
-                              reader.readAsDataURL(file);
-                          }} />
+                          <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} />
                         </label>
                         <label className="upload-btn" style={{background:'#eff6ff', color:'#1e40af'}}>🖼️ المعرض
-                          <input type="file" className="hidden" accept="image/*" onChange={e => {
-                              const file = e.target.files[0]; if(!file) return;
-                              const reader = new FileReader(); reader.onload=(ev)=>setPhotos(prev=>({...prev, [id]:[...(prev[id]||[]), ev.target.result].slice(0,3)}));
-                              reader.readAsDataURL(file);
-                          }} />
+                          <input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} />
                         </label>
-                        <div className="flex flex-wrap">
-                          {(photos[id] || []).map((img, px) => (
+                        <div className="flex flex-wrap mr-auto">
+                          {(photos[i.id] || []).map((img, px) => (
                             <div key={px} className="relative m-1">
                               <img src={img} className="photo-thumb" />
-                              <div className="del-img" onClick={()=>setPhotos({...photos, [id]: photos[id].filter((_,x)=>x!==px)})}>×</div>
+                              <div className="del-img" onClick={()=>setPhotos({...photos, [i.id]: photos[i.id].filter((_,x)=>x!==px)})}>×</div>
                             </div>
                           ))}
                         </div>
-                      </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             ))}
 
             <div className="card p-8 border-2 border-dashed border-gray-300 text-center shadow-inner">
               <h3 className="font-bold text-green-900 mb-4 uppercase italic">Signature / التوقيع</h3>
               <canvas ref={canvasRef} className="sig-canvas shadow-lg"></canvas>
-              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-sm font-bold mt-4 underline block mx-auto active:scale-90 transition">Clear Signature</button>
+              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-sm font-bold mt-4 underline block mx-auto">Clear Signature</button>
             </div>
 
             <button onClick={async () => {
                 if(!branch) return alert("يرجى إدخال اسم المنشأة");
                 try {
                   await db.collection("inspections").add({ branch, score: getScore(), inspector: user.email, date: new Date().toLocaleDateString('ar-EG'), signature: sigPad.current.toDataURL(), location: location, timestamp: firebase.firestore.FieldValue.serverTimestamp(), answers, notes, photos });
-                  alert("تم الإرسال للسحابة بنجاح!"); location.reload();
-                } catch(e) { alert("خطأ: " + e.message); }
+                  alert("تم الإرسال للسحابة!"); location.reload();
+                } catch(e) { alert("خطأ في الاتصال"); }
             }} className="w-full verra-gradient text-white font-black py-7 rounded-[2.5rem] shadow-2xl text-2xl active:scale-95 transition"
             >إرسال التقرير النهائي</button>
           </main>
@@ -313,7 +303,7 @@
         }, []);
 
         return (
-          <div className="p-4 bg-gray-50 min-h-screen animate-in slide-in-from-left duration-500">
+          <div className="p-4 bg-gray-50 min-h-screen">
              <header className="flex justify-between items-center mb-8 bg-white p-6 rounded-[2.5rem] shadow-sm border-b-4 border-green-800">
                 <h1 className="text-2xl font-black text-green-900 tracking-tighter">لوحة تحكم الإدارة</h1>
                 <button onClick={()=>setView("inspector")} className="bg-gray-100 text-gray-600 px-4 py-2 rounded-2xl text-xs font-bold shadow-sm">⬅️ الميدان</button>
@@ -321,21 +311,21 @@
 
              <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="card p-6 border-r-8 border-blue-500">
-                   <p className="text-gray-400 font-bold text-[10px] uppercase">إجمالي التقارير</p>
-                   <p className="text-3xl font-black">{allReports.length}</p>
+                   <p className="text-gray-400 font-bold text-[10px] uppercase text-right">إجمالي التقارير</p>
+                   <p className="text-3xl font-black text-right">{allReports.length}</p>
                 </div>
                 <div className="card p-6 border-r-8 border-green-500">
-                   <p className="text-gray-400 font-bold text-[10px] uppercase">الجودة العامة</p>
-                   <p className="text-3xl font-black text-green-600">
+                   <p className="text-gray-400 font-bold text-[10px] uppercase text-right">الجودة العامة</p>
+                   <p className="text-3xl font-black text-green-600 text-right">
                       {allReports.length > 0 ? Math.round(allReports.reduce((acc, r) => acc + r.score, 0) / allReports.length) : 0}%
                    </p>
                 </div>
              </div>
 
-             <h2 className="font-bold text-xl mb-4 text-green-950 px-2">التقارير الواردة:</h2>
+             <h2 className="font-bold text-xl mb-4 text-green-950 px-2 text-right">التقارير الواردة:</h2>
              <div className="space-y-4">
                 {allReports.map(rep => (
-                  <div key={rep.id} className="card p-5 flex justify-between items-center hover:bg-green-50 transition-all border-r-8 border-gold-border">
+                  <div key={rep.id} className="card p-5 flex justify-between items-center hover:bg-green-50 transition-all border-r-8 border-green-800">
                      <div className="text-right">
                         <p className="font-black text-green-900 text-lg leading-none">{rep.branch}</p>
                         <p className="text-[11px] text-gray-400 mt-2 font-bold uppercase">{rep.date} | {rep.inspector.split('@')[0]}</p>
@@ -345,7 +335,7 @@
                         <button onClick={() => {
                            const html = buildReportHTML(rep.branch, rep.inspector, rep.location, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
                            html2pdf().from(html).set({margin:0, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2, useCORS:true, scrollY:0}, jsPDF:{format:'a4'}}).save();
-                        }} className="bg-gray-50 border p-3 rounded-2xl text-blue-600 shadow-sm active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" strokeWidth="2.5"></path></svg></button>
+                        }} className="bg-gray-50 border p-3 rounded-2xl text-blue-600 shadow-sm active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"></path></svg></button>
                      </div>
                   </div>
                 ))}
@@ -358,15 +348,16 @@
     }
 
     function Login({ auth }) {
-      const [e, setE] = useState(""); const [p, setP] = useState("");
+      const [email, setLocalEmail] = useState(""); 
+      const [pass, setLocalPass] = useState("");
       return (
-        <div className="h-screen verra-gradient flex items-center justify-center p-6">
-           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(e, p).catch(err=>alert("خطأ في البيانات"))}} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
-              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-20 mx-auto mb-6" />
-              <h1 className="text-4xl font-black text-green-900 mb-10 italic uppercase">VERRA PRO</h1>
-              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600" placeholder="البريد الإلكتروني" onChange={v=>setE(v.target.value)} />
-              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600" type="password" placeholder="كلمة المرور" onChange={v=>setP(v.target.value)} />
-              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl">دخول النظام</button>
+        <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
+           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(err=>alert("خطأ في البيانات"))}} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
+              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-16 mx-auto mb-6" />
+              <h1 className="text-3xl font-black text-green-900 mb-10 italic uppercase">VERRA PRO</h1>
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" value={email} onChange={v=>setLocalEmail(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setLocalPass(v.target.value)} />
+              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition">دخول النظام السحابي</button>
            </form>
         </div>
       );
