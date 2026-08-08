@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VERRA PRO - لوحة تحكم الإدارة العليا</title>
+  <title>نظام VERRA PRO - لوحة الإدارة</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -17,11 +17,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f1f5f9; margin: 0; padding: 0; }
-    .verra-grad { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
-    .card { background: white; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-    .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    body { font-family: 'Cairo', sans-serif; background: #f4f7f6; margin: 0; padding: 0; }
+    .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
+    .card { background: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    .report-item { transition: all 0.3s ease; border-right: 8px solid #004b47; }
+    .report-item:hover { transform: translateY(-3px); }
   </style>
 </head>
 <body>
@@ -42,7 +42,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // نستخدم نفس البنود لضمان دقة التقارير عند إعادة طباعتها
     const sectionsData = [
       { title: "1. الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة"},{id:2,q:"درجة حرارة المجمدات ≤ -18°م"},{id:3,q:"درجة حرارة المبردات ≤ 4°م"},{id:4,q:"استخدام مقياس حرارة معاير"},{id:5,q:"نقل المواد للمخازن < 20 دقيقة"},{id:6,q:"مطابقة المواصفات السعودية"},{id:7,q:"اللحوم من مسالخ معتمدة"},{id:8,q:"التعبئة سليمة وخالية من التلف"},{id:9,q:"التحقق من تواريخ الصلاحية"},{id:10,q:"نظافة وتهوية أماكن التخزين"}]},
       { title: "2. تحضير الأغذية", items: [{id:11,q:"تحضير العجين"},{id:12,q:"تكوير العجين"},{id:13,q:"تحضير الصوصات"},{id:14,q:"فصل الخام عن المطبوخ"},{id:15,q:"منع التلوث الخلطي"},{id:16,q:"إذابة الأغذية آمنة"},{id:17,q:"عدم ترك الغذاء > ساعتين"},{id:18,q:"حرارة الطهي ≥ 75°م"},{id:19,q:"إعادة التسخين آمنة"},{id:20,q:"ألواح تقطيع ملونة"},{id:21,q:"ارتداء القفازات"}]},
@@ -51,68 +50,67 @@
       { title: "5. التنظيف والتعقيم", items: [{id:34,q:"جدول موثق"},{id:35,q:"مطهرات آمنة"},{id:36,q:"تعقيم بعد الاستخدام"},{id:37,q:"تنظيف عميق يومي"},{id:38,q:"حاويات بالقدم"},{id:39,q:"تخلص آمن من النفايات"},{id:40,q:"عقد مكافحة آفات"},{id:41,q:"خلو من الحشرات"}]},
       { title: "6. النظافة الشخصية", items: [{id:42,q:"زي نظيف وغطاء شعر"},{id:43,q:"كمامات"},{id:44,q:"محطات غسل مكتملة"},{id:45,q:"غسل بعد الاستراحة"},{id:46,q:"خلو من المجوهرات"},{id:47,q:"فحص قبل التوظيف"},{id:48,q:"فحص دوري"},{id:49,q:"استبعاد المرضى"}]},
       { title: "7. المعدات والأدوات", items: [{id:50,q:"مواد آمنة"},{id:51,q:"مقاييس معايرة"},{id:52,q:"ثلاجات فعالة"},{id:53,q:"سجلات مرتين يومياً"},{id:54,q:"صيانة دورية"},{id:55,q:"أسطح ملساء"}]},
-      { title: "8. التتبع والتوثيق", items: [{id:56,q:"سجلات الجودة"},{id:57,q:"لوائح التشييك"},{id:58,q:"دليل التتبع"},{id:59,q:"حفظ 180 يوم"},{id:60,q:"ترميز المنتجات"},{id:61,q:"شهادات الموردين"},{id:62,q:"كروت صحية"},{id:63,q:"خطة HACCP"},{id:64,q:"سجلات تعقيم"},{id:65,q:"توقيع السجلات"}]},
+      { title: "8. التتبع والتوثيق", items: [{id:56,q:"سجلات الجودة"},{id:57,q:"لوائح التشييك"},{id:58,q:"دليل تتبع"},{id:59,q:"حفظ 180 يوم"},{id:60,q:"ترميز المنتجات"},{id:61,q:"شهادات الموردين"},{id:62,q:"كروت صحية"},{id:63,q:"خطة HACCP"},{id:64,q:"سجلات تعقيم"},{id:65,q:"توقيع السجلات"}]},
       { title: "9. إمداد المياه", items: [{id:66,q:"مياه شرب نظيفة"},{id:67,q:"صيانة فلاتر"},{id:68,q:"خلو من التسربات"},{id:69,q:"فتحات مغلقة"},{id:70,q:"تجفيف أيدي"}]},
       { title: "10. مسببات الحساسية", items: [{id:71,q:"ملصقات الحساسية"},{id:72,q:"مناطق منفصلة"},{id:73,q:"أدوات مخصصة"},{id:74,q:"تدريب الموظفين"}]}
     ];
 
-    const generateDashboardPDF = (rep) => {
+    const generatePDF = (rep) => {
         const scoreColor = rep.score >= 70 ? '#10b981' : '#ef4444';
         const reportHTML = `
           <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box; text-align: right;">
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
               <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 100px; display: block; margin: 0 auto 15px;" />
-              <h1 style="color: #004b47; font-size: 32px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
-              <p style="color: #666; font-size: 14px;">تمت إعادة الطباعة من لوحة التحكم العليا</p>
+              <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
+              <p style="color: #666; font-size: 14px;">نظام فيرا PRO السحابي المتكامل</p>
             </div>
-
-            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 40px; direction: rtl; width: 100%;">
-              <div style="flex: 1; text-align: right; line-height: 2.2">
+            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; direction: rtl; width: 100%; box-sizing: border-box;">
+              <div style="flex: 1; text-align: right; line-height: 2">
                 <p><b>🏢 المنشأة:</b> ${rep.branch || 'غير محدد'}</p>
                 <p><b>👤 المفتش:</b> ${rep.inspector}</p>
-                <p><b>📍 الموقع:</b> ${rep.location || 'غير متاح'}</p>
+                <p><b>📍 الموقع:</b> ${rep.location || 'غير متوفر'}</p>
                 <p><b>📅 التاريخ:</b> ${rep.date}</p>
               </div>
-              <div style="width: 180px; text-align: center; border-right: 2px solid #ddd; padding-right: 30px;">
-                <p style="color: #64748b; font-weight: bold; font-size: 12px">الدرجة</p>
-                <div style="font-size: 55px; font-weight: 900; color: ${scoreColor}">${rep.score}%</div>
+              <div style="width: 150px; text-align: center; border-right: 2px solid #ddd; padding-right: 30px;">
+                <p style="color: #64748b; font-weight: bold; font-size: 12px">درجة الامتثال</p>
+                <div style="font-size: 42px; font-weight: 900; color: ${scoreColor}">${score}%</div>
               </div>
             </div>
-
-            ${sectionsData.map(sec => `
-              <div style="background: #e8f5ee; padding: 10px; font-weight: 900; border-right: 6px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right;">${sec.title}</div>
-              ${sec.items.map(i => {
-                const ans = rep.answers ? rep.answers[i.id] : 'لم يجب';
-                const note = rep.notes ? rep.notes[i.id] : "";
-                const itemPhotos = rep.photos ? (rep.photos[i.id] || []) : [];
-                return `
-                  <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
-                    <p style="margin: 0; font-size: 15px; font-weight: bold;">${i.id}. ${i.q}</p>
-                    <p style="font-size: 13px; margin: 8px 0;">الحالة: ${ans === 'yes' ? '✅ مطابق' : ans === 'no' ? '❌ مخالف' : '⚪ N/A'}</p>
-                    ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; margin: 10px 0;">${note}</div>` : ''}
-                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
-                      ${itemPhotos.map(p => `<img src="${p}" style="width: 210px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ccc" />`).join('')}
+            <div style="width: 100%;">
+              ${sectionsData.map(sec => `
+                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right; width: 100%; box-sizing: border-box;">${sec.title}</div>
+                ${sec.items.map(i => {
+                  const ans = rep.answers ? rep.answers[i.id] : 'لم يجب';
+                  const note = rep.notes ? rep.notes[i.id] : "";
+                  const itemPhotos = rep.photos ? (rep.photos[i.id] || []) : [];
+                  return `
+                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right; width: 100%; box-sizing: border-box;">
+                      <p style="margin: 0; font-size: 15px; font-weight: bold; color: #0f172a;">${i.id}. ${i.q}</p>
+                      <p style="font-size: 12px; margin: 5px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green; font-weight:bold;">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red; font-weight:bold;">❌ مخالف</span>' : '⚪ N/A'}</p>
+                      ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0; line-height: 1.6; color: #713f12;"><b>الملاحظة:</b> ${note}</div>` : ''}
+                      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                        ${itemPhotos.map(p => `<img src="${p}" style="width: 210px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd" />`).join('')}
+                      </div>
                     </div>
-                  </div>
-                `;
-              }).join('')}
-            `).join('')}
-
-            <div style="margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 3px solid #004b47; padding-top: 30px;">
+                  `;
+                }).join('')}
+              `).join('')}
+            </div>
+            <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; direction: rtl; border-top: 3px solid #004b47; padding-top: 30px;">
               <div style="text-align: center;">
-                <p style="font-weight: 900; color: #004b47; margin-bottom: 15px">توقيع المفتش</p>
-                <img src="${rep.signature || ''}" style="width: 250px; border-bottom: 2px solid #004b47" />
+                <p style="font-weight: 900; color: #004b47; margin-bottom: 15px">توقيع المفتش المعتمد</p>
+                <img src="${rep.signature || ''}" style="width: 200px; border-bottom: 2px solid #004b47" />
               </div>
-              <p style="font-size: 10px; color: #999;">ID: ${rep.id}</p>
+              <p style="font-size: 10px; color: #999;">توليد آلي بواسطة خوادم فيرا</p>
             </div>
           </div>
         `;
 
         const opt = {
-            margin: 0,
-            filename: `Report_${rep.branch || 'Verra'}.pdf`,
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          margin: 0,
+          filename: `VERRA_${rep.branch || 'Report'}.pdf`,
+          html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().from(reportHTML).set(opt).save();
     };
@@ -130,9 +128,9 @@
       }, []);
 
       if (loading) return (
-        <div className="h-screen flex flex-col items-center justify-center verra-grad text-white">
+        <div className="h-screen flex flex-col items-center justify-center verra-gradient text-white">
            <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-4"></div>
-           <p className="font-bold text-xl tracking-widest">تحميل بيانات الإدارة...</p>
+           <p className="font-bold text-xl tracking-tighter">جاري جلب التقارير...</p>
         </div>
       );
 
@@ -146,36 +144,39 @@
            <div className="grid grid-cols-2 gap-4 mb-10">
               <div className="card p-6 border-r-8 border-blue-500 text-right">
                  <p className="text-gray-400 font-bold text-[10px] uppercase">إجمالي الزيارات</p>
-                 <p className="text-4xl font-black text-blue-900">{reports.length}</p>
+                 <p className="text-4xl font-black text-blue-900 leading-none mt-1">{reports.length}</p>
               </div>
               <div className="card p-6 border-r-8 border-green-500 text-right">
                  <p className="text-gray-400 font-bold text-[10px] uppercase">متوسط الجودة</p>
-                 <p className="text-4xl font-black text-green-600">
+                 <p className="text-4xl font-black text-green-600 leading-none mt-1">
                     {reports.length > 0 ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) : 0}%
                  </p>
               </div>
            </div>
 
            <h2 className="font-black text-xl mb-6 text-green-950 px-2 text-right">سجل التقارير السحابي:</h2>
-           <div className="space-y-5">
+           
+           <div className="space-y-6">
               {reports.map(rep => (
-                <div key={rep.id} className="card p-6 flex justify-between items-center border-r-8 border-green-800 hover:shadow-xl transition-all">
-                   <div className="text-right flex-1">
-                      <p className="font-black text-green-900 text-xl leading-none mb-2">{rep.branch || "فرع غير مسمى"}</p>
-                      <div className="flex items-center gap-2 text-gray-400 font-bold text-[10px] uppercase">
-                         <span>📅 {rep.date}</span>
-                         <span>|</span>
-                         <span>👤 {rep.inspector ? rep.inspector.split('@')[0] : 'مفتش'}</span>
-                      </div>
-                   </div>
-                   <div className="flex items-center gap-4 pr-4 border-r border-gray-100">
+                <div key={rep.id} className="card report-item p-6 flex justify-between items-center bg-white">
+                   <button 
+                      onClick={() => generatePDF(rep)} 
+                      className="bg-blue-50 border-2 border-blue-100 p-4 rounded-2xl text-blue-600 shadow-sm active:scale-90 transition hover:bg-blue-600 hover:text-white"
+                   >
+                      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                   </button>
+
+                   <div className="px-6 text-center border-l border-gray-100">
                       <span className={`text-2xl font-black ${rep.score >= 70 ? 'text-green-600':'text-red-600'}`}>{rep.score}%</span>
-                      <button 
-                         onClick={() => generateDashboardPDF(rep)} 
-                         className="bg-blue-50 border-2 border-blue-100 p-3 rounded-2xl text-blue-600 shadow-sm active:scale-90 transition hover:bg-blue-600 hover:text-white"
-                      >
-                         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" strokeLinecap="round" strokeLinejoin="round"></path></svg>
-                      </button>
+                   </div>
+
+                   <div className="text-right flex-1 pr-6">
+                      <p className="font-black text-green-900 text-xl mb-2 leading-tight">{rep.branch || "فرع غير مسمى"}</p>
+                      <div className="flex flex-row-reverse items-center gap-3 text-gray-400 font-bold text-[10px] uppercase">
+                         <span className="flex items-center gap-1">📅 {rep.date}</span>
+                         <span>|</span>
+                         <span className="flex items-center gap-1">👤 {rep.inspector ? rep.inspector.split('@')[0] : 'مفتش'}</span>
+                      </div>
                    </div>
                 </div>
               ))}
