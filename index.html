@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>نظام VERRA PRO - بوابة الميدان</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -11,24 +12,26 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f8fafc; margin: 0; padding: 0; }
+    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; padding: 0; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
-    .gold-text { color: #d1ba89; }
     .card { background: white; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
     .section-title { background: #e8f5ee; border-right: 6px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; }
-    .item-card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
+    .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
     .ans-btn { width: 52px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; }
-    .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
-    .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
+    .btn-yes.active { background: #10b981 !important; color: white; }
+    .btn-no.active { background: #ef4444 !important; color: white; }
     .btn-na.active { background: #64748b !important; color: white; }
     .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; z-index: 50; }
-    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
+    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 15px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 10px 15px; }
     select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: left 1rem center; background-size: 1em; }
   </style>
@@ -37,6 +40,7 @@
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
+
     const firebaseConfig = {
       apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
       authDomain: "verra-system-828f2.firebaseapp.com",
@@ -45,6 +49,7 @@
       messagingSenderId: "961104891607",
       appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
     };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -60,7 +65,7 @@
       { title: "المعدات والأدوات", items: [{id:50,q:"المعدات مصنوعة من مواد مقاومة للتآكل وآمنة"},{id:51,q:"مقاييس الحرارة معايرة وتعمل بشكل صحيح"},{id:52,q:"الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة"},{id:53,q:"تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل"},{id:54,q:"صيانة وتنظيف معدات الطهي بانتظام"},{id:55,q:"أسطح ملامسة للأغذية ناعمة وخالية من التشققات"}]},
       { title: "التتبع والتوثيق", items: [{id:56,q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"},{id:57,q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"},{id:58,q:"دليل تتبع الأغذية متاح وكامل في المنشأة"},{id:59,q:"الاحتفاظ بسجلات التتبع 180 يوماً"},{id:60,q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"},{id:61,q:"سجلات اعتماد الموردين والشهادات"},{id:62,q:"جميع العاملين يحملون شهادات صحية سارية"},{id:63,q:"خطة HACCP موثقة ومعتمدة"},{id:64,q:"سجلات التنظيف والتعقيم كاملة ومحدثة"},{id:65,q:"الاحتفاظ بسجلات مراقبة درجة الحرارة"}]},
       { title: "إمداد المياه والسباكة", items: [{id:66,q:"إمداد مياه الشرب كافٍ ونظيف تماماً"},{id:67,q:"تركيب فلاتر المياه وتنظيفها وصيانتها"},{id:68,q:"عدم وجود تسربات في مواسير الصرف"},{id:69,q:"إغلاق فتحات الصرف أثناء ساعات العمل"},{id:70,q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}]},
-      { title: "إدارة مسببات الحساسية", items: [{id:71,q:"معلومات مسببات الحساسية كاملة على الملصقات"},{id:72,q:"مناطق تحضير منفصلة للأصناف الخالية"},{id:73,q:"أدوات مخصصة لتحضير الأغذية الخاصة"},{id:74,q:"تدريب الموظفين على مسببات الحساسية"}]}
+      { title: "إدارة مسببات الحساسية", items: [{id:71,q:"معلومات مسببات الحساسية كاملة على الملصقات"},{id:72,q:"مناطق تحضير منفصلة للأصناف الخالية من الحساسية"},{id:73,q:"أدوات مخصصة لتحضير الأغذية الخاصة"},{id:74,q:"تدريب الموظفين على التوعية بمسببات الحساسية"}]}
     ];
 
     const buildReportHTML = (branch, email, location, score, answers, notes, photos, signature) => {
@@ -68,7 +73,7 @@
         return `
           <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box; text-align: right;">
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
-              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 100px; display: block; margin: 0 auto 10px;" />
+              <img src="https://raw.githubusercontent.com/Chef-Ayo/verra-food-safety-inspector/main/logo.png" style="height: 100px; display: block; margin: 0 auto 10px;" onerror="this.src='https://ve-rra.netlify.app/logo.png'" />
               <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
             </div>
             <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; direction: rtl; width: 100%; box-sizing: border-box;">
@@ -83,31 +88,28 @@
                 <div style="font-size: 42px; font-weight: 900; color: ${scoreColor}">${score}%</div>
               </div>
             </div>
-            <div style="width: 100%;">
-              ${sectionsData.map(sec => `
-                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right; width: 100%; box-sizing: border-box;">${sec.title}</div>
+            ${sectionsData.map(sec => `
+                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right;">${sec.title}</div>
                 ${sec.items.map(i => {
                   const ans = answers[i.id]; const note = notes[i.id]; const itemPhotos = photos[i.id] || [];
                   return `
-                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right; width: 100%; box-sizing: border-box;">
-                      <p style="margin: 0; font-size: 15px; font-weight: bold; color: #0f172a;">${i.id}. ${i.q}</p>
+                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
+                      <p style="margin: 0; font-size: 15px; font-weight: bold;">${i.id}. ${i.q}</p>
                       <p style="font-size: 13px; margin: 5px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green; font-weight:bold;">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red; font-weight:bold;">❌ مخالف</span>' : '⚪ لم يتم الإجابة'}</p>
-                      ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0; line-height: 1.6; color: #713f12;"><b>الملاحظة:</b> ${note}</div>` : ''}
+                      ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0;">${note}</div>` : ''}
                       <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
-                        ${itemPhotos.map(p => `<img src="${p}" style="width: 220px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd" />`).join('')}
+                        ${itemPhotos.map(p => `<img src="${p}" style="width: 210px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd" />`).join('')}
                       </div>
                     </div>
                   `;
                 }).join('')}
-              `).join('')}
-            </div>
-            <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; direction: rtl; border-top: 3px solid #004b47; padding-top: 30px;">
+            `).join('')}
+            <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 3px solid #004b47; padding-top: 30px;">
               <div style="text-align: center;">
                 <p style="font-weight: 900; color: #004b47; margin-bottom: 15px">توقيع المفتش المعتمد</p>
                 <img src="${signature}" style="width: 200px; border-bottom: 2px solid #004b47" />
-                <p style="font-size: 11px; margin-top: 8px; color: #666;">${email}</p>
               </div>
-              <p style="font-size: 10px; color: #999;">توليد آلي - نظام فيرا PRO</p>
+              <p style="font-size: 10px; color: #999;">نظام فيرا PRO السحابي</p>
             </div>
           </div>
         `;
@@ -132,10 +134,7 @@
             if(u) {
                 setUser(u);
                 if(u.email === ADMIN_EMAIL) setUserRole("admin");
-                // جلب الفروع من السحابة
-                db.collection("branches").onSnapshot(snap => {
-                   setBranches(snap.docs.map(d => d.data().name));
-                });
+                db.collection("branches").onSnapshot(snap => setBranches(snap.docs.map(d => d.data().name)));
             }
             setLoading(false); 
         });
@@ -161,7 +160,7 @@
       return (
         <div className="pb-40 animate-in fade-in duration-500">
           <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[4rem]">
-            <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-28 mx-auto mb-4 drop-shadow-2xl" />
+            <img src="https://raw.githubusercontent.com/Chef-Ayo/verra-food-safety-inspector/main/logo.png" className="h-28 mx-auto mb-4 drop-shadow-2xl" />
             <div className="flex flex-wrap justify-center gap-3 mt-6 text-white text-right">
               <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase">👤 {user.email.split('@')[0]}</span>
               <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-tighter">📍 {location}</span>
@@ -187,11 +186,7 @@
           <main className="p-4 max-w-2xl mx-auto space-y-6 mt-4 text-right">
             <div className="card p-6 border-r-[12px] border-green-800 shadow-lg">
               <p className="text-xs font-black text-gray-400 mb-2 uppercase tracking-widest">اختر المنشأة المستهدفة:</p>
-              <select 
-                className="w-full text-xl font-bold outline-none text-green-950 bg-transparent" 
-                value={branch} 
-                onChange={e=>setBranch(e.target.value)}
-              >
+              <select className="w-full text-xl font-bold outline-none text-green-950 bg-transparent" value={branch} onChange={e=>setBranch(e.target.value)}>
                 <option value="">-- اختر من القائمة --</option>
                 {branches.map(b => <option key={b} value={b}>{b}</option>)}
               </select>
@@ -244,13 +239,10 @@
                 ))}
               </div>
             ))}
-
             <div className="card p-8 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-bold text-green-900 mb-4 uppercase italic">Signature / التوقيع</h3>
               <canvas ref={canvasRef} className="sig-canvas shadow-lg"></canvas>
               <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-sm font-bold mt-4 underline block mx-auto">Clear Signature</button>
             </div>
-
             <button onClick={async () => {
                 if(!branch) return alert("يرجى اختيار اسم المنشأة");
                 try {
@@ -269,10 +261,10 @@
       return (
         <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
            <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(err=>alert("بيانات الدخول غير صحيحة"))}} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
-              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-16 mx-auto mb-6" />
+              <img src="https://raw.githubusercontent.com/Chef-Ayo/verra-food-safety-inspector/main/logo.png" className="h-16 mx-auto mb-6" />
               <h1 className="text-3xl font-black text-green-900 mb-10 italic uppercase">VERRA PRO</h1>
-              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" value={email} onChange={v=>setEmail(v.target.value)} />
-              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" onChange={v=>setEmail(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" onChange={v=>setPass(v.target.value)} />
               <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition">دخول النظام</button>
            </form>
         </div>
