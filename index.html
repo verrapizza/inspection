@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>نظام VERRA PRO - النسخة النهائية المستقرة</title>
+  <title>VERRA PRO - النظام المتكامل</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -13,7 +13,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -22,18 +21,18 @@
     body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; padding: 0; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .gold-text { color: #d1ba89; }
-    .card { background: white; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+    .card { background: white; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
     .section-title { background: #e8f5ee; border-right: 6px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; }
-    .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
-    .ans-btn { width: 52px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; transition: 0.2s; }
+    .item-card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 10px; border: 1px solid #e2e8f0; }
+    .ans-btn { width: 52px; height: 40px; border-radius: 8px; font-weight: 800; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; }
     .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
     .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
     .btn-na.active { background: #64748b !important; color: white; }
     .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
     .sig-canvas { border: 2px dashed #cbd5e1; border-radius: 15px; background: white; width: 100%; height: 180px; touch-action: none; }
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; z-index: 60; }
-    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 15px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
+    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; z-index: 50; }
+    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 10px 15px; }
   </style>
 </head>
@@ -58,85 +57,82 @@
 
     const ADMIN_EMAIL = "ch3f.ramzi@gmail.com"; 
 
-    const sectionsData = [
-      { title: "1. الاستلام والتخزين", items: [
+    // --- قاعدة بيانات البنود الـ 74 (ثابتة ومنسقة) ---
+    const checklistData = [
+      { title: "الاستلام والتخزين", items: [
         {id:1, q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"}, {id:2, q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"}, {id:3, q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"}, {id:4, q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"}, {id:5, q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"}, {id:6, q:"مطابقة المنتجات للمواصفات القياسية السعودية"}, {id:7, q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"}, {id:8, q:"التعبئة سليمة وخالية من الآفات أو التلف"}, {id:9, q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"}, {id:10, q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}
       ]},
-      { title: "2. تحضير الأغذية", items: [
+      { title: "تحضير الأغذية", items: [
         {id:11, q:"مراجعة ومتابعة بروسيس تحضير العجين"}, {id:12, q:"متابعة بروسيس تكوير العجين"}, {id:13, q:"مراجعة تحضير الصوصات"}, {id:14, q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"}, {id:15, q:"منع التلوث الخلطي أثناء التحضير"}, {id:16, q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"}, {id:17, q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"}, {id:18, q:"وصول درجات حرارة الطهي لـ (≥75°م)"}, {id:19, q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"}, {id:20, q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"}, {id:21, q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}
       ]},
-      { title: "3. جودة المنتج", items: [
+      { title: "جودة المنتج", items: [
         {id:22, q:"معاينة جودة المنتج النهائي (قسم الباستا)"}, {id:23, q:"معاينة جودة المنتج النهائي (قسم البيتزا)"}, {id:24, q:"رفع صورة المنتج النهائي على الواتساب في كل الفروع"}
       ]},
-      { title: "4. المنشأة والبيئة", items: [
+      { title: "المنشأة والبيئة", items: [
         {id:25, q:"المنشأة تقع بعيداً عن مصادر التلوث"}, {id:26, q:"خلو الجدران والأرضيات والأسقف من التشققات"}, {id:27, q:"الأبواب محكمة الإغلاق وتغلق تلقائياً"}, {id:28, q:"النوافذ مزودة بشبكات معدنية سليمة"}, {id:29, q:"ميل مناسب للصرف في جميع المناطق"}, {id:30, q:"أجهزة التكييف فعالة وتعمل بشكل صحيح"}, {id:31, q:"وجود شفاطات فوق الأفران والشوايات"}, {id:32, q:"إضاءة كافية في جميع مناطق التعامل مع الأغذية"}, {id:33, q:"الأرضيات مقاومة للماء وغير زلقة وسهلة التنظيف"}
       ]},
-      { title: "5. التنظيف والتعقيم", items: [
+      { title: "التنظيف والتعقيم", items: [
         {id:34, q:"جدول التنظيف موثق ويتم اتباعه بدقة"}, {id:35, q:"المطهرات آمنة للأغذية وبالتركيزات الصحيحة"}, {id:36, q:"تنظيف وتعقيم المعدات بعد كل استخدام"}, {id:37, q:"التنظيف العميق يومياً لجميع الأسطح الملامسة"}, {id:38, q:"حاويات النفايات تفتح بالقدم وتفرغ بانتظام"}, {id:39, q:"التخلص من النفايات يمنع تلوث المياه أو الأغذية"}, {id:40, q:"عقد مكافحة آفات ساري مع شركة متخصصة"}, {id:41, q:"عدم وجود دلائل على القوارض أو الحشرات"}
       ]},
-      { title: "6. النظافة الشخصية", items: [
+      { title: "النظافة الشخصية", items: [
         {id:42, q:"جميع العاملين يرتدون زياً نظيفاً وأغطية للشعر"}, {id:43, q:"ارتداء الكمامات في مناطق الأغذية القابلة للتلف"}, {id:44, q:"محطات غسل اليدين مزودة بالصابون والماء الساخن"}, {id:45, q:"غسل اليدين قبل التعامل مع الأغذية وبعد الاستراحة"}, {id:46, q:"عدم ارتداء المجوهرات أو طلاء الأظافر"}, {id:47, q:"فحوصات طبية قبل التوظيف من جهات معتمدة"}, {id:48, q:"فحوصات طبية روتينية سنوية لجميع العاملين"}, {id:49, q:"استبعاد العاملين المصابين بالأمراض المعدية"}
       ]},
-      { title: "7. المعدات والأدوات", items: [
+      { title: "المعدات والأدوات", items: [
         {id:50, q:"المعدات مصنوعة من مواد مقاومة للتآكل وآمنة"}, {id:51, q:"مقاييس الحرارة معايرة وتعمل بشكل صحيح"}, {id:52, q:"الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة"}, {id:53, q:"تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل"}, {id:54, q:"صيانة وتنظيف معدات الطهي بانتظام"}, {id:55, q:"أسطح ملامسة للأغذية ناعمة وخالية من التشققات"}
       ]},
-      { title: "8. التتبع والتوثيق", items: [
-        {id:56, q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"}, {id:57, q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"}, {id:58, q:"دليل تتبع الأغذية متاح وكامل في المنشأة"}, {id:59, q:"الاحتفاظ بسجلات تتبع لـ 180 يوماً"}, {id:60, q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"}, {id:61, q:"سجلات اعتماد الموردين والشهادات"}, {id:62, q:"جميع العاملين يحملون شهادات صحية سارية"}, {id:63, q:"خطة HACCP موثقة ومعتمدة"}, {id:64, q:"سجلات التنظيف والتعقيم كاملة ومحدثة"}, {id:65, q:"الاحتفاظ بسجلات مراقبة درجة الحرارة"}
+      { title: "التتبع والتوثيق", items: [
+        {id:56, q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"}, {id:57, q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"}, {id:58, q:"دليل تتبع الأغذية متاح وكامل في المنشأة"}, {id:59, q:"الاحتفاظ بسجلات التتبع 180 يوماً"}, {id:60, q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"}, {id:61, q:"سجلات اعتماد الموردين والشهادات"}, {id:62, q:"جميع العاملين يحملون شهادات صحية سارية"}, {id:63, q:"خطة HACCP موثقة ومعتمدة"}, {id:64, q:"سجلات التنظيف والتعقيم كاملة ومحدثة"}, {id:65, q:"الاحتفاظ بسجلات مراقبة درجة الحرارة"}
       ]},
-      { title: "9. إمداد المياه والسباكة", items: [
+      { title: "إمداد المياه والسباكة", items: [
         {id:66, q:"إمداد مياه الشرب كافٍ ونظيف تماماً"}, {id:67, q:"تركيب فلاتر المياه وتنظيفها وصيانتها"}, {id:68, q:"عدم وجود تسربات في مواسير الصرف"}, {id:69, q:"إغلاق فتحات الصرف أثناء ساعات العمل"}, {id:70, q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}
       ]},
-      { title: "10. إدارة مسببات الحساسية", items: [
+      { title: "إدارة مسببات الحساسية", items: [
         {id:71, q:"معلومات مسببات الحساسية كاملة على الملصقات"}, {id:72, q:"مناطق تحضير منفصلة للأصناف الخالية"}, {id:73, q:"أدوات مخصصة لتحضير الأغذية الخاصة"}, {id:74, q:"تدريب الموظفين على مسببات الحساسية"}
       ]}
     ];
 
+    // --- محرك التقرير (نفس التنسيق الموسط والمصلح) ---
     const buildReportHTML = (branch, email, location, score, answers, notes, photos, signature) => {
         const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
         return `
-          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box; text-align: right;">
+          <div style="width: 794px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box; text-align: right;">
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
               <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 100px; display: block; margin: 0 auto 10px;" />
               <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
               <p style="color: #666; font-size: 14px;">نظام فيرا PRO السحابي المتكامل</p>
             </div>
-            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; direction: rtl; width: 100%; box-sizing: border-box;">
+            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; width: 100%; box-sizing: border-box;">
               <div style="flex: 1; text-align: right; line-height: 2">
                 <p><b>🏢 المنشأة:</b> ${branch || 'غير محدد'}</p>
-                <p><b>👤 المفتش:</b> ${email}</p>
-                <p><b>📍 الموقع الجغرافي:</b> ${location}</p>
-                <p><b>📅 تاريخ الفحص:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
+                <p><b>👤 المفتش المعتمد:</b> ${email}</p>
+                <p><b>📍 الموقع:</b> ${location}</p>
+                <p><b>📅 التاريخ:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
               </div>
               <div style="text-align: center; border-right: 2px solid #ddd; padding-right: 30px; min-width: 150px;">
                 <p style="color: #64748b; font-weight: bold; font-size: 12px">درجة الامتثال</p>
-                <div style="font-size: 42px; font-weight: 900; color: ${scoreColor}">${score}%</div>
+                <div style="font-size: 48px; font-weight: 900; color: ${scoreColor}">${score}%</div>
               </div>
             </div>
-            <div style="width: 100%;">
-              ${sectionsData.map(sec => `
-                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right; width: 100%; box-sizing: border-box;">${sec.title}</div>
-                ${sec.items.map(i => {
-                  const ans = answers[i.id];
-                  const note = notes[i.id];
-                  const itemPhotos = photos[i.id] || [];
-                  return `
-                    <div style="padding: 20px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right; width: 100%; box-sizing: border-box;">
-                      <p style="margin: 0; font-size: 15px; font-weight: bold; color: #0f172a;">${i.id}. ${i.q}</p>
-                      <p style="font-size: 13px; margin: 8px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green; font-weight:bold;">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red; font-weight:bold;">❌ مخالف</span>' : '⚪ لم يتم الإجابة'}</p>
-                      ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0; line-height: 1.6; color: #713f12;"><b>الملاحظة:</b> ${note}</div>` : ''}
-                      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; justify-content: flex-start;">
-                        ${itemPhotos.map(p => `<img src="${p}" style="width: 220px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd" />`).join('')}
-                      </div>
+            ${checklistData.map(sec => `
+              <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 20px; text-align: right;">${sec.title}</div>
+              ${sec.items.map(i => {
+                const ans = answers[i.id]; const note = notes[i.id]; const itemPhotos = photos[i.id] || [];
+                return `
+                  <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
+                    <p style="margin: 0; font-size: 15px; font-weight: bold;">${i.id}. ${i.q}</p>
+                    <p style="font-size: 13px; margin: 5px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green; font-weight:bold;">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red; font-weight:bold;">❌ مخالف</span>' : '⚪ لم يتم الإجابة'}</p>
+                    ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 5px 0;">ملاحظة: ${note}</div>` : ''}
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px">
+                      ${itemPhotos.map(p => `<img src="${p}" style="width: 200px; height: 150px; border-radius: 12px; object-fit: cover; border: 1px solid #ccc" />`).join('')}
                     </div>
-                  `;
-                }).join('')}
-              `).join('')}
-            </div>
-            <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; direction: rtl; border-top: 3px solid #004b47; padding-top: 30px;">
+                  </div>
+                `;
+              }).join('')}
+            `).join('')}
+            <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 3px solid #004b47; padding-top: 30px;">
               <div style="text-align: center;">
                 <p style="font-weight: 900; color: #004b47; margin-bottom: 15px">توقيع المفتش المعتمد</p>
                 <img src="${signature}" style="width: 200px; border-bottom: 2px solid #004b47" />
-                <p style="font-size: 11px; margin-top: 8px; color: #666;">${email}</p>
               </div>
               <p style="font-size: 10px; color: #999;">توليد آلي - نظام فيرا PRO</p>
             </div>
@@ -154,17 +150,15 @@
       const [answers, setAnswers] = useState({});
       const [notes, setNotes] = useState({});
       const [photos, setPhotos] = useState({});
-      const [expanded, setExpanded] = useState(new Set([sectionsData[0].title]));
+      const [expanded, setExpanded] = useState(new Set([checklistData[0].title]));
       const canvasRef = useRef(null);
       const sigPad = useRef(null);
 
       useEffect(() => {
-        auth.onAuthStateChanged(async u => {
+        auth.onAuthStateChanged(u => {
             if(u) {
-                setUser(u);
-                if(u.email === ADMIN_EMAIL) {
-                    setUserRole("admin"); setView("admin");
-                }
+              setUser(u);
+              if(u.email === ADMIN_EMAIL) { setUserRole("admin"); setView("admin"); }
             }
             setLoading(false); 
         });
@@ -185,21 +179,20 @@
       };
 
       const handlePhotoAction = (id, e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result].slice(0,3)}));
         reader.readAsDataURL(file);
       };
 
-      // المفتش
+      // --- واجهة المفتش (الصندوق المحمي) ---
       const InspectorUI = () => (
-        <div className="pb-40">
+        <div className="pb-40 animate-in fade-in duration-500">
           <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[4rem]">
             <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-28 mx-auto mb-4 drop-shadow-2xl" />
             <div className="flex flex-wrap justify-center gap-3 mt-6 text-white text-right">
-              <span className="bg-white/10 px-4 py-2 rounded-full text-[11px] font-bold border border-white/20 uppercase">👤 {user.email.split('@')[0]}</span>
-              <span className="bg-white/10 px-4 py-2 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-tighter">📍 {location}</span>
+              <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase">👤 {user.email.split('@')[0]}</span>
+              <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-tighter">📍 {location}</span>
               {userRole === 'admin' && <button onClick={()=>setView("admin")} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-full text-xs font-black shadow-lg">لوحة الإدارة ⚙️</button>}
             </div>
           </div>
@@ -221,7 +214,7 @@
             <div className="card p-6 border-r-[12px] border-green-800 shadow-lg text-right">
               <input className="w-full text-2xl font-bold outline-none text-green-950 bg-transparent text-right" placeholder="اسم الفرع..." value={branch} onChange={e=>setBranch(e.target.value)} />
             </div>
-            {sectionsData.map(sec => (
+            {checklistData.map(sec => (
               <div key={sec.title}>
                 <div className="section-title flex justify-between items-center shadow-sm" onClick={() => {
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
@@ -261,7 +254,6 @@
               </div>
             ))}
             <div className="card p-8 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-bold text-green-900 mb-4 uppercase italic">Signature / التوقيع</h3>
               <canvas ref={canvasRef} className="sig-canvas shadow-lg"></canvas>
               <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-sm font-bold mt-4 underline block mx-auto">Clear Signature</button>
             </div>
@@ -277,7 +269,8 @@
         </div>
       );
 
-      const AdminDashboard = () => {
+      // --- واجهة الإدارة ---
+      const AdminUI = () => {
         const [allReports, setAllReports] = useState([]);
         useEffect(() => {
           db.collection("inspections").orderBy("timestamp", "desc").get().then(snap => setAllReports(snap.docs.map(d => ({id: d.id, ...d.data()}))));
@@ -292,19 +285,14 @@
                 <div className="card p-6 border-r-8 border-blue-500 text-right"><p className="text-gray-400 font-bold text-[10px] uppercase">إجمالي التقارير</p><p className="text-3xl font-black">{allReports.length}</p></div>
                 <div className="card p-6 border-r-8 border-green-500 text-right"><p className="text-gray-400 font-bold text-[10px] uppercase">الجودة العامة</p><p className="text-3xl font-black text-green-600">{allReports.length > 0 ? Math.round(allReports.reduce((acc, r) => acc + r.score, 0) / allReports.length) : 0}%</p></div>
              </div>
-             <h2 className="font-bold text-xl mb-4 text-green-950 px-2 text-right">سجل التقارير:</h2>
              <div className="space-y-4">
                 {allReports.map(rep => (
                   <div key={rep.id} className="card p-5 flex justify-between items-center border-r-8 border-green-800 hover:bg-green-50 transition-all">
-                     <div className="text-right">
-                        <p className="font-black text-green-900 text-lg leading-none">{rep.branch}</p>
-                        <p className="text-[11px] text-gray-400 mt-2 font-bold uppercase">{rep.date} | {rep.inspector.split('@')[0]}</p>
-                     </div>
+                     <div className="text-right"><p className="font-black text-green-900 text-lg leading-none">{rep.branch}</p><p className="text-[11px] text-gray-400 mt-2 font-bold uppercase">{rep.date} | {rep.inspector.split('@')[0]}</p></div>
                      <div className="flex items-center gap-3">
                         <span className={`text-xl font-black ${rep.score >= 70 ? 'text-green-600':'text-red-600'}`}>{rep.score}%</span>
                         <button onClick={() => {
-                           const signature = rep.signature || "";
-                           const html = buildReportHTML(rep.branch, rep.inspector, rep.location, rep.score, rep.answers, rep.notes, rep.photos, signature);
+                           const html = buildReportHTML(rep.branch, rep.inspector, rep.location, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
                            html2pdf().from(html).set({margin:0, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2, useCORS:true, scrollY:0}, jsPDF:{unit:'mm', format:'a4'}}).save();
                         }} className="bg-gray-50 border p-3 rounded-2xl text-blue-600 shadow-sm active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"></path></svg></button>
                      </div>
@@ -315,15 +303,15 @@
         );
       };
 
-      return view === "admin" ? <AdminDashboard /> : <InspectorUI />;
+      return view === "admin" ? <AdminUI /> : <InspectorUI />;
     }
 
     function Login({ auth }) {
-      const [email, setLocalEmail] = useState(""); 
-      const [pass, setLocalPass] = useState("");
+      const [email, setLocalEmail] = useState(""); const [pass, setLocalPass] = useState("");
+      const onLogin = (ev) => { ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(err=>alert("بيانات الدخول غير صحيحة")); };
       return (
         <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
-           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(err=>alert("بيانات الدخول غير صحيحة"))}} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
+           <form onSubmit={onLogin} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
               <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" className="h-16 mx-auto mb-6" />
               <h1 className="text-3xl font-black text-green-900 mb-10 italic uppercase">VERRA PRO</h1>
               <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" value={email} onChange={v=>setLocalEmail(v.target.value)} />
