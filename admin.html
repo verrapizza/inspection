@@ -52,7 +52,7 @@
       { title: "2. تحضير الأغذية", items: [{id:11,q:"تحضير العجين"},{id:12,q:"تكوير العجين"},{id:13,q:"تحضير الصوصات"},{id:14,q:"فصل الخام عن المطبوخ"},{id:15,q:"منع التلوث الخلطي"},{id:16,q:"إذابة الأغذية آمنة"},{id:17,q:"عدم ترك الغذاء > ساعتين"},{id:18,q:"حرارة الطهي ≥ 75°م"},{id:19,q:"إعادة التسخين آمنة"},{id:20,q:"ألواح تقطيع ملونة"},{id:21,q:"ارتداء القفازات"}]},
       { title: "3. جودة المنتج", items: [{id:22,q:"جودة قسم الباستا"},{id:23,q:"جودة قسم البيتزا"},{id:24,q:"صور الواتساب"}]},
       { title: "4. المنشأة والبيئة", items: [{id:25,q:"البعد عن التلوث"},{id:26,q:"سلامة الجدران"},{id:27,q:"أبواب آلية"},{id:28,q:"شبك نوافذ"},{id:29,q:"ميل الصرف"},{id:30,q:"كفاءة التكييف"},{id:31,q:"شفاطات الأفران"},{id:32,q:"إضاءة كافية"},{id:33,q:"أرضيات مانعة للانزلاق"}]},
-      { title: "5. التنظيف والتعقيم", items: [{id:34,q:"جدول التنظيف موثق"},{id:35,q:"المطهرات آمنة"},{id:36,q:"تعقيم بعد الاستخدام"},{id:37,q:"تنظيف عميق يومي"},{id:38,q:"حاويات بالقدم"},{id:39,q:"تخلص آمن من النفايات"},{id:40,q:"عقد مكافحة آفات"},{id:41,q:"خلو من الحشرات"}]},
+      { title: "5. التنظيف والتعقيم", items: [{id:34,q:"جدول التنظيف موثق"},{id:35,q:"مطهرات آمنة"},{id:36,q:"تعقيم بعد الاستخدام"},{id:37,q:"تنظيف عميق يومي"},{id:38,q:"حاويات بالقدم"},{id:39,q:"تخلص آمن من النفايات"},{id:40,q:"عقد مكافحة آفات"},{id:41,q:"خلو من الحشرات"}]},
       { title: "6. النظافة الشخصية", items: [{id:42,q:"زي نظيف وغطاء شعر"},{id:43,q:"كمامات"},{id:44,q:"محطات غسل مكتملة"},{id:45,q:"غسل بعد الاستراحة"},{id:46,q:"خلو من المجوهرات"},{id:47,q:"فحص قبل التوظيف"},{id:48,q:"فحص دوري"},{id:49,q:"استبعاد المرضى"}]},
       { title: "7. المعدات والأدوات", items: [{id:50,q:"مواد آمنة"},{id:51,q:"مقاييس معايرة"},{id:52,q:"ثلاجات فعالة"},{id:53,q:"سجلات مرتين يومياً"},{id:54,q:"صيانة دورية"},{id:55,q:"أسطح ملساء"}]},
       { title: "8. التتبع والتوثيق", items: [{id:56,q:"سجلات الجودة"},{id:57,q:"لوائح التشييك"},{id:58,q:"دليل تتبع"},{id:59,q:"حفظ 180 يوم"},{id:60,q:"ترميز المنتجات"},{id:61,q:"شهادات الموردين"},{id:62,q:"كروت صحية"},{id:63,q:"خطة HACCP"},{id:64,q:"سجلات تعقيم"},{id:65,q:"توقيع السجلات"}]},
@@ -72,7 +72,7 @@
             <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; direction: rtl; width: 100%; box-sizing: border-box;">
               <div style="flex: 1; text-align: right; line-height: 2">
                 <p><b>🏢 المنشأة:</b> ${rep.branch || 'غير محدد'}</p>
-                <p><b>👤 المفتش المعتمد:</b> ${rep.inspector}</p>
+                <p><b>👤 المفتش:</b> ${rep.inspector}</p>
                 <p><b>📍 الموقع:</b> ${rep.location || 'غير متوفر'}</p>
                 <p><b>📅 التاريخ:</b> ${formattedDate}</p>
               </div>
@@ -83,16 +83,16 @@
             </div>
             <div style="width: 100%;">
               ${sectionsData.map(sec => `
-                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right;">${sec.title}</div>
+                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right; width: 100%; box-sizing: border-box;">${sec.title}</div>
                 ${sec.items.map(i => {
                   const ans = rep.answers ? rep.answers[i.id] : 'لم يجب';
                   const note = rep.notes ? rep.notes[i.id] : "";
                   const itemPhotos = rep.photos ? (rep.photos[i.id] || []) : [];
                   return `
-                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
+                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right; width: 100%; box-sizing: border-box;">
                       <p style="margin: 0; font-size: 15px; font-weight: bold;">${i.id}. ${i.q}</p>
-                      <p style="font-size: 12px; margin: 5px 0;">الحالة: ${ans === 'yes' ? '✅ مطابق' : ans === 'no' ? '❌ مخالف' : '⚪ N/A'}</p>
-                      ${note ? `<div style="background: #fffbeb; padding: 8px; border-radius: 5px; font-size: 11px; margin: 10px 0; line-height: 1.6; color: #713f12;"><b>ملاحظة:</b> ${note}</div>` : ''}
+                      <p style="font-size: 13px; margin: 5px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green; font-weight:bold;">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red; font-weight:bold;">❌ مخالف</span>' : '⚪ N/A'}</p>
+                      ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0; line-height: 1.6; color: #713f12;"><b>الملاحظة:</b> ${note}</div>` : ''}
                       <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
                         ${itemPhotos.map(p => `<img src="${p}" style="width: 200px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ddd" />`).join('')}
                       </div>
@@ -114,7 +114,7 @@
 
         const opt = {
           margin: 0,
-          filename: `VERRA_${rep.branch || 'Report'}.pdf`,
+          filename: `VERRA_Report_${rep.branch || 'Export'}.pdf`,
           html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
@@ -143,18 +143,18 @@
       return (
         <div className="p-4 bg-gray-50 min-h-screen">
            <header className="flex justify-between items-center mb-8 bg-white p-6 rounded-[2.5rem] shadow-sm border-b-4 border-green-800">
-              <h1 className="text-2xl font-black text-green-900 tracking-tighter uppercase">لوحة الإدارة العليا</h1>
+              <h1 className="text-2xl font-black text-green-900 tracking-tighter uppercase">لوحة التحكم العليا</h1>
               <a href="index.html" className="bg-gray-100 text-gray-600 px-5 py-2 rounded-2xl text-xs font-bold shadow-sm active:scale-95 transition">⬅️ الميدان</a>
            </header>
 
            <div className="grid grid-cols-2 gap-4 mb-10">
               <div className="card p-6 border-r-8 border-blue-500 text-right">
                  <p className="text-gray-400 font-bold text-[10px] uppercase">إجمالي الزيارات</p>
-                 <p className="text-3xl font-black text-blue-900 leading-none mt-1">{reports.length}</p>
+                 <p className="text-4xl font-black text-blue-900 leading-none mt-1">{reports.length}</p>
               </div>
               <div className="card p-6 border-r-8 border-green-500 text-right">
                  <p className="text-gray-400 font-bold text-[10px] uppercase">متوسط الجودة</p>
-                 <p className="text-3xl font-black text-green-600 leading-none mt-1">
+                 <p className="text-4xl font-black text-green-600 leading-none mt-1">
                     {reports.length > 0 ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) : 0}%
                  </p>
               </div>
@@ -164,27 +164,27 @@
            
            <div className="space-y-4">
               {reports.map(rep => (
-                <div key={rep.id} className="card report-card p-5 flex flex-row items-center bg-white gap-2">
-                   {/* بيانات التقرير - الآن في أقصى اليسار */}
+                <div key={rep.id} className="card report-card p-4 flex flex-row items-center bg-white gap-2">
+                   {/* بيانات التقرير - حجم خط أصغر لاسم الفرع */}
                    <div className="text-left flex-1 min-w-0">
-                      <p className="font-black text-green-900 text-lg mb-1 truncate">{rep.branch || "فرع غير مسمى"}</p>
+                      <p className="font-bold text-green-900 text-[13px] mb-1 leading-tight">{rep.branch || "فرع غير مسمى"}</p>
                       <div className="flex flex-col gap-0.5">
-                         <span className="text-gray-400 font-bold text-[11px] en-nums">📅 {toEnNums(rep.date)}</span>
-                         <span className="text-gray-400 font-bold text-[11px] uppercase truncate">👤 {rep.inspector ? rep.inspector.split('@')[0] : 'مفتش'}</span>
+                         <span className="text-gray-400 font-bold text-[9px] en-nums">📅 {toEnNums(rep.date)}</span>
+                         <span className="text-gray-400 font-bold text-[9px] uppercase truncate">👤 {rep.inspector ? rep.inspector.split('@')[0] : 'مفتش'}</span>
                       </div>
                    </div>
 
                    {/* النسبة المئوية في المنتصف كفاصل */}
-                   <div className="text-center px-3 border-x border-gray-100">
-                      <span className={`text-xl font-black ${rep.score >= 70 ? 'text-green-600':'text-red-600'}`}>{rep.score}%</span>
+                   <div className="text-center px-2 border-x border-gray-100 shrink-0">
+                      <span className={`text-lg font-black ${rep.score >= 70 ? 'text-green-600':'text-red-600'}`}>{rep.score}%</span>
                    </div>
 
-                   {/* زر التحميل المصغر في أقصى اليمين */}
+                   {/* زر التحميل الصغير في أقصى اليمين */}
                    <button 
                       onClick={() => generatePDF(rep)} 
-                      className="bg-blue-50 border border-blue-100 p-2.5 rounded-xl text-blue-600 shadow-sm active:scale-90 transition hover:bg-blue-600 hover:text-white shrink-0"
+                      className="bg-blue-50 border border-blue-100 p-2 rounded-xl text-blue-600 shadow-sm active:scale-90 transition hover:bg-blue-600 hover:text-white shrink-0"
                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                    </button>
                 </div>
               ))}
