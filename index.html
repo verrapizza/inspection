@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>نظام VERRA PRO - بوابة الميدان</title>
+  <title>نظام VERRA PRO - المفتش الميداني</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -31,14 +31,12 @@
     .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 10px 15px; }
     select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: left 1rem center; background-size: 1em; }
-    .logo-container { width: 140px; height: 140px; margin: 0 auto; background: white; border-radius: 25px; padding: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
-
     const firebaseConfig = {
       apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
       authDomain: "verra-system-828f2.firebaseapp.com",
@@ -47,14 +45,13 @@
       messagingSenderId: "961104891607",
       appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
     const ADMIN_EMAIL = "ch3f.ramzi@gmail.com";
 
-    // شعار VERRA المدمج برمجياً (Base64)
-    const LOGO_DATA = "https://raw.githubusercontent.com/verrapizza/verra/main/logo.png"; // تأكد من رفع ملف logo.png في GitHub بهذا الاسم
+    // رابط الشعار المباشر من GitHub الخاص بك
+    const LOGO_URL = "https://raw.githubusercontent.com/verrapizza/inspection/ea885e49f98c9ff32306c1acd32ed7207c52c4f1/verralogo.jpg";
 
     const sectionsData = [
       { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
@@ -74,8 +71,8 @@
         return `
           <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box; text-align: right;">
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
+              <img src="${LOGO_URL}" style="height: 120px; display: block; margin: 0 auto 10px;" />
               <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
-              <p style="color: #666; font-size: 14px;">نظام فيرا PRO السحابي المتكامل</p>
             </div>
             <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; direction: rtl; width: 100%; box-sizing: border-box;">
               <div style="flex: 1; text-align: right; line-height: 2">
@@ -90,11 +87,11 @@
               </div>
             </div>
             ${sectionsData.map(sec => `
-                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right;">${sec.title}</div>
+                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right; width: 100%; box-sizing: border-box;">${sec.title}</div>
                 ${sec.items.map(i => {
                   const ans = answers[i.id]; const note = notes[i.id]; const itemPhotos = photos[i.id] || [];
                   return `
-                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
+                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right; width: 100%; box-sizing: border-box;">
                       <p style="margin: 0; font-size: 15px; font-weight: bold; color: #0f172a;">${i.id}. ${i.q}</p>
                       <p style="font-size: 13px; margin: 5px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green; font-weight:bold;">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red; font-weight:bold;">❌ مخالف</span>' : '⚪ لم يتم الإجابة'}</p>
                       ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0;">${note}</div>` : ''}
@@ -141,7 +138,7 @@
             setLoading(false); 
         });
         if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(pos => setLoc(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`));
+          navigator.geolocation.getCurrentPosition(pos => setLoc(`Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`));
         }
       }, []);
 
@@ -164,18 +161,16 @@
       };
 
       if (loading) return <div className="h-screen flex items-center justify-center font-bold text-green-900 animate-pulse text-2xl">جاري التحميل...</div>;
-      if (!user) return <Login auth={auth} />;
+      if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
         <div className="pb-40 animate-in fade-in duration-500">
           <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[4rem]">
-            <div className="logo-container mb-6">
-                <img src={auth.currentUser.photoURL || "https://ve-rra.netlify.app/logo.png"} className="w-full h-full object-contain" />
-            </div>
+            <img src={LOGO_URL} className="h-32 mx-auto mb-4 drop-shadow-2xl" />
             <div className="flex flex-wrap justify-center gap-3 mt-6 text-white text-right">
               <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase">👤 {user.email.split('@')[0]}</span>
-              <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-tighter">📍 {location}</span>
-              {userRole === 'admin' && <a href="admin.html" className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-full text-xs font-black shadow-lg">لوحة الإدارة ⚙️</a>}
+              <span className="bg-white/10 px-4 py-1.5 rounded-full text-[11px] font-bold border border-white/20 uppercase tracking-tighter text-center flex items-center justify-center">📍 {location}</span>
+              {userRole === 'admin' && <a href="admin.html" className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-full text-xs font-black shadow-lg flex items-center justify-center">لوحة الإدارة ⚙️</a>}
             </div>
           </div>
 
@@ -185,7 +180,7 @@
               <p className="text-3xl font-black text-green-700 leading-none">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-2.5 rounded-xl shadow active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+              <button onClick={()=>location.reload()} className="bg-red-500 text-white p-2.5 rounded-xl shadow active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
               <button onClick={() => {
                   const signature = sigPad.current ? sigPad.current.toDataURL() : "";
                   const html = buildReportHTML(branch, user.email, location, getScore(), answers, notes, photos, signature);
@@ -265,9 +260,7 @@
       return (
         <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
            <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(err=>alert("بيانات الدخول غير صحيحة"))}} className="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-sm text-center">
-              <div className="logo-container mb-6 scale-125">
-                 <img src={logo} className="w-full h-full object-contain" />
-              </div>
+              <img src={logo} className="h-24 mx-auto mb-6" />
               <h1 className="text-3xl font-black text-green-900 mb-10 italic uppercase tracking-tighter text-center">VERRA PRO</h1>
               <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" value={email} onChange={v=>setEmail(v.target.value)} />
               <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
