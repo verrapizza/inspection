@@ -1,1 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERRA PRO - لوحة تحكم الإدارة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Cairo', sans-serif; background: #f1f5f9; margin: 0; }
+    .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
+    .card { background: white; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
+      authDomain: "verra-system-828f2.firebaseapp.com",
+      projectId: "verra-system-828f2",
+      storageBucket: "verra-system-828f2.firebasestorage.app",
+      messagingSenderId: "961104891607",
+      appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
+    // نستخدم نفس مصفوفة البنود لضمان صحة التقارير
+    const sectionsData = [
+      { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
+      { title: "تحضير الأغذية", items: [{id:11,q:"مراجعة ومتابعة بروسيس تحضير العجين"},{id:12,q:"متابعة بروسيس تكوير العجين"},{id:13,q:"مراجعة تحضير الصوصات"},{id:14,q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"},{id:15,q:"منع التلوث الخلطي أثناء التحضير"},{id:16,q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"},{id:17,q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"},{id:18,q:"وصول درجات حرارة الطهي لـ (≥75°م)"},{id:19,q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"},{id:20,q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"},{id:21,q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}]},
+      { title: "جودة المنتج", items: [{id:22,q:"معاينة جودة المنتج النهائي (قسم الباستا)"},{id:23,q:"معاينة جودة المنتج النهائي (قسم البيتزا)"},{id:24,q:"رفع صورة المنتج النهائي على الواتساب في كل الفروع"}]},
+      { title: "المنشأة والبيئة", items: [{id:25,q:"المنشأة تقع بعيداً عن مصادر التلوث"},{id:26,q:"خلو الجدران والأرضيات والأسقف من التشققات"},{id:27,q:"الأبواب محكمة الإغلاق وتغلق تلقائياً"},{id:28,q:"النوافذ مزودة بشبكات معدنية سليمة"},{id:29,q:"ميل مناسب للصرف في جميع المناطق"},{id:30,q:"أجهزة التكييف فعالة وتعمل بشكل صحيح"},{id:31,q:"وجود شفاطات فوق الأفران والشوايات"},{id:32,q:"إضاءة كافية في جميع مناطق التعامل مع الأغذية"},{id:33,q:"الأرضيات مقاومة للماء وغير زلقة وسهلة التنظيف"}]},
+      { title: "التنظيف والتعقيم", items: [{id:34,q:"جدول التنظيف موثق ويتم اتباعه بدقة"},{id:35,q:"المطهرات آمنة للأغذية وبالتركيزات الصحيحة"},{id:36,q:"تنظيف وتعقيم المعدات بعد كل استخدام"},{id:37,q:"التنظيف العميق يومياً لجميع الأسطح الملامسة"},{id:38,q:"حاويات النفايات تفتح بالقدم وتفرغ بانتظام"},{id:39,q:"التخلص من النفايات يمنع تلوث المياه أو الأغذية"},{id:40,q:"عقد مكافحة آفات ساري مع شركة متخصصة"},{id:41,q:"عدم وجود دلائل على القوارض أو الحشرات"}]},
+      { title: "النظافة الشخصية", items: [{id:42,q:"جميع العاملين يرتدون زياً نظيفاً وأغطية للشعر"},{id:43,q:"ارتداء الكمامات في مناطق الأغذية القابلة للتلف"},{id:44,q:"محطات غسل اليدين مزودة بالصابون والماء الساخن"},{id:45,q:"غسل اليدين قبل التعامل مع الأغذية وبعد الاستراحة"},{id:46,q:"عدم ارتداء المجوهرات أو طلاء الأظافر"},{id:47,q:"فحوصات طبية قبل التوظيف من جهات معتمدة"},{id:48,q:"فحوصات طبية روتينية سنوياً لجميع العاملين"},{id:49,q:"استبعاد العاملين المصابين بالأمراض المعدية"}]},
+      { title: "المعدات والأدوات", items: [{id:50,q:"المعدات مصنوعة من مواد مقاومة للتآكل وآمنة"},{id:51,q:"مقاييس الحرارة معايرة وتعمل بشكل صحيح"},{id:52,q:"الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة"},{id:53,q:"تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل"},{id:54,q:"صيانة وتنظيف معدات الطهي بانتظام"},{id:55,q:"أسطح ملامسة للأغذية ناعمة وخالية من التشققات"}]},
+      { title: "التتبع والتوثيق", items: [{id:56,q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"},{id:57,q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"},{id:58,q:"دليل تتبع الأغذية متاح وكامل في المنشأة"},{id:59,q:"الاحتفاظ بسجلات التتبع 180 يوماً بعد الصلاحية"},{id:60,q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"},{id:61,q:"سجلات اعتماد الموردين تشمل الشهادات والمواصفات"},{id:62,q:"جميع العاملين يحملون شهادات صحية سارية المفعول"},{id:63,q:"خطة HACCP موثقة ومعتمدة ومراجعتها بانتظام"},{id:64,q:"سجلات التنظيف والتعقيم كاملة ومحدثة"},{id:65,q:"الاحتفاظ بسجلات مراقبة درجة الحرارة وتوقيعها"}]},
+      { title: "إمداد المياه والسباكة", items: [{id:66,q:"إمداد مياه الشرب كافٍ ونظيف تماماً"},{id:67,q:"تركيب فلاتر المياه وتنظيفها وصيانتها"},{id:68,q:"عدم وجود تسربات في مواسير الصرف أو وصلاتها"},{id:69,q:"إغلاق فتحات الصرف أثناء ساعات العمل"},{id:70,q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}]},
+      { title: "إدارة مسببات الحساسية", items: [{id:71,q:"معلومات مسببات الحساسية كاملة على الملصقات"},{id:72,q:"مناطق تحضير منفصلة للأصناف الخالية من الحساسية"},{id:73,q:"أدوات مخصصة لتحضير الأغذية الخاصة"},{id:74,q:"تدريب الموظفين على مسببات الحساسية"}]}
+    ];
+
+    const buildReportHTML = (branch, email, location, score, answers, notes, photos, signature) => {
+        const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
+        return `
+          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box; text-align: right;">
+            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
+              <img src="https://chef-ayo.github.io/verra-food-safety-inspector/logo.png" style="height: 100px; display: block; margin: 0 auto 10px;" />
+              <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
+            </div>
+            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; direction: rtl; width: 100%; box-sizing: border-box;">
+              <div style="flex: 1; text-align: right; line-height: 2">
+                <p><b>🏢 المنشأة:</b> ${branch || 'غير محدد'}</p>
+                <p><b>👤 المفتش:</b> ${email}</p>
+                <p><b>📍 الموقع:</b> ${location}</p>
+                <p><b>📅 التاريخ:</b> ${new Date().toLocaleDateString('ar-EG')}</p>
+              </div>
+              <div style="text-align: center; border-right: 2px solid #ddd; padding-right: 30px; min-width: 150px;">
+                <p style="color: #64748b; font-weight: bold; font-size: 12px">درجة الامتثال</p>
+                <div style="font-size: 42px; font-weight: 900; color: ${scoreColor}">${score}%</div>
+              </div>
+            </div>
+            ${sectionsData.map(sec => `
+              <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right;">${sec.title}</div>
+              ${sec.items.map(i => {
+                const ans = answers[i.id]; const note = notes[i.id]; const itemPhotos = photos[i.id] || [];
+                return `
+                  <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
+                    <p style="margin: 0; font-size: 15px; font-weight: bold; color: #0f172a;">${i.id}. ${i.q}</p>
+                    <p style="font-size: 13px; margin: 8px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green; font-weight:bold;">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red; font-weight:bold;">❌ مخالف</span>' : '⚪ لم يتم الإجابة'}</p>
+                    ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0;">ملاحظة: ${note}</div>` : ''}
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                      ${itemPhotos.map(p => `<img src="${p}" style="width: 210px; height: 160px; border-radius: 12px; object-fit: cover; border: 1px solid #ccc" />`).join('')}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            `).join('')}
+            <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 3px solid #004b47; padding-top: 30px;">
+              <div style="text-align: center;">
+                <p style="font-weight: 900; color: #004b47; margin-bottom: 15px">توقيع المفتش المعتمد</p>
+                <img src="${signature}" style="width: 200px; border-bottom: 2px solid #004b47" />
+                <p style="font-size: 11px; margin-top: 8px; color: #666;">${email}</p>
+              </div>
+              <p style="font-size: 10px; color: #999;">توليد آلي - نظام فيرا PRO</p>
+            </div>
+          </div>
+        `;
+    };
+
+    function App() {
+      const [reports, setReports] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        db.collection("inspections").orderBy("timestamp", "desc").get().then(snap => {
+          setReports(snap.docs.map(d => ({id: d.id, ...d.data()})));
+          setLoading(false);
+        });
+      }, []);
+
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-green-900 animate-pulse text-2xl">جاري تحميل الداشبورد...</div>;
+
+      return (
+        <div className="p-4 bg-gray-50 min-h-screen">
+           <header className="flex justify-between items-center mb-8 bg-white p-6 rounded-[2.5rem] shadow-sm border-b-4 border-green-800">
+              <h1 className="text-2xl font-black text-green-900 tracking-tighter uppercase">لوحة تحكم الإدارة العليا</h1>
+              <a href="index.html" className="bg-gray-100 text-gray-600 px-4 py-2 rounded-2xl text-xs font-bold shadow-sm">⬅️ الميدان</a>
+           </header>
+
+           <div className="grid grid-cols-2 gap-4 mb-8 text-right">
+              <div className="card p-6 border-r-8 border-blue-500">
+                 <p className="text-gray-400 font-bold text-[10px] uppercase">إجمالي الزيارات</p>
+                 <p className="text-3xl font-black">{reports.length}</p>
+              </div>
+              <div className="card p-6 border-r-8 border-green-500">
+                 <p className="text-gray-400 font-bold text-[10px] uppercase">متوسط الجودة</p>
+                 <p className="text-3xl font-black text-green-600">
+                    {reports.length > 0 ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) : 0}%
+                 </p>
+              </div>
+           </div>
+
+           <h2 className="font-bold text-xl mb-4 text-green-950 px-2 text-right tracking-tight">سجل التقارير المرفوعة:</h2>
+           <div className="space-y-4">
+              {reports.map(rep => (
+                <div key={rep.id} className="card p-5 flex justify-between items-center border-r-8 border-green-800 hover:bg-green-50 transition-all">
+                   <div className="text-right">
+                      <p className="font-black text-green-900 text-lg leading-none">{rep.branch}</p>
+                      <p className="text-[11px] text-gray-400 mt-2 font-bold uppercase">{rep.date} | {rep.inspector.split('@')[0]}</p>
+                   </div>
+                   <div className="flex items-center gap-3">
+                      <span className={`text-xl font-black ${rep.score >= 70 ? 'text-green-600':'text-red-600'}`}>{rep.score}%</span>
+                      <button onClick={() => {
+                         const html = buildReportHTML(rep.branch, rep.inspector, rep.location, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
+                         html2pdf().from(html).set({margin:0, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2, useCORS:true, scrollY:0}, jsPDF:{unit:'mm', format:'a4'}}).save();
+                      }} className="bg-gray-50 border p-3 rounded-2xl text-blue-600 shadow-sm active:scale-90 transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
+                   </div>
+                </div>
+              ))}
+           </div>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
