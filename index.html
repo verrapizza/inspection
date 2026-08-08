@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>نظام VERRA PRO - المفتش الميداني</title>
+  <title>نظام VERRA PRO - بوابة الميدان</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -11,16 +12,19 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
   <style>
     body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; padding: 0; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .gold-text { color: #d1ba89; }
     .card { background: white; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
     .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; }
-    .item-card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
+    .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
     .ans-btn { width: 52px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; }
     .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
     .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
@@ -28,7 +32,7 @@
     .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; z-index: 50; }
-    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
+    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 15px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 10px 15px; }
     select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: left 1rem center; background-size: 1em; }
   </style>
@@ -50,8 +54,8 @@
     const db = firebase.firestore();
     const ADMIN_EMAIL = "ch3f.ramzi@gmail.com";
 
-    // رابط الشعار المباشر من GitHub الخاص بك
-    const LOGO_URL = "https://raw.githubusercontent.com/verrapizza/inspection/ea885e49f98c9ff32306c1acd32ed7207c52c4f1/verralogo.jpg";
+    // رابط الشعار الجديد الذي طلبته
+    const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
 
     const sectionsData = [
       { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
@@ -73,12 +77,13 @@
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
               <img src="${LOGO_URL}" style="height: 120px; display: block; margin: 0 auto 10px;" />
               <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
+              <p style="color: #666; font-size: 14px;">نظام فيرا PRO السحابي المتكامل</p>
             </div>
             <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; direction: rtl; width: 100%; box-sizing: border-box;">
               <div style="flex: 1; text-align: right; line-height: 2">
                 <p><b>🏢 المنشأة:</b> ${branch || 'غير محدد'}</p>
                 <p><b>👤 المفتش:</b> ${email}</p>
-                <p><b>📍 الموقع الجغرافي:</b> ${location}</p>
+                <p><b>📍 الموقع:</b> ${location}</p>
                 <p><b>📅 التاريخ:</b> ${new Date().toLocaleDateString('en-GB')}</p>
               </div>
               <div style="width: 150px; text-align: center; border-right: 2px solid #ddd; padding-right: 30px; min-width: 150px;">
@@ -87,11 +92,11 @@
               </div>
             </div>
             ${sectionsData.map(sec => `
-                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right; width: 100%; box-sizing: border-box;">${sec.title}</div>
+                <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px; text-align: right;">${sec.title}</div>
                 ${sec.items.map(i => {
                   const ans = answers[i.id]; const note = notes[i.id]; const itemPhotos = photos[i.id] || [];
                   return `
-                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right; width: 100%; box-sizing: border-box;">
+                    <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
                       <p style="margin: 0; font-size: 15px; font-weight: bold; color: #0f172a;">${i.id}. ${i.q}</p>
                       <p style="font-size: 13px; margin: 5px 0;">الحالة: ${ans === 'yes' ? '<span style="color:green; font-weight:bold;">✅ مطابق</span>' : ans === 'no' ? '<span style="color:red; font-weight:bold;">❌ مخالف</span>' : '⚪ لم يتم الإجابة'}</p>
                       ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0;">${note}</div>` : ''}
