@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>نظام VERRA PRO - مركز القيادة</title>
+  <title>VERRA PRO - مركز القيادة</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -11,45 +11,47 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f8fafc; margin: 0; padding: 0; }
-    .sidebar { width: 280px; background: #004b47; height: 100vh; position: fixed; right: 0; top: 0; color: white; padding: 20px; z-index: 1000; border-left: 1px solid rgba(255,255,255,0.1); }
-    .main-area { margin-right: 280px; padding: 40px; min-height: 100vh; }
+    body { font-family: 'Cairo', sans-serif; background: #f4f7f6; margin: 0; padding: 0; overflow-x: hidden; }
+    .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     
-    /* بطاقة الوحدة المستوحاة من FoodDocs */
-    .unit-card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: 0.3s; position: relative; overflow: hidden; }
-    .unit-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
-    
-    /* الدائرة الملونة */
-    .progress-circle { position: relative; width: 110px; height: 110px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; }
-    .progress-circle svg { transform: rotate(-90deg); width: 110px; height: 110px; }
-    .progress-circle circle { fill: none; stroke-width: 10; stroke-linecap: round; }
-    .circle-bg { stroke: #f1f5f9; }
-    
-    .nav-btn { padding: 15px 20px; border-radius: 16px; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; font-weight: 700; transition: 0.2s; color: rgba(255,255,255,0.7); }
-    .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-    .nav-btn.active { background: #10b981; color: white; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); }
-
-    .indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-left: 10px; }
-
-    @media (max-width: 1024px) {
-      .sidebar { display: none; }
-      .main-area { margin-right: 0; padding: 20px; }
+    /* القائمة الجانبية للجوال (Slide-in Menu) */
+    .sidebar { 
+      position: fixed; top: 0; right: -280px; width: 280px; height: 100vh; 
+      background: #004b47; color: white; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      z-index: 2000; padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.3);
     }
+    .sidebar.open { right: 0; }
+    
+    /* غطاء الشاشة عند فتح المنيو */
+    .overlay { 
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
+      display: none; z-index: 1500; backdrop-filter: blur(4px); 
+    }
+    .overlay.show { display: block; }
+
+    .card { background: white; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    .report-card { border-right: 8px solid #004b47; }
+    .nav-btn { 
+      padding: 14px 18px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; 
+      display: flex; align-items: center; gap: 12px; font-weight: 700; color: rgba(255,255,255,0.7); 
+    }
+    .nav-btn.active { background: #10b981; color: white; }
+    
+    .menu-trigger { background: white; padding: 10px; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState, useEffect, useRef } = React;
 
     const firebaseConfig = {
       apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
@@ -64,145 +66,123 @@
     const db = firebase.firestore();
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
 
-    // البنود كاملة للـ PDF المنسق
-    const sectionsData = [
-      { title: "الاستلام والتخزين", items: [{id:1, q:"فحص درجات حرارة المواد الغذائية الواردة"},{id:2, q:"درجة حرارة المجمدات ≤ -18°م"},{id:10, q:"أماكن التخزين نظيفة وجافة"}]},
-      { title: "تحضير الأغذية", items: [{id:11, q:"مراجعة بروسيس تحضير العجين"},{id:15, q:"منع التلوث الخلطي"},{id:21, q:"ارتداء القفازات"}]},
-      { title: "جودة المنتج", items: [{id:22, q:"جودة قسم الباستا"},{id:23, q:"جودة قسم البيتزا"}]},
-      { title: "النظافة الشخصية", items: [{id:42, q:"زي نظيف وأغطية شعر"},{id:46, q:"خلو من المجوهرات"}]}
-    ];
-
-    // مكون الدائرة الاحترافي بدون مكتبات خارجية (لمنع الـ Crash)
-    const CircleGauge = ({ score }) => {
-      const r = 45;
-      const c = 2 * Math.PI * r;
-      const offset = c - (score / 100) * c;
-      const color = score >= 90 ? '#10b981' : score >= 70 ? '#f59e0b' : '#ef4444';
-
-      return (
-        <div className="progress-circle" style={{ color: color }}>
-          <svg>
-            <circle className="circle-bg" cx="55" cy="55" r={r} />
-            <circle cx="55" cy="55" r={r} stroke={color} strokeDasharray={c} strokeDashoffset={offset} />
-          </svg>
-          <span className="absolute text-green-950">{score}%</span>
-        </div>
-      );
-    };
-
-    const buildReportHTML = (branch, email, score, answers, notes, photos, signature) => {
+    // دالة بناء الـ PDF (نفس التنسيق الموسط المعتمد)
+    const buildReportHTML = (branch, email, location, score, answers, notes, photos, signature) => {
         const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
-        return `
-          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right;">
-            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
-              <img src="${LOGO_URL}" style="height: 100px; display: block; margin: 0 auto 10px;" />
-              <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
-            </div>
-            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
-              <div style="flex: 1; text-align: right; line-height: 2">
-                <p>🏢 المنشأة: ${branch}</p>
-                <p>👤 المفتش: ${email}</p>
-                <p>📅 التاريخ: ${new Date().toLocaleDateString('ar-EG')}</p>
-              </div>
-              <div style="text-align: center; border-right: 2px solid #ddd; padding-right: 30px;">
-                <div style="font-size: 42px; font-weight: 900; color: ${scoreColor}">${score}%</div>
-              </div>
-            </div>
-            <div style="margin-top: 50px; text-align: center;">
-               <img src="${signature}" style="width: 200px; border-bottom: 2px solid #004b47" />
-               <p>توقيع المفتش المعتمد</p>
-            </div>
-          </div>
-        `;
+        return `<div style="width:750px; padding:40px; direction:rtl; text-align:right;"><img src="${LOGO_URL}" style="height:100px; display:block; margin:0 auto;" /><h1 style="text-align:center; color:#004b47;">تقرير الجودة</h1><div style="background:#f8fafc; padding:20px; border-radius:15px;"><p><b>🏢 المنشأة:</b> ${branch}</p><p><b>👤 المفتش:</b> ${email}</p><p><b>📈 النتيجة:</b> ${score}%</p></div><img src="${signature}" style="width:200px; border-bottom:2px solid #004b47; margin-top:20px" /></div>`;
     };
 
     function App() {
       const [reports, setReports] = useState([]);
       const [branches, setBranches] = useState([]);
       const [activeTab, setActiveTab] = useState("overview");
+      const [menuOpen, setMenuOpen] = useState(false);
       const [loading, setLoading] = useState(true);
+      const [newBranch, setNewBranch] = useState("");
+      const chartRef = useRef(null);
 
       useEffect(() => {
-        const unsubReports = db.collection("inspections").orderBy("timestamp", "desc").onSnapshot(snap => setReports(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-        const unsubBranches = db.collection("branches").onSnapshot(snap => {
+        db.collection("inspections").orderBy("timestamp", "desc").onSnapshot(snap => setReports(snap.docs.map(d => ({id: d.id, ...d.data()}))));
+        db.collection("branches").onSnapshot(snap => {
             setBranches(snap.docs.map(d => ({id: d.id, ...d.data()})));
             setLoading(false);
         });
-        return () => { unsubReports(); unsubBranches(); };
       }, []);
 
-      const getLatestData = (name) => {
-        const lastRep = reports.find(r => r.branch === name);
-        return lastRep || { score: 0, date: 'لا يوجد زيارات' };
-      };
+      // رسم البياني
+      useEffect(() => {
+        if (activeTab === "overview" && reports.length > 0) {
+          const ctx = document.getElementById('complianceChart');
+          if (ctx) {
+            new Chart(ctx, { type: 'bar', data: { labels: reports.slice(0, 3).map(r => r.branch), datasets: [{ data: reports.slice(0, 3).map(r => r.score), backgroundColor: '#004b47', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: false } });
+          }
+        }
+      }, [reports, activeTab]);
 
-      if (loading) return <div className="h-screen w-full flex items-center justify-center font-black text-green-900 animate-pulse text-2xl tracking-tighter italic">VERRA PRO CLOUD...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-black text-green-900 animate-pulse text-2xl">VERRA DASHBOARD...</div>;
 
       return (
-        <div className="flex w-full">
-           <aside className="sidebar shadow-2xl">
-              <div className="text-center mb-10 pb-6 border-b border-white/10">
-                 <img src={LOGO_URL} className="h-20 mx-auto mb-2" />
-                 <p className="text-[10px] gold-text font-black uppercase tracking-widest">Management Dashboard</p>
+        <div className="min-h-screen">
+           {/* القائمة الجانبية المنزلقة للجوال */}
+           <div className={`overlay ${menuOpen?'show':''}`} onClick={()=>setMenuOpen(false)}></div>
+           <aside className={`sidebar ${menuOpen?'open':''}`}>
+              <div className="flex justify-between items-center mb-10">
+                 <img src={LOGO_URL} className="h-14" />
+                 <button onClick={()=>setMenuOpen(false)} className="text-white text-2xl">✕</button>
               </div>
               <nav>
-                 <div onClick={()=>setActiveTab("overview")} className={`nav-btn ${activeTab==='overview'?'active':''}`}>🏠 نظرة عامة</div>
-                 <div onClick={()=>setActiveTab("reports")} className={`nav-btn ${activeTab==='reports'?'active':''}`}>📋 سجل التقارير</div>
-                 <div onClick={()=>setActiveTab("setup")} className={`nav-btn ${activeTab==='setup'?'active':''}`}>🏢 إدارة الفروع</div>
+                 <div onClick={()=>{setActiveTab("overview"); setMenuOpen(false);}} className={`nav-btn ${activeTab==='overview'?'active':''}`}>🏠 نظرة عامة</div>
+                 <div onClick={()=>{setActiveTab("reports"); setMenuOpen(false);}} className={`nav-btn ${activeTab==='reports'?'active':''}`}>📋 سجل التقارير</div>
+                 <div onClick={()=>{setActiveTab("setup"); setMenuOpen(false);}} className={`nav-btn ${activeTab==='setup'?'active':''}`}>🏢 إدارة الفروع</div>
               </nav>
+              <div className="absolute bottom-10 right-6 left-6 border-t border-white/10 pt-6">
+                 <a href="index.html" className="flex items-center gap-2 text-gold-text font-bold uppercase tracking-widest text-[11px]">⬅️ العودة للميدان</a>
+              </div>
            </aside>
 
-           <main className="main-area flex-1">
+           {/* الشريط العلوي مع زر المنيو (☰) */}
+           <header className="verra-gradient p-6 flex justify-between items-center shadow-xl rounded-b-[2.5rem]">
+              <button onClick={()=>setMenuOpen(true)} className="menu-trigger">
+                 <svg className="w-7 h-7 text-green-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+              </button>
+              <img src={LOGO_URL} className="h-14" />
+              <div className="w-10"></div> {/* موازن مساحة */}
+           </header>
+
+           <main className="p-4 max-w-2xl mx-auto -mt-6">
               {activeTab === "overview" && (
                 <div className="animate-in fade-in duration-500">
-                   <h1 className="text-3xl font-black text-green-950 mb-10">حالة الوحدات الميدانية</h1>
-                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                      {branches.map(b => {
-                        const latest = getLatestData(b.name);
-                        return (
-                          <div key={b.id} className="unit-card">
-                             <div className="flex justify-between items-start">
-                                <h2 className="text-xl font-black text-green-900 leading-tight">{b.name}</h2>
-                                <span className="text-[10px] font-bold text-gray-300 uppercase">Unit</span>
-                             </div>
-                             <p className="text-[10px] text-gray-400 font-bold mt-1">آخر فحص: {latest.date}</p>
-                             
-                             <CircleGauge score={latest.score} />
-
-                             <div className="mt-4 space-y-2">
-                                <div className="flex items-center text-[12px] font-bold text-gray-500"><span className="indicator bg-green-500"></span> HACCP Compliance</div>
-                                <div className="flex items-center text-[12px] font-bold text-gray-500"><span className="indicator bg-green-500"></span> Monitoring Logs</div>
-                                <div className="flex items-center text-[12px] font-bold text-gray-500"><span className="indicator bg-yellow-500"></span> Staff Health Cards</div>
-                             </div>
-
-                             <button onClick={()=>setActiveTab("reports")} className="w-full mt-6 py-3 rounded-2xl bg-gray-50 text-green-800 font-black text-[11px] uppercase tracking-wider hover:bg-green-100 transition">عرض التفاصيل السحابية</button>
-                          </div>
-                        );
-                      })}
+                   <div className="grid grid-cols-2 gap-4 mb-6 text-right">
+                      <div className="card p-5 border-r-8 border-blue-500"><p className="text-gray-400 font-bold text-[10px] uppercase">الزيارات</p><p className="text-3xl font-black">{reports.length}</p></div>
+                      <div className="card p-5 border-r-8 border-green-500"><p className="text-gray-400 font-bold text-[10px] uppercase">الجودة</p><p className="text-3xl font-black text-green-600">{reports.length > 0 ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) : 0}%</p></div>
+                   </div>
+                   <div className="card p-5 mb-8 text-right">
+                      <h3 className="font-bold text-xs text-gray-500 mb-4">أداء الوحدات الميدانية</h3>
+                      <div style={{height: '200px'}}><canvas id="complianceChart"></canvas></div>
+                   </div>
+                   <h2 className="font-black text-lg text-green-950 mb-4 px-2">الوحدات النشطة:</h2>
+                   <div className="grid grid-cols-2 gap-4">
+                      {branches.map(b => (
+                        <div key={b.id} className="card p-4 text-center border-b-4 border-gold-text">
+                           <p className="font-black text-green-900 text-sm truncate">{b.name}</p>
+                           <p className="text-[10px] text-gray-400 font-bold mt-2">Unit Active ✅</p>
+                        </div>
+                      ))}
                    </div>
                 </div>
               )}
 
               {activeTab === "reports" && (
-                <div className="animate-in slide-in-from-bottom duration-500">
-                   <h1 className="text-3xl font-black text-green-950 mb-10 text-right">سجل التقارير التاريخي</h1>
-                   <div className="space-y-4">
-                      {reports.map(rep => (
-                        <div key={rep.id} className="card p-5 flex justify-between items-center border-r-8 border-green-800">
-                           <div className="text-right">
-                              <p className="font-black text-green-900 text-lg">{rep.branch}</p>
-                              <p className="text-[11px] text-gray-400 font-bold uppercase">{rep.date} | المفتش: {rep.inspector}</p>
-                           </div>
-                           <div className="flex items-center gap-4">
-                              <span className={`text-xl font-black ${rep.score >= 70 ? 'text-green-600':'text-red-600'}`}>{rep.score}%</span>
-                              <button onClick={() => {
-                                 const html = buildReportHTML(rep.branch, rep.inspector, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
-                                 html2pdf().from(html).set({margin:10, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2, useCORS:true}, jsPDF:{format:'a4'}}).save();
-                              }} className="bg-blue-50 border p-3 rounded-2xl text-blue-600 shadow-sm active:scale-90 transition">📥</button>
-                           </div>
+                <div className="animate-in slide-in-from-left duration-500">
+                   <h2 className="font-black text-lg text-green-950 mb-5 px-2">سجل التقارير السحابي:</h2>
+                   {reports.map(rep => (
+                     <div key={rep.id} className="card p-4 flex flex-row items-center bg-white gap-3 report-card mb-4">
+                        <div className="text-left flex-1 min-w-0 pr-1">
+                           <p className="font-bold text-green-950 text-[13px] mb-1 truncate">{rep.branch}</p>
+                           <p className="text-[9px] text-gray-400 font-bold">📅 {rep.date} | 👤 {rep.inspector.split('@')[0]}</p>
                         </div>
-                      ))}
-                   </div>
+                        <span className="text-lg font-black text-green-700">{rep.score}%</span>
+                        <button onClick={() => {
+                           const html = buildReportHTML(rep.branch, rep.inspector, rep.location, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
+                           html2pdf().from(html).set({margin:0, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2, useCORS:true, scrollY:0}, jsPDF:{unit:'mm', format:'a4'}}).save();
+                        }} className="bg-blue-50 p-2.5 rounded-xl text-blue-600">📥</button>
+                     </div>
+                   ))}
+                </div>
+              )}
+
+              {activeTab === "setup" && (
+                <div className="animate-in fade-in">
+                   <div className="card p-6 mb-8 border-t-8 border-green-800 text-right">
+                    <input value={newBranch} onChange={e=>setNewBranch(e.target.value)} className="w-full border-2 p-3 rounded-xl mb-4 text-right" placeholder="اسم الفرع الجديد..." />
+                    <button onClick={()=>{ db.collection("branches").add({name:newBranch}); setNewBranch(""); alert("تم!"); }} className="verra-gradient text-white px-6 py-3 rounded-xl font-bold w-full shadow-lg">حفظ</button>
+                  </div>
+                  {branches.map(b => (
+                     <div key={b.id} className="card p-4 flex justify-between items-center mb-3">
+                        <p className="font-bold">{b.name}</p>
+                        <button onClick={()=>db.collection("branches").doc(b.id).delete()} className="text-red-500 font-bold">حذف 🗑</button>
+                     </div>
+                  ))}
                 </div>
               )}
            </main>
