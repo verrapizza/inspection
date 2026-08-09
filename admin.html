@@ -1,196 +1,114 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>نظام VERRA PRO - مركز الإدارة والتحليل</title>
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
-  <style>
-    body { font-family: 'Cairo', sans-serif; background: #f0f4f3; margin: 0; padding: 0; overflow-x: hidden; }
-    .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
-    
-    /* القائمة الجانبية المفقودة في الجوال */
-    .sidebar { 
-      position: fixed; top: 0; right: -280px; width: 280px; height: 100vh; 
-      background: #004b47; color: white; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-      z-index: 2000; padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.3);
-    }
-    .sidebar.open { right: 0; }
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; z-index: 1500; backdrop-filter: blur(4px); }
-    .overlay.show { display: block; }
-
-    .card { background: white; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e5eef0; }
-    
-    /* دائرة التقدم الذكية */
-    .circle-wrap { position: relative; width: 85px; height: 85px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-    .circle-wrap svg { transform: rotate(-90deg); width: 85px; height: 85px; }
-    .circle-wrap circle { fill: none; stroke-width: 8; stroke-linecap: round; }
-    .c-bg { stroke: #f1f5f9; }
-    
-    .nav-btn { padding: 14px 18px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; font-weight: 700; color: rgba(255,255,255,0.6); }
-    .nav-btn.active { background: rgba(255,255,255,0.1); color: #d1ba89; border-right: 4px solid #d1ba89; }
-    
-    .indicator-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px; }
-    .en-nums { font-family: sans-serif; font-weight: bold; }
-    
-    /* تنسيق السجل: [زر يمين] [نسبة وسط] [معلومات يسار] */
-    .row-fix { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-    .info-l { text-align: left; flex: 1; order: 3; }
-    .score-c { text-align: center; width: 80px; order: 2; border-left: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; margin: 0 10px; }
-    .btn-r { order: 1; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERRA Pro - نظام إدارة الجودة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; bg-gray-50; }
+        .sidebar-active { border-right: 4px solid #10b981; background: rgba(16, 185, 129, 0.1); }
+    </style>
 </head>
-<body>
-  <div id="root"></div>
+<body class="bg-gray-100 text-gray-800">
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+    <!-- القائمة الجانبية للهاتف (Bottom Navigation) -->
+    <nav class="fixed bottom-0 w-full bg-[#004d40] text-white flex justify-around p-3 md:hidden z-50 rounded-t-2xl shadow-2xl">
+        <button class="flex flex-col items-center text-green-400">
+            <span>🏠</span>
+            <span class="text-[10px]">الرئيسية</span>
+        </button>
+        <button class="flex flex-col items-center text-gray-400">
+            <span>📋</span>
+            <span class="text-[10px]">المهام</span>
+        </button>
+        <button class="flex flex-col items-center text-gray-400">
+            <span>⚠️</span>
+            <span class="text-[10px]">بلاغات</span>
+        </button>
+        <button class="flex flex-col items-center text-gray-400">
+            <span>📊</span>
+            <span class="text-[10px]">تقارير</span>
+        </button>
+    </nav>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
-      authDomain: "verra-system-828f2.firebaseapp.com",
-      projectId: "verra-system-828f2",
-      storageBucket: "verra-system-828f2.firebasestorage.app",
-      messagingSenderId: "961104891607",
-      appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
-
-    const toEnNums = (str) => str ? str.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : "";
-
-    // مكون الدائرة الملونة
-    const Gauge = ({ score }) => {
-      const r = 35; const c = 2 * Math.PI * r;
-      const offset = c - (score / 100) * c;
-      const color = score >= 90 ? '#10b981' : score >= 70 ? '#f59e0b' : '#ef4444';
-      return (
-        <div className="circle-wrap">
-          <svg><circle className="c-bg" cx="42.5" cy="42.5" r={r}/><circle cx="42.5" cy="42.5" r={r} stroke={color} strokeDasharray={c} strokeDashoffset={offset}/></svg>
-          <span className="absolute font-black text-sm" style={{color}}>{score}%</span>
+    <!-- الهيدر العلوي -->
+    <header class="bg-[#004d40] p-6 pb-20 rounded-b-[40px] shadow-lg text-white">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h1 class="text-2xl font-bold">VERRA <span class="text-green-400 text-sm">PRO</span></h1>
+                <p class="text-xs opacity-70">أهلاً، رمزي الشريف</p>
+            </div>
+            <div class="w-10 h-10 bg-green-500 rounded-full border-2 border-white flex items-center justify-center font-bold">R</div>
         </div>
-      );
-    };
+    </header>
 
-    const buildReportHTML = (branch, email, location, score, answers, notes, photos, signature) => {
-        const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
-        return `<div style="width:750px; padding:40px; direction:rtl; text-align:right;"><img src="${LOGO_URL}" style="height:100px; display:block; margin:0 auto;" /><h1 style="text-align:center; color:#004b47; font-weight:900;">تقرير الجودة</h1><div style="background:#f8fafc; padding:20px; border-radius:15px; border:1px solid #ddd;"><p><b>🏢 المنشأة:</b> ${branch}</p><p><b>👤 المفتش:</b> ${email}</p><p><b>📈 النتيجة:</b> ${score}%</p></div><img src="${signature}" style="width:200px; border-bottom:2px solid #004b47; margin-top:20px" /></div>`;
-    };
-
-    function App() {
-      const [reports, setReports] = useState([]);
-      const [branches, setBranches] = useState([]);
-      const [activeTab, setActiveTab] = useState("overview");
-      const [menuOpen, setMenuOpen] = useState(false);
-      const [loading, setLoading] = useState(true);
-      const chartInstance = useRef(null);
-
-      useEffect(() => {
-        db.collection("inspections").orderBy("timestamp", "desc").onSnapshot(snap => setReports(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-        db.collection("branches").onSnapshot(snap => { setBranches(snap.docs.map(d => ({id: d.id, ...d.data()}))); setLoading(false); });
-      }, []);
-
-      useEffect(() => {
-        if (activeTab === "overview" && reports.length > 0) {
-          const ctx = document.getElementById('mainChart');
-          if (ctx) {
-            if (chartInstance.current) chartInstance.current.destroy();
-            chartInstance.current = new Chart(ctx, { 
-              type: 'bar', 
-              data: { 
-                labels: reports.slice(0, 4).map(r => r.branch ? r.branch.substring(0,10) : 'Branch'), 
-                datasets: [{ label: 'الالتزام %', data: reports.slice(0, 4).map(r => r.score), backgroundColor: '#004b47', borderRadius: 10 }] 
-              },
-              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-          }
-        }
-      }, [reports, activeTab]);
-
-      if (loading) return <div className="h-screen flex items-center justify-center font-black text-green-900 animate-pulse text-2xl tracking-tighter">VERRA CLOUD...</div>;
-
-      return (
-        <div className="min-h-screen">
-           <div className={`overlay ${menuOpen?'show':''}`} onClick={()=>setMenuOpen(false)}></div>
-           <aside className={`sidebar ${menuOpen?'open':''}`}>
-              <div className="flex justify-between items-center mb-10"><img src={LOGO_URL} className="h-12" /><button onClick={()=>setMenuOpen(false)} className="text-2xl">✕</button></div>
-              <nav>
-                 <div onClick={()=>{setActiveTab("overview"); setMenuOpen(false);}} className={`nav-btn ${activeTab==='overview'?'active':''}`}>🏠 نظرة عامة</div>
-                 <div onClick={()=>{setActiveTab("reports"); setMenuOpen(false);}} className={`nav-btn ${activeTab==='reports'?'active':''}`}>📋 سجل التقارير</div>
-                 <div onClick={()=>{setActiveTab("setup"); setMenuOpen(false);}} className={`nav-btn ${activeTab==='setup'?'active':''}`}>🏢 إدارة الفروع</div>
-              </nav>
-              <div className="absolute bottom-10 right-6 left-6 border-t border-white/10 pt-6"><a href="index.html" className="text-gold-text font-bold text-xs uppercase tracking-widest">⬅️ العودة للميدان</a></div>
-           </aside>
-
-           <header className="verra-gradient p-6 flex justify-between items-center shadow-xl rounded-b-[2.5rem]">
-              <button onClick={()=>setMenuOpen(true)} className="bg-white/10 p-3 rounded-2xl text-white"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
-              <img src={LOGO_URL} className="h-12" /><div className="w-10"></div>
-           </header>
-
-           <main className="p-4 max-w-2xl mx-auto -mt-6">
-              {activeTab === "overview" && (
-                <div className="animate-in fade-in duration-500">
-                   <div className="grid grid-cols-2 gap-4 mb-6 text-right">
-                      <div className="card p-5 border-r-8 border-blue-500"><p className="text-gray-400 font-bold text-[10px] uppercase">الزيارات</p><p className="text-3xl font-black">{reports.length}</p></div>
-                      <div className="card p-5 border-r-8 border-green-500"><p className="text-gray-400 font-bold text-[10px] uppercase">الجودة</p><p className="text-3xl font-black text-green-600">{reports.length > 0 ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) : 0}%</p></div>
-                   </div>
-                   <div className="card p-5 mb-8 text-right"><h3 className="font-bold text-xs text-gray-400 mb-4 uppercase">تحليل أداء الوحدات</h3><div style={{height: '180px'}}><canvas id="mainChart"></canvas></div></div>
-                   <h2 className="font-black text-lg text-green-950 mb-4 px-2">الوحدات الميدانية:</h2>
-                   <div className="grid grid-cols-2 gap-4">
-                      {branches.map(b => {
-                        const last = reports.find(r => r.branch === b.name) || {score:0};
-                        return (
-                          <div key={b.id} className="card p-5 text-center">
-                             <h2 className="font-black text-green-900 text-sm truncate mb-3">{b.name}</h2>
-                             <Gauge score={last.score} />
-                             <div className="mt-4 pt-4 border-t border-gray-50 space-y-1">
-                                <div className="flex items-center text-[10px] font-bold text-gray-400"><span className="indicator-dot bg-green-500"></span> HACCP</div>
-                                <div className="flex items-center text-[10px] font-bold text-gray-400"><span className="indicator-dot bg-green-500"></span> Monitoring</div>
-                             </div>
-                          </div>
-                        )
-                      })}
-                   </div>
-                </div>
-              )}
-
-              {activeTab === "reports" && (
-                <div className="animate-in slide-in-from-left">
-                   <h2 className="font-black text-xl text-green-950 mb-6 px-2">سجل التقارير:</h2>
-                   {reports.map(rep => (
-                     <div key={rep.id} className="card p-4 row-fix bg-white mb-4 border-r-8 border-green-800">
-                        <div className="btn-r"><button onClick={() => {
-                           const html = buildReportHTML(rep.branch, rep.inspector, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
-                           html2pdf().from(html).set({margin:0, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2, useCORS:true, scrollY:0}, jsPDF:{unit:'mm', format:'a4'}}).save();
-                        }} className="bg-blue-50 p-2.5 rounded-xl text-blue-600 shadow-sm"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button></div>
-                        <div className="score-c"><span className="text-xl font-black text-green-700">{rep.score}%</span></div>
-                        <div className="info-l">
-                           <p className="font-bold text-green-950 text-[13px] mb-1 truncate">{rep.branch}</p>
-                           <p className="text-[9px] text-gray-400 font-bold en-nums">📅 {toEnNums(rep.date)} <br/> 👤 {rep.inspector.split('@')[0]}</p>
-                        </div>
-                     </div>
-                   ))}
-                </div>
-              )}
-           </main>
+    <!-- المحتوى الرئيسي -->
+    <main class="px-4 -mt-12 mb-24">
+        
+        <!-- كروت الملخص السريع -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-3xl shadow-sm border-b-4 border-green-500">
+                <p class="text-gray-400 text-xs">نسبة الجودة</p>
+                <h2 class="text-2xl font-bold text-green-600">88%</h2>
+            </div>
+            <div class="bg-white p-4 rounded-3xl shadow-sm border-b-4 border-orange-500">
+                <p class="text-gray-400 text-xs">مهام معلقة</p>
+                <h2 class="text-2xl font-bold text-orange-600">5</h2>
+            </div>
         </div>
-      );
-    }
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+
+        <!-- قسم العمليات اليومية (الجديد) -->
+        <h3 class="font-bold mb-3 flex justify-between items-center px-1">
+            <span>العمليات الميدانية</span>
+            <span class="text-xs text-green-600">عرض الكل</span>
+        </h3>
+        
+        <div class="space-y-3">
+            <!-- مهمة 1 -->
+            <div class="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border-r-4 border-blue-500">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🌡️</span>
+                    <div>
+                        <p class="font-bold text-sm">سجل درجات الحرارة</p>
+                        <p class="text-[10px] text-gray-400">فرع مكة - منذ ساعتين</p>
+                    </div>
+                </div>
+                <button class="bg-blue-100 text-blue-600 text-[10px] px-3 py-1 rounded-full font-bold">بدء الآن</button>
+            </div>
+
+            <!-- مهمة 2 -->
+            <div class="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border-r-4 border-purple-500">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🧹</span>
+                    <div>
+                        <p class="font-bold text-sm">جدول التنظيف الدوري</p>
+                        <p class="text-[10px] text-gray-400">فرع أبحر - لم يكتمل</p>
+                    </div>
+                </div>
+                <button class="bg-purple-100 text-purple-600 text-[10px] px-3 py-1 rounded-full font-bold">بدء الآن</button>
+            </div>
+        </div>
+
+        <!-- قسم التحليل -->
+        <div class="mt-8 bg-white p-4 rounded-3xl shadow-sm">
+            <h3 class="font-bold mb-4">أداء الفروع الأسبوعي</h3>
+            <div class="flex items-end justify-between h-32 gap-2 px-2">
+                <div class="bg-green-500 w-full rounded-t-lg" style="height: 80%"></div>
+                <div class="bg-green-600 w-full rounded-t-lg" style="height: 50%"></div>
+                <div class="bg-green-400 w-full rounded-t-lg" style="height: 95%"></div>
+                <div class="bg-green-700 w-full rounded-t-lg" style="height: 40%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] mt-2 text-gray-400 text-center">
+                <span class="w-full">مكة</span>
+                <span class="w-full">أبحر</span>
+                <span class="w-full">التحلية</span>
+                <span class="w-full">الخالدية</span>
+            </div>
+        </div>
+
+    </main>
+
 </body>
 </html>
