@@ -3,197 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VERRA Pro - النظام الذكي</title>
+    <title>VERRA Pro - نظام التتبع المتكامل</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         .page { transition: 0.3s; }
         .hidden { display: none; }
-        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        .critical-pulse { animation: pulse-red 2s infinite; }
+        @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .animate-slide-up { animation: slide-up 0.3s ease-out; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-24">
+<body class="bg-gray-50 text-gray-800 pb-28">
 
     <!-- الصفحة الرئيسية -->
     <div id="dashboardPage" class="page">
         <header class="bg-[#004d40] p-8 pb-20 rounded-b-[45px] text-white shadow-lg relative">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-2xl font-bold italic">VERRA <span class="text-green-400 text-xs">AI</span></h1>
-                    <p class="text-[10px] opacity-70 italic font-bold">مرحبًا بك، رمزي الشريف</p>
+                    <h1 class="text-2xl font-bold">VERRA <span class="text-green-400 text-xs italic">SYSTEM</span></h1>
+                    <p class="text-[10px] opacity-70">أهلاً بك في نظام الإدارة الذكي</p>
                 </div>
-                <div class="relative">
-                    <span id="alertBadge" class="absolute -top-1 -right-1 bg-red-500 text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#004d40] hidden">0</span>
-                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center font-bold shadow-inner border border-white/20">R</div>
-                </div>
+                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center font-bold border-2 border-white/20 shadow-xl">R</div>
             </div>
         </header>
 
         <main class="px-5 -mt-12 relative z-10">
-            <!-- كروت الإحصائيات -->
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-white p-5 rounded-[30px] shadow-sm border-b-4 border-green-500">
-                    <p class="text-gray-400 text-[10px] font-bold">الفروع</p>
+                <div class="bg-white p-5 rounded-[30px] shadow-sm border-b-4 border-green-500 text-center">
+                    <p class="text-gray-400 text-[10px] font-bold">إجمالي الفروع</p>
                     <h2 id="branchStats" class="text-3xl font-bold text-green-600">0</h2>
                 </div>
-                <div id="alertCard" class="bg-white p-5 rounded-[30px] shadow-sm border-b-4 border-gray-200 transition-all">
-                    <p class="text-gray-400 text-[10px] font-bold">بلاغات حرجة</p>
-                    <h2 id="alertCount" class="text-3xl font-bold text-gray-400">0</h2>
+                <div onclick="navigateTo('tracePage')" class="bg-white p-5 rounded-[30px] shadow-sm border-b-4 border-blue-500 text-center">
+                    <p class="text-gray-400 text-[10px] font-bold">مواد مخزنة</p>
+                    <h2 id="traceCount" class="text-3xl font-bold text-blue-600">0</h2>
                 </div>
             </div>
 
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-gray-700">العمليات العاجلة</h3>
-                <button onclick="openModal('سجل حرارة')" class="bg-blue-600 text-white text-[10px] px-5 py-2 rounded-xl font-bold shadow-lg shadow-blue-100">فحص الآن +</button>
-            </div>
-
-            <div id="recentActivity" class="space-y-4">
-                <!-- النشاط الأخير سيظهر هنا -->
+            <h3 class="font-bold text-gray-700 mb-4 px-1">العمليات السريعة</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <div class="bg-white p-5 rounded-3xl flex items-center justify-between shadow-sm border-r-[10px] border-blue-500">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl">🌡️</span>
+                        <div><p class="font-bold text-sm">فحص الحرارة</p><p class="text-[9px] text-gray-400 font-bold">نقطة CCP</p></div>
+                    </div>
+                    <button onclick="openModal('سجل الحرارة')" class="bg-blue-600 text-white text-[10px] px-5 py-2 rounded-xl font-bold">بدء</button>
+                </div>
+                <div class="bg-white p-5 rounded-3xl flex items-center justify-between shadow-sm border-r-[10px] border-orange-500">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl">📦</span>
+                        <div><p class="font-bold text-sm">استلام شحنة</p><p class="text-[9px] text-gray-400 font-bold">وحدة التتبع</p></div>
+                    </div>
+                    <button onclick="openModal('تتبع شحنة')" class="bg-orange-600 text-white text-[10px] px-5 py-2 rounded-xl font-bold">استلام</button>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- صفحات أخرى (مخفية) -->
-    <div id="reportsPage" class="page hidden px-5 pt-10"><h2 class="text-2xl font-bold mb-6">سجل التقارير</h2><div id="reportsList" class="space-y-4"></div></div>
+    <!-- صفحة التتبع (جديدة) -->
+    <div id="tracePage" class="page hidden px-5 pt-10">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">سجل تتبع المواد</h2>
+            <button onclick="openModal('تتبع شحنة')" class="bg-orange-600 text-white px-4 py-2 rounded-xl text-xs font-bold">إضافة شحنة +</button>
+        </div>
+        <div id="traceList" class="space-y-4">
+            <!-- قائمة المواد ستظهر هنا -->
+        </div>
+    </div>
+
+    <!-- بقية الصفحات: السجل والفروع -->
+    <div id="reportsPage" class="page hidden px-5 pt-10"><h2 class="text-2xl font-bold mb-6 italic">سجل العمليات</h2><div id="reportsList" class="space-y-4"></div></div>
     <div id="branchesPage" class="page hidden px-5 pt-10">
-        <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold">الفروع</h2><button onclick="addNewBranch()" class="bg-[#004d40] text-white px-4 py-2 rounded-xl text-xs font-bold">+ إضافة</button></div>
+        <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold italic">إدارة الفروع</h2><button onclick="addB()" class="bg-[#004d40] text-white px-4 py-2 rounded-xl text-xs font-bold">جديد +</button></div>
         <div id="branchesList" class="space-y-4"></div>
     </div>
 
-    <!-- القائمة السفلية -->
+    <!-- القائمة السفلية المحدثة -->
     <nav class="fixed bottom-0 w-full bg-[#004d40] text-white flex justify-around p-4 z-50 rounded-t-[40px] shadow-2xl">
         <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-green-400"><span class="text-xl">🏠</span><span class="text-[9px] font-bold">الرئيسية</span></button>
-        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-xl">📋</span><span class="text-[9px] font-bold">السجل</span></button>
+        <button onclick="navigateTo('tracePage')" id="nav-trace" class="flex flex-col items-center text-white/40"><span class="text-xl">📦</span><span class="text-[9px] font-bold">التتبع</span></button>
+        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-xl">📊</span><span class="text-[9px] font-bold">السجل</span></button>
         <button onclick="navigateTo('branchesPage')" id="nav-branches" class="flex flex-col items-center text-white/40"><span class="text-xl">🏢</span><span class="text-[9px] font-bold">الفروع</span></button>
     </nav>
 
-    <!-- مودال التسجيل -->
+    <!-- النافذة المنبثقة (المودال) الذكية -->
     <div id="logModal" class="fixed inset-0 bg-black/70 z-[60] hidden flex items-end">
-        <div class="bg-white w-full rounded-t-[45px] p-8 animate-slide-up shadow-2xl">
-            <div class="w-16 h-1.5 bg-gray-200 rounded-full mx-auto mb-8"></div>
-            <h3 class="text-2xl font-bold mb-8 text-center text-gray-800" id="modalTitle">تسجيل القراءة</h3>
+        <div class="bg-white w-full rounded-t-[45px] p-8 animate-slide-up shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="w-16 h-1 bg-gray-200 rounded-full mx-auto mb-8"></div>
+            <h3 class="text-xl font-bold mb-8 text-center" id="modalTitle">تسجيل بيانات</h3>
             
-            <div class="space-y-6 mb-10">
-                <select id="branchSelect" class="w-full bg-gray-50 p-4 rounded-2xl outline-none border-2 border-gray-100 font-bold"></select>
-                <input type="number" id="tempInput" placeholder="0 °C" class="w-full bg-gray-50 p-5 rounded-3xl text-4xl font-bold text-center outline-none border-2 border-gray-100 focus:border-green-500">
-                <div class="bg-blue-50 p-5 rounded-3xl flex items-center justify-between border-2 border-blue-100 relative">
-                     <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleImage(this)">
-                     <div id="preview" class="hidden absolute inset-0 bg-white p-2 rounded-3xl flex items-center justify-between">
-                         <img id="imgView" class="h-full rounded-xl object-cover">
-                         <button onclick="resetCam()" class="text-xs text-red-500 font-bold ml-2">حذف ❌</button>
-                     </div>
-                     <p class="text-xs font-bold text-blue-900">صورة التوثيق الإلزامية</p>
-                     <button onclick="document.getElementById('cameraInput').click()" class="bg-blue-600 text-white p-3 rounded-2xl">📷</button>
-                </div>
+            <div id="modalContent" class="space-y-5 mb-8">
+                <!-- المحتوى يتغير ديناميكياً بناءً على نوع العملية -->
             </div>
 
             <div class="flex gap-4">
                 <button onclick="closeModal()" class="flex-1 p-5 rounded-3xl bg-gray-100 text-gray-400 font-bold">إلغاء</button>
-                <button onclick="submitData()" class="flex-1 p-5 rounded-3xl bg-green-600 text-white font-bold shadow-lg">حفظ وإرسال</button>
+                <button onclick="saveEntry()" class="flex-1 p-5 rounded-3xl bg-green-600 text-white font-bold shadow-lg">حفظ البيانات</button>
             </div>
         </div>
     </div>
 
     <script>
-        let branches = JSON.parse(localStorage.getItem('verra_branches')) || [];
-        let reports = JSON.parse(localStorage.getItem('verra_reports')) || [];
+        let branches = JSON.parse(localStorage.getItem('v_branches')) || [];
+        let reports = JSON.parse(localStorage.getItem('v_reports')) || [];
+        let items = JSON.parse(localStorage.getItem('v_items')) || [];
 
-        function navigateTo(pId) {
+        function navigateTo(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById(pId).classList.remove('hidden');
+            document.getElementById(id).classList.remove('hidden');
             document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-green-400', 'text-white/40'));
-            document.getElementById('nav-' + pId.replace('Page','')).classList.replace('text-white/40', 'text-green-400');
-            if(pId === 'branchesPage') renderBranches();
-            if(pId === 'reportsPage') renderReports();
+            document.getElementById('nav-' + id.replace('Page','')).classList.replace('text-white/40', 'text-green-400');
+            if(id === 'tracePage') renderTrace();
+            if(id === 'branchesPage') renderBranches();
+            if(id === 'reportsPage') renderReports();
         }
 
-        function addNewBranch() {
-            let n = prompt("اسم الفرع:");
-            if(n) { branches.push({id: Date.now(), name: n}); localStorage.setItem('verra_branches', JSON.stringify(branches)); renderBranches(); updateStats(); }
-        }
-
-        function renderBranches() {
-            document.getElementById('branchesList').innerHTML = branches.map(b => `
-                <div class="bg-white p-5 rounded-3xl shadow-sm flex justify-between border-r-8 border-[#004d40]">
-                    <span class="font-bold">${b.name}</span>
-                    <button onclick="deleteB(${b.id})" class="text-red-400">🗑️</button>
-                </div>`).join('');
-        }
-
-        function deleteB(id) { branches = branches.filter(x => x.id !== id); localStorage.setItem('verra_branches', JSON.stringify(branches)); renderBranches(); updateStats(); }
-
-        function openModal(t) {
-            if(!branches.length) return alert("أضف فرعاً أولاً!");
-            document.getElementById('modalTitle').innerText = t;
-            document.getElementById('branchSelect').innerHTML = branches.map(b => `<option>${b.name}</option>`).join('');
+        function openModal(type) {
+            const content = document.getElementById('modalContent');
+            document.getElementById('modalTitle').innerText = type;
+            
+            if(type === 'تتبع شحنة') {
+                content.innerHTML = `
+                    <input type="text" id="itemName" placeholder="اسم المنتج (مثلاً: صدور دجاج)" class="w-full bg-gray-50 p-4 rounded-2xl border-2 border-gray-100 font-bold">
+                    <input type="text" id="supplier" placeholder="اسم المورد" class="w-full bg-gray-50 p-4 rounded-2xl border-2 border-gray-100 font-bold">
+                    <label class="text-xs font-bold text-gray-400 mr-1">تاريخ انتهاء الصلاحية</label>
+                    <input type="date" id="expDate" class="w-full bg-gray-50 p-4 rounded-2xl border-2 border-gray-100 font-bold">
+                `;
+            } else {
+                content.innerHTML = `
+                    <select id="bSel" class="w-full bg-gray-50 p-4 rounded-2xl border-2 border-gray-100 font-bold italic">
+                        ${branches.map(b => `<option>${b.name}</option>`).join('')}
+                    </select>
+                    <input type="number" id="tVal" placeholder="القراءة الرقمية" class="w-full bg-gray-50 p-5 rounded-3xl text-3xl font-bold text-center border-2 border-gray-100 focus:border-green-500">
+                `;
+            }
             document.getElementById('logModal').classList.remove('hidden');
         }
 
-        function handleImage(i) { if(i.files[0]) { let r = new FileReader(); r.onload=e=>{document.getElementById('imgView').src=e.target.result; document.getElementById('preview').classList.remove('hidden');}; r.readAsDataURL(i.files[0]); } }
-        function resetCam() { document.getElementById('cameraInput').value=""; document.getElementById('preview').classList.add('hidden'); }
-        function closeModal() { document.getElementById('logModal').classList.add('hidden'); resetCam(); document.getElementById('tempInput').value=""; }
+        function saveEntry() {
+            const type = document.getElementById('modalTitle').innerText;
+            if(type === 'تتبع شحنة') {
+                const n = document.getElementById('itemName').value;
+                const s = document.getElementById('supplier').value;
+                const d = document.getElementById('expDate').value;
+                if(!n || !d) return alert("أكمل البيانات!");
+                items.unshift({name: n, supplier: s, expiry: d, id: Date.now()});
+                localStorage.setItem('v_items', JSON.stringify(items));
+            } else {
+                const v = document.getElementById('tVal').value;
+                const b = document.getElementById('bSel').value;
+                if(!v) return alert("أدخل القيمة!");
+                reports.unshift({branch: b, value: v, date: new Date().toLocaleString('ar-SA')});
+                localStorage.setItem('v_reports', JSON.stringify(reports));
+            }
+            alert("تم الحفظ بنجاح!"); closeModal(); updateStats();
+        }
 
-        function submitData() {
-            let v = parseFloat(document.getElementById('tempInput').value);
-            let b = document.getElementById('branchSelect').value;
-            let img = document.getElementById('imgView').src;
-            if(isNaN(v) || !img) return alert("أكمل البيانات والصورة!");
+        function renderTrace() {
+            document.getElementById('traceList').innerHTML = items.length === 0 ? '<p class="text-center text-gray-400 py-10 italic">لا توجد مواد مخزنة بعد..</p>' :
+            items.map(i => `
+                <div class="bg-white p-5 rounded-3xl shadow-sm border-r-8 border-orange-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-bold text-gray-800">${i.name}</p>
+                            <p class="text-[10px] text-gray-400">المورد: ${i.supplier}</p>
+                        </div>
+                        <span class="text-[10px] bg-orange-100 text-orange-600 px-2 py-1 rounded-lg font-bold italic">ينتهي: ${i.expiry}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-            let isCritical = v > 5;
-            if(isCritical) { if(!confirm("⚠️ تحذير: الحرارة خارج النطاق الآمن! هل قمت بإبلاغ الإدارة؟")) return; }
-
-            reports.unshift({ branch: b, value: v, isCritical: isCritical, date: new Date().toLocaleString('ar-SA'), img: img });
-            localStorage.setItem('verra_reports', JSON.stringify(reports));
-            alert(isCritical ? "تم تسجيل مخالفة حرجة!" : "تم الحفظ بنجاح ✅");
-            closeModal();
-            updateStats();
+        function renderBranches() {
+            document.getElementById('branchesList').innerHTML = branches.map(b => `<div class="bg-white p-5 rounded-3xl shadow-sm border-r-8 border-[#004d40] font-bold">${b.name}</div>`).join('');
         }
 
         function renderReports() {
-            document.getElementById('reportsList').innerHTML = reports.map(r => `
-                <div class="bg-white p-4 rounded-3xl shadow-sm border-r-8 ${r.isCritical ? 'border-red-500' : 'border-green-500'}">
-                    <div class="flex gap-3">
-                        <img src="${r.img}" class="w-12 h-12 rounded-xl object-cover border">
-                        <div>
-                            <p class="font-bold text-sm">${r.branch}</p>
-                            <p class="text-[9px] text-gray-400">${r.date}</p>
-                            <p class="text-xs font-bold ${r.isCritical ? 'text-red-500' : 'text-green-600'}">الحرارة: ${r.value}°C</p>
-                        </div>
-                    </div>
-                </div>`).join('');
+            document.getElementById('reportsList').innerHTML = reports.map(r => `<div class="bg-white p-4 rounded-2xl shadow-sm border-r-4 border-blue-500 font-bold text-xs">${r.branch}: ${r.value} | ${r.date}</div>`).join('');
         }
 
+        function addB() { let n = prompt("الفرع:"); if(n) { branches.push({name: n}); localStorage.setItem('v_branches', JSON.stringify(branches)); updateStats(); renderBranches(); } }
+        function closeModal() { document.getElementById('logModal').classList.add('hidden'); }
         function updateStats() {
-            let crits = reports.filter(r => r.isCritical).length;
             document.getElementById('branchStats').innerText = branches.length;
-            document.getElementById('alertCount').innerText = crits;
-            document.getElementById('alertBadge').innerText = crits;
-            document.getElementById('alertBadge').style.display = crits > 0 ? 'flex' : 'none';
-            
-            let card = document.getElementById('alertCard');
-            if(crits > 0) {
-                card.classList.replace('border-gray-200', 'border-red-500');
-                card.classList.add('critical-pulse');
-                document.getElementById('alertCount').classList.replace('text-gray-400', 'text-red-600');
-            } else {
-                card.className = "bg-white p-5 rounded-[30px] shadow-sm border-b-4 border-gray-200 transition-all";
-                document.getElementById('alertCount').classList.replace('text-red-600', 'text-gray-400');
-            }
-
-            // عرض آخر تقرير في الرئيسية
-            if(reports.length > 0) {
-                let r = reports[0];
-                document.getElementById('recentActivity').innerHTML = `
-                    <div class="bg-white p-5 rounded-[30px] shadow-sm flex justify-between items-center border-l-4 ${r.isCritical ? 'border-red-500' : 'border-green-500'}">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl">${r.isCritical ? '🚨' : '✅'}</span>
-                            <div><p class="font-bold text-xs">${r.branch}</p><p class="text-[9px] text-gray-400">آخر فحص: ${r.value}°C</p></div>
-                        </div>
-                        <button onclick="navigateTo('reportsPage')" class="text-[10px] text-blue-500 font-bold">التفاصيل ⮕</button>
-                    </div>`;
-            }
+            document.getElementById('traceCount').innerText = items.length;
         }
 
         updateStats();
