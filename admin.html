@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VERRA PRO - لوحة التحكم الإدارية</title>
+  <title>نظام VERRA PRO - مركز القيادة</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -11,34 +11,37 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f9fafb; margin: 0; display: flex; }
-    .sidebar { width: 280px; background: #004b47; height: 100vh; position: fixed; right: 0; top: 0; color: white; padding: 20px; z-index: 1000; }
-    .main-content { margin-right: 280px; width: calc(100% - 280px); padding: 40px; min-height: 100vh; transition: 0.3s; }
+    body { font-family: 'Cairo', sans-serif; background: #f8fafc; margin: 0; padding: 0; }
+    .sidebar { width: 280px; background: #004b47; height: 100vh; position: fixed; right: 0; top: 0; color: white; padding: 20px; z-index: 1000; border-left: 1px solid rgba(255,255,255,0.1); }
+    .main-area { margin-right: 280px; padding: 40px; min-height: 100vh; }
     
-    .unit-card { background: white; border-radius: 20px; padding: 30px; border: 1px solid #e5e7eb; transition: 0.3s; position: relative; }
-    .unit-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+    /* بطاقة الوحدة المستوحاة من FoodDocs */
+    .unit-card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: 0.3s; position: relative; overflow: hidden; }
+    .unit-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
     
-    .circle-gauge { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; margin: 20px auto; font-weight: 900; font-size: 22px; }
-    .circle-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
-    .circle-bg { fill: none; stroke: #f3f4f6; stroke-width: 8; }
-    .circle-progress { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s ease-in-out; }
+    /* الدائرة الملونة */
+    .progress-circle { position: relative; width: 110px; height: 110px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; }
+    .progress-circle svg { transform: rotate(-90deg); width: 110px; height: 110px; }
+    .progress-circle circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+    .circle-bg { stroke: #f1f5f9; }
     
-    .nav-link { padding: 14px 20px; border-radius: 12px; cursor: pointer; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; font-weight: 600; opacity: 0.7; }
-    .nav-link:hover { background: rgba(255,255,255,0.1); opacity: 1; }
-    .nav-link.active { background: #10b981; opacity: 1; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-    
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px; }
-    .indicator-item { display: flex; align-items: center; font-size: 13px; color: #6b7280; margin-bottom: 8px; }
+    .nav-btn { padding: 15px 20px; border-radius: 16px; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; font-weight: 700; transition: 0.2s; color: rgba(255,255,255,0.7); }
+    .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+    .nav-btn.active { background: #10b981; color: white; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); }
+
+    .indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-left: 10px; }
 
     @media (max-width: 1024px) {
       .sidebar { display: none; }
-      .main-content { margin-right: 0; width: 100%; padding: 20px; }
+      .main-area { margin-right: 0; padding: 20px; }
     }
   </style>
 </head>
@@ -61,23 +64,56 @@
     const db = firebase.firestore();
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
 
-    // --- مكون الدائرة الملونة المقتبس من FoodDocs ---
-    const ComplianceCircle = ({ score }) => {
-      const radius = 40;
-      const circumference = 2 * Math.PI * radius;
-      const offset = circumference - (score / 100) * circumference;
+    // البنود كاملة للـ PDF المنسق
+    const sectionsData = [
+      { title: "الاستلام والتخزين", items: [{id:1, q:"فحص درجات حرارة المواد الغذائية الواردة"},{id:2, q:"درجة حرارة المجمدات ≤ -18°م"},{id:10, q:"أماكن التخزين نظيفة وجافة"}]},
+      { title: "تحضير الأغذية", items: [{id:11, q:"مراجعة بروسيس تحضير العجين"},{id:15, q:"منع التلوث الخلطي"},{id:21, q:"ارتداء القفازات"}]},
+      { title: "جودة المنتج", items: [{id:22, q:"جودة قسم الباستا"},{id:23, q:"جودة قسم البيتزا"}]},
+      { title: "النظافة الشخصية", items: [{id:42, q:"زي نظيف وأغطية شعر"},{id:46, q:"خلو من المجوهرات"}]}
+    ];
+
+    // مكون الدائرة الاحترافي بدون مكتبات خارجية (لمنع الـ Crash)
+    const CircleGauge = ({ score }) => {
+      const r = 45;
+      const c = 2 * Math.PI * r;
+      const offset = c - (score / 100) * c;
       const color = score >= 90 ? '#10b981' : score >= 70 ? '#f59e0b' : '#ef4444';
 
       return (
-        <div className="circle-gauge" style={{ color: color }}>
-          <svg className="circle-svg">
-            <circle className="circle-bg" cx="50" cy="50" r={radius} />
-            <circle className="circle-progress" cx="50" cy="50" r={radius} 
-                    stroke={color} strokeDasharray={circumference} strokeDashoffset={offset} />
+        <div className="progress-circle" style={{ color: color }}>
+          <svg>
+            <circle className="circle-bg" cx="55" cy="55" r={r} />
+            <circle cx="55" cy="55" r={r} stroke={color} strokeDasharray={c} strokeDashoffset={offset} />
           </svg>
-          <span className="absolute">{score}%</span>
+          <span className="absolute text-green-950">{score}%</span>
         </div>
       );
+    };
+
+    const buildReportHTML = (branch, email, score, answers, notes, photos, signature) => {
+        const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
+        return `
+          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right;">
+            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
+              <img src="${LOGO_URL}" style="height: 100px; display: block; margin: 0 auto 10px;" />
+              <h1 style="color: #004b47; font-size: 30px; margin: 0; font-weight: 900;">تقرير فحص الجودة والسلامة الغذائية</h1>
+            </div>
+            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
+              <div style="flex: 1; text-align: right; line-height: 2">
+                <p>🏢 المنشأة: ${branch}</p>
+                <p>👤 المفتش: ${email}</p>
+                <p>📅 التاريخ: ${new Date().toLocaleDateString('ar-EG')}</p>
+              </div>
+              <div style="text-align: center; border-right: 2px solid #ddd; padding-right: 30px;">
+                <div style="font-size: 42px; font-weight: 900; color: ${scoreColor}">${score}%</div>
+              </div>
+            </div>
+            <div style="margin-top: 50px; text-align: center;">
+               <img src="${signature}" style="width: 200px; border-bottom: 2px solid #004b47" />
+               <p>توقيع المفتش المعتمد</p>
+            </div>
+          </div>
+        `;
     };
 
     function App() {
@@ -100,56 +136,46 @@
         return lastRep || { score: 0, date: 'لا يوجد زيارات' };
       };
 
-      if (loading) return <div className="h-screen w-full flex items-center justify-center font-black text-green-900 animate-pulse text-2xl tracking-tighter">جاري تحميل المنظومة...</div>;
+      if (loading) return <div className="h-screen w-full flex items-center justify-center font-black text-green-900 animate-pulse text-2xl tracking-tighter italic">VERRA PRO CLOUD...</div>;
 
       return (
         <div className="flex w-full">
-           {/* Sidebar المستوحى من FoodDocs */}
            <aside className="sidebar shadow-2xl">
-              <div className="text-center mb-10 border-b border-white/10 pb-6">
+              <div className="text-center mb-10 pb-6 border-b border-white/10">
                  <img src={LOGO_URL} className="h-20 mx-auto mb-2" />
-                 <p className="text-[10px] gold-text font-black uppercase tracking-[0.2em]">Management Portal</p>
+                 <p className="text-[10px] gold-text font-black uppercase tracking-widest">Management Dashboard</p>
               </div>
               <nav>
-                 <div onClick={()=>setActiveTab("overview")} className={`nav-link ${activeTab==='overview'?'active':''}`}>🏠 نظرة عامة</div>
-                 <div onClick={()=>setActiveTab("reports")} className={`nav-link ${activeTab==='reports'?'active':''}`}>📋 سجل التقارير</div>
-                 <div onClick={()=>setActiveTab("setup")} className={`nav-link ${activeTab==='setup'?'active':''}`}>⚙️ الإعدادات</div>
+                 <div onClick={()=>setActiveTab("overview")} className={`nav-btn ${activeTab==='overview'?'active':''}`}>🏠 نظرة عامة</div>
+                 <div onClick={()=>setActiveTab("reports")} className={`nav-btn ${activeTab==='reports'?'active':''}`}>📋 سجل التقارير</div>
+                 <div onClick={()=>setActiveTab("setup")} className={`nav-btn ${activeTab==='setup'?'active':''}`}>🏢 إدارة الفروع</div>
               </nav>
            </aside>
 
-           <main className="main-content">
+           <main className="main-area flex-1">
               {activeTab === "overview" && (
-                <div className="animate-in fade-in duration-700">
-                   <header className="flex justify-between items-center mb-12">
-                      <h1 className="text-4xl font-black text-green-950">نظرة عامة / Overview</h1>
-                      <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-100 font-bold text-sm">
-                         إجمالي الفروع النشطة: <span className="text-green-700">{branches.length}</span>
-                      </div>
-                   </header>
-
+                <div className="animate-in fade-in duration-500">
+                   <h1 className="text-3xl font-black text-green-950 mb-10">حالة الوحدات الميدانية</h1>
                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                       {branches.map(b => {
                         const latest = getLatestData(b.name);
                         return (
                           <div key={b.id} className="unit-card">
                              <div className="flex justify-between items-start">
-                                <h2 className="text-xl font-black text-green-900">{b.name}</h2>
-                                <span className="text-[10px] font-bold text-gray-400 uppercase">Unit Card</span>
+                                <h2 className="text-xl font-black text-green-900 leading-tight">{b.name}</h2>
+                                <span className="text-[10px] font-bold text-gray-300 uppercase">Unit</span>
                              </div>
-                             <p className="text-[11px] text-gray-400 font-bold mt-1">آخر زيارة: {latest.date}</p>
+                             <p className="text-[10px] text-gray-400 font-bold mt-1">آخر فحص: {latest.date}</p>
                              
-                             <ComplianceCircle score={latest.score} />
+                             <CircleGauge score={latest.score} />
 
-                             <div className="space-y-1 mt-4">
-                                <div className="indicator-item"><span className="status-dot bg-green-500"></span> HACCP Plan</div>
-                                <div className="indicator-item"><span className="status-dot bg-green-500"></span> Monitoring</div>
-                                <div className="indicator-item"><span className="status-dot bg-yellow-500"></span> Traceability</div>
-                                <div className="indicator-item"><span className="status-dot bg-gray-300"></span> Team</div>
+                             <div className="mt-4 space-y-2">
+                                <div className="flex items-center text-[12px] font-bold text-gray-500"><span className="indicator bg-green-500"></span> HACCP Compliance</div>
+                                <div className="flex items-center text-[12px] font-bold text-gray-500"><span className="indicator bg-green-500"></span> Monitoring Logs</div>
+                                <div className="flex items-center text-[12px] font-bold text-gray-500"><span className="indicator bg-yellow-500"></span> Staff Health Cards</div>
                              </div>
 
-                             <button onClick={()=>setActiveTab("reports")} className="w-full mt-6 py-3 rounded-xl bg-gray-50 text-green-800 font-bold text-xs hover:bg-green-50 transition">
-                                عرض السجل الكامل >
-                             </button>
+                             <button onClick={()=>setActiveTab("reports")} className="w-full mt-6 py-3 rounded-2xl bg-gray-50 text-green-800 font-black text-[11px] uppercase tracking-wider hover:bg-green-100 transition">عرض التفاصيل السحابية</button>
                           </div>
                         );
                       })}
@@ -158,8 +184,25 @@
               )}
 
               {activeTab === "reports" && (
-                <div className="text-center py-20 italic text-gray-400 font-bold">
-                   (سأقوم بإعادة دمج سجل التقارير المنسق هنا في الخطوة القادمة)
+                <div className="animate-in slide-in-from-bottom duration-500">
+                   <h1 className="text-3xl font-black text-green-950 mb-10 text-right">سجل التقارير التاريخي</h1>
+                   <div className="space-y-4">
+                      {reports.map(rep => (
+                        <div key={rep.id} className="card p-5 flex justify-between items-center border-r-8 border-green-800">
+                           <div className="text-right">
+                              <p className="font-black text-green-900 text-lg">{rep.branch}</p>
+                              <p className="text-[11px] text-gray-400 font-bold uppercase">{rep.date} | المفتش: {rep.inspector}</p>
+                           </div>
+                           <div className="flex items-center gap-4">
+                              <span className={`text-xl font-black ${rep.score >= 70 ? 'text-green-600':'text-red-600'}`}>{rep.score}%</span>
+                              <button onClick={() => {
+                                 const html = buildReportHTML(rep.branch, rep.inspector, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
+                                 html2pdf().from(html).set({margin:10, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2, useCORS:true}, jsPDF:{format:'a4'}}).save();
+                              }} className="bg-blue-50 border p-3 rounded-2xl text-blue-600 shadow-sm active:scale-90 transition">📥</button>
+                           </div>
+                        </div>
+                      ))}
+                   </div>
                 </div>
               )}
            </main>
