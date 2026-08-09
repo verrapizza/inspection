@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VERRA PRO - مركز القيادة</title>
+  <title>نظام VERRA PRO - مركز الإدارة والتحليل</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -18,33 +18,38 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f4f7f6; margin: 0; padding: 0; overflow-x: hidden; }
+    body { font-family: 'Cairo', sans-serif; background: #f0f4f3; margin: 0; padding: 0; overflow-x: hidden; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     
-    /* القائمة الجانبية للجوال (Slide-in Menu) */
+    /* القائمة الجانبية المفقودة في الجوال */
     .sidebar { 
       position: fixed; top: 0; right: -280px; width: 280px; height: 100vh; 
       background: #004b47; color: white; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
       z-index: 2000; padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.3);
     }
     .sidebar.open { right: 0; }
-    
-    /* غطاء الشاشة عند فتح المنيو */
-    .overlay { 
-      position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
-      display: none; z-index: 1500; backdrop-filter: blur(4px); 
-    }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; z-index: 1500; backdrop-filter: blur(4px); }
     .overlay.show { display: block; }
 
-    .card { background: white; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-    .report-card { border-right: 8px solid #004b47; }
-    .nav-btn { 
-      padding: 14px 18px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; 
-      display: flex; align-items: center; gap: 12px; font-weight: 700; color: rgba(255,255,255,0.7); 
-    }
-    .nav-btn.active { background: #10b981; color: white; }
+    .card { background: white; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e5eef0; }
     
-    .menu-trigger { background: white; padding: 10px; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    /* دائرة التقدم الذكية */
+    .circle-wrap { position: relative; width: 85px; height: 85px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+    .circle-wrap svg { transform: rotate(-90deg); width: 85px; height: 85px; }
+    .circle-wrap circle { fill: none; stroke-width: 8; stroke-linecap: round; }
+    .c-bg { stroke: #f1f5f9; }
+    
+    .nav-btn { padding: 14px 18px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; font-weight: 700; color: rgba(255,255,255,0.6); }
+    .nav-btn.active { background: rgba(255,255,255,0.1); color: #d1ba89; border-right: 4px solid #d1ba89; }
+    
+    .indicator-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px; }
+    .en-nums { font-family: sans-serif; font-weight: bold; }
+    
+    /* تنسيق السجل: [زر يمين] [نسبة وسط] [معلومات يسار] */
+    .row-fix { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+    .info-l { text-align: left; flex: 1; order: 3; }
+    .score-c { text-align: center; width: 80px; order: 2; border-left: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; margin: 0 10px; }
+    .btn-r { order: 1; }
   </style>
 </head>
 <body>
@@ -66,10 +71,24 @@
     const db = firebase.firestore();
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
 
-    // دالة بناء الـ PDF (نفس التنسيق الموسط المعتمد)
+    const toEnNums = (str) => str ? str.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : "";
+
+    // مكون الدائرة الملونة
+    const Gauge = ({ score }) => {
+      const r = 35; const c = 2 * Math.PI * r;
+      const offset = c - (score / 100) * c;
+      const color = score >= 90 ? '#10b981' : score >= 70 ? '#f59e0b' : '#ef4444';
+      return (
+        <div className="circle-wrap">
+          <svg><circle className="c-bg" cx="42.5" cy="42.5" r={r}/><circle cx="42.5" cy="42.5" r={r} stroke={color} strokeDasharray={c} strokeDashoffset={offset}/></svg>
+          <span className="absolute font-black text-sm" style={{color}}>{score}%</span>
+        </div>
+      );
+    };
+
     const buildReportHTML = (branch, email, location, score, answers, notes, photos, signature) => {
         const scoreColor = score >= 70 ? '#10b981' : '#ef4444';
-        return `<div style="width:750px; padding:40px; direction:rtl; text-align:right;"><img src="${LOGO_URL}" style="height:100px; display:block; margin:0 auto;" /><h1 style="text-align:center; color:#004b47;">تقرير الجودة</h1><div style="background:#f8fafc; padding:20px; border-radius:15px;"><p><b>🏢 المنشأة:</b> ${branch}</p><p><b>👤 المفتش:</b> ${email}</p><p><b>📈 النتيجة:</b> ${score}%</p></div><img src="${signature}" style="width:200px; border-bottom:2px solid #004b47; margin-top:20px" /></div>`;
+        return `<div style="width:750px; padding:40px; direction:rtl; text-align:right;"><img src="${LOGO_URL}" style="height:100px; display:block; margin:0 auto;" /><h1 style="text-align:center; color:#004b47; font-weight:900;">تقرير الجودة</h1><div style="background:#f8fafc; padding:20px; border-radius:15px; border:1px solid #ddd;"><p><b>🏢 المنشأة:</b> ${branch}</p><p><b>👤 المفتش:</b> ${email}</p><p><b>📈 النتيجة:</b> ${score}%</p></div><img src="${signature}" style="width:200px; border-bottom:2px solid #004b47; margin-top:20px" /></div>`;
     };
 
     function App() {
@@ -78,55 +97,48 @@
       const [activeTab, setActiveTab] = useState("overview");
       const [menuOpen, setMenuOpen] = useState(false);
       const [loading, setLoading] = useState(true);
-      const [newBranch, setNewBranch] = useState("");
-      const chartRef = useRef(null);
+      const chartInstance = useRef(null);
 
       useEffect(() => {
         db.collection("inspections").orderBy("timestamp", "desc").onSnapshot(snap => setReports(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-        db.collection("branches").onSnapshot(snap => {
-            setBranches(snap.docs.map(d => ({id: d.id, ...d.data()})));
-            setLoading(false);
-        });
+        db.collection("branches").onSnapshot(snap => { setBranches(snap.docs.map(d => ({id: d.id, ...d.data()}))); setLoading(false); });
       }, []);
 
-      // رسم البياني
       useEffect(() => {
         if (activeTab === "overview" && reports.length > 0) {
-          const ctx = document.getElementById('complianceChart');
+          const ctx = document.getElementById('mainChart');
           if (ctx) {
-            new Chart(ctx, { type: 'bar', data: { labels: reports.slice(0, 3).map(r => r.branch), datasets: [{ data: reports.slice(0, 3).map(r => r.score), backgroundColor: '#004b47', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: false } });
+            if (chartInstance.current) chartInstance.current.destroy();
+            chartInstance.current = new Chart(ctx, { 
+              type: 'bar', 
+              data: { 
+                labels: reports.slice(0, 4).map(r => r.branch ? r.branch.substring(0,10) : 'Branch'), 
+                datasets: [{ label: 'الالتزام %', data: reports.slice(0, 4).map(r => r.score), backgroundColor: '#004b47', borderRadius: 10 }] 
+              },
+              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
           }
         }
       }, [reports, activeTab]);
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-black text-green-900 animate-pulse text-2xl">VERRA DASHBOARD...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-black text-green-900 animate-pulse text-2xl tracking-tighter">VERRA CLOUD...</div>;
 
       return (
         <div className="min-h-screen">
-           {/* القائمة الجانبية المنزلقة للجوال */}
            <div className={`overlay ${menuOpen?'show':''}`} onClick={()=>setMenuOpen(false)}></div>
            <aside className={`sidebar ${menuOpen?'open':''}`}>
-              <div className="flex justify-between items-center mb-10">
-                 <img src={LOGO_URL} className="h-14" />
-                 <button onClick={()=>setMenuOpen(false)} className="text-white text-2xl">✕</button>
-              </div>
+              <div className="flex justify-between items-center mb-10"><img src={LOGO_URL} className="h-12" /><button onClick={()=>setMenuOpen(false)} className="text-2xl">✕</button></div>
               <nav>
                  <div onClick={()=>{setActiveTab("overview"); setMenuOpen(false);}} className={`nav-btn ${activeTab==='overview'?'active':''}`}>🏠 نظرة عامة</div>
                  <div onClick={()=>{setActiveTab("reports"); setMenuOpen(false);}} className={`nav-btn ${activeTab==='reports'?'active':''}`}>📋 سجل التقارير</div>
                  <div onClick={()=>{setActiveTab("setup"); setMenuOpen(false);}} className={`nav-btn ${activeTab==='setup'?'active':''}`}>🏢 إدارة الفروع</div>
               </nav>
-              <div className="absolute bottom-10 right-6 left-6 border-t border-white/10 pt-6">
-                 <a href="index.html" className="flex items-center gap-2 text-gold-text font-bold uppercase tracking-widest text-[11px]">⬅️ العودة للميدان</a>
-              </div>
+              <div className="absolute bottom-10 right-6 left-6 border-t border-white/10 pt-6"><a href="index.html" className="text-gold-text font-bold text-xs uppercase tracking-widest">⬅️ العودة للميدان</a></div>
            </aside>
 
-           {/* الشريط العلوي مع زر المنيو (☰) */}
            <header className="verra-gradient p-6 flex justify-between items-center shadow-xl rounded-b-[2.5rem]">
-              <button onClick={()=>setMenuOpen(true)} className="menu-trigger">
-                 <svg className="w-7 h-7 text-green-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-              </button>
-              <img src={LOGO_URL} className="h-14" />
-              <div className="w-10"></div> {/* موازن مساحة */}
+              <button onClick={()=>setMenuOpen(true)} className="bg-white/10 p-3 rounded-2xl text-white"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+              <img src={LOGO_URL} className="h-12" /><div className="w-10"></div>
            </header>
 
            <main className="p-4 max-w-2xl mx-auto -mt-6">
@@ -136,53 +148,42 @@
                       <div className="card p-5 border-r-8 border-blue-500"><p className="text-gray-400 font-bold text-[10px] uppercase">الزيارات</p><p className="text-3xl font-black">{reports.length}</p></div>
                       <div className="card p-5 border-r-8 border-green-500"><p className="text-gray-400 font-bold text-[10px] uppercase">الجودة</p><p className="text-3xl font-black text-green-600">{reports.length > 0 ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) : 0}%</p></div>
                    </div>
-                   <div className="card p-5 mb-8 text-right">
-                      <h3 className="font-bold text-xs text-gray-500 mb-4">أداء الوحدات الميدانية</h3>
-                      <div style={{height: '200px'}}><canvas id="complianceChart"></canvas></div>
-                   </div>
-                   <h2 className="font-black text-lg text-green-950 mb-4 px-2">الوحدات النشطة:</h2>
+                   <div className="card p-5 mb-8 text-right"><h3 className="font-bold text-xs text-gray-400 mb-4 uppercase">تحليل أداء الوحدات</h3><div style={{height: '180px'}}><canvas id="mainChart"></canvas></div></div>
+                   <h2 className="font-black text-lg text-green-950 mb-4 px-2">الوحدات الميدانية:</h2>
                    <div className="grid grid-cols-2 gap-4">
-                      {branches.map(b => (
-                        <div key={b.id} className="card p-4 text-center border-b-4 border-gold-text">
-                           <p className="font-black text-green-900 text-sm truncate">{b.name}</p>
-                           <p className="text-[10px] text-gray-400 font-bold mt-2">Unit Active ✅</p>
-                        </div>
-                      ))}
+                      {branches.map(b => {
+                        const last = reports.find(r => r.branch === b.name) || {score:0};
+                        return (
+                          <div key={b.id} className="card p-5 text-center">
+                             <h2 className="font-black text-green-900 text-sm truncate mb-3">{b.name}</h2>
+                             <Gauge score={last.score} />
+                             <div className="mt-4 pt-4 border-t border-gray-50 space-y-1">
+                                <div className="flex items-center text-[10px] font-bold text-gray-400"><span className="indicator-dot bg-green-500"></span> HACCP</div>
+                                <div className="flex items-center text-[10px] font-bold text-gray-400"><span className="indicator-dot bg-green-500"></span> Monitoring</div>
+                             </div>
+                          </div>
+                        )
+                      })}
                    </div>
                 </div>
               )}
 
               {activeTab === "reports" && (
-                <div className="animate-in slide-in-from-left duration-500">
-                   <h2 className="font-black text-lg text-green-950 mb-5 px-2">سجل التقارير السحابي:</h2>
+                <div className="animate-in slide-in-from-left">
+                   <h2 className="font-black text-xl text-green-950 mb-6 px-2">سجل التقارير:</h2>
                    {reports.map(rep => (
-                     <div key={rep.id} className="card p-4 flex flex-row items-center bg-white gap-3 report-card mb-4">
-                        <div className="text-left flex-1 min-w-0 pr-1">
-                           <p className="font-bold text-green-950 text-[13px] mb-1 truncate">{rep.branch}</p>
-                           <p className="text-[9px] text-gray-400 font-bold">📅 {rep.date} | 👤 {rep.inspector.split('@')[0]}</p>
-                        </div>
-                        <span className="text-lg font-black text-green-700">{rep.score}%</span>
-                        <button onClick={() => {
-                           const html = buildReportHTML(rep.branch, rep.inspector, rep.location, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
+                     <div key={rep.id} className="card p-4 row-fix bg-white mb-4 border-r-8 border-green-800">
+                        <div className="btn-r"><button onClick={() => {
+                           const html = buildReportHTML(rep.branch, rep.inspector, rep.score, rep.answers, rep.notes, rep.photos, rep.signature);
                            html2pdf().from(html).set({margin:0, filename:`Rep_${rep.branch}.pdf`, html2canvas:{scale:2, useCORS:true, scrollY:0}, jsPDF:{unit:'mm', format:'a4'}}).save();
-                        }} className="bg-blue-50 p-2.5 rounded-xl text-blue-600">📥</button>
+                        }} className="bg-blue-50 p-2.5 rounded-xl text-blue-600 shadow-sm"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button></div>
+                        <div className="score-c"><span className="text-xl font-black text-green-700">{rep.score}%</span></div>
+                        <div className="info-l">
+                           <p className="font-bold text-green-950 text-[13px] mb-1 truncate">{rep.branch}</p>
+                           <p className="text-[9px] text-gray-400 font-bold en-nums">📅 {toEnNums(rep.date)} <br/> 👤 {rep.inspector.split('@')[0]}</p>
+                        </div>
                      </div>
                    ))}
-                </div>
-              )}
-
-              {activeTab === "setup" && (
-                <div className="animate-in fade-in">
-                   <div className="card p-6 mb-8 border-t-8 border-green-800 text-right">
-                    <input value={newBranch} onChange={e=>setNewBranch(e.target.value)} className="w-full border-2 p-3 rounded-xl mb-4 text-right" placeholder="اسم الفرع الجديد..." />
-                    <button onClick={()=>{ db.collection("branches").add({name:newBranch}); setNewBranch(""); alert("تم!"); }} className="verra-gradient text-white px-6 py-3 rounded-xl font-bold w-full shadow-lg">حفظ</button>
-                  </div>
-                  {branches.map(b => (
-                     <div key={b.id} className="card p-4 flex justify-between items-center mb-3">
-                        <p className="font-bold">{b.name}</p>
-                        <button onClick={()=>db.collection("branches").doc(b.id).delete()} className="text-red-500 font-bold">حذف 🗑</button>
-                     </div>
-                  ))}
                 </div>
               )}
            </main>
