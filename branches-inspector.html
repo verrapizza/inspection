@@ -19,7 +19,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; }
+    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; -webkit-tap-highlight-color: transparent; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; cursor: pointer; }
     .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
@@ -113,86 +113,94 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // --- وظيفة التحميل النهائية المضمونة (إعادة رسم المحتوى بالكامل) ---
+      // --- وظيفة الـ PDF الجديدة المعالجة لكل الأخطاء ---
       const handlePreview = () => {
+        if(!branch) return alert("يرجى اختيار الفرع أولاً");
+        
         const score = getScore();
-        const signature = sigPad.current ? sigPad.current.toDataURL() : "";
-        const timestamp = new Date().toLocaleString('en-GB', {hour12: true});
+        const signatureBase64 = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : null;
+        const scoreColor = score >= 70 ? '#059669' : '#dc2626';
 
-        let sectionsHtml = sectionsData.map(sec => {
-          let itemsHtml = sec.items.map(i => {
+        let itemsContent = sectionsData.map(sec => {
+          let items = sec.items.map(i => {
             const ans = answers[i.id];
             const note = notes[i.id] || '';
             const pic = photos[i.id] ? photos[i.id][0] : null;
             let status = "N/A"; let color = "#64748b";
             if(ans==='yes'){status="مطابق ✅"; color="#059669";}
-            if(ans==='no'){status="مخالفة ❌"; color="#dc2626";}
+            if(ans==='no'){status="يوجد ملاحظة ❌"; color="#dc2626";}
             
             return `
-              <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
-                <p style="margin: 0; font-size: 14px; font-weight: bold; color: #333;">${i.q.replace(/\n/g, '<br>')}</p>
-                <p style="font-size: 12px; margin: 8px 0; color: ${color}; font-weight: bold;">الحالة: ${status}</p>
-                ${note ? `<div style="background: #fff9e6; padding: 8px; border: 1px solid #fde68a; border-radius: 5px; font-size: 11px; margin-top: 5px;">ملاحظة: ${note}</div>` : ''}
-                ${pic ? `<img src="${pic}" style="width: 300px; max-height: 200px; object-fit: cover; border-radius: 10px; margin-top: 10px; border: 1px solid #ddd;" />` : ''}
+              <div style="padding: 12px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
+                <p style="margin: 0; font-size: 13px; font-weight: bold; color: #1e293b;">${i.q.replace(/\n/g, '<br>')}</p>
+                <p style="font-size: 11px; margin: 5px 0; color: ${color}; font-weight: bold;">الحالة: ${status}</p>
+                ${note ? `<div style="background: #fff9e6; padding: 8px; border-radius: 5px; font-size: 11px; margin-top: 5px;">ملاحظة: ${note}</div>` : ''}
+                ${pic ? `<img src="${pic}" style="width: 250px; height: 180px; object-fit: cover; border-radius: 8px; margin-top: 10px;" />` : ''}
               </div>`;
           }).join('');
 
-          return `<div style="background: #e8f5ee; padding: 10px; margin-top: 25px; border-right: 8px solid #d1ba89; color: #004b47; font-weight: 900; font-size: 16px;">${sec.title}</div>${itemsHtml}`;
+          return `<div style="background: #e8f5ee; padding: 10px; margin-top: 20px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: bold; font-size: 15px;">${sec.title}</div>${items}`;
         }).join('');
 
-        const fullContent = `
-          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right; box-sizing: border-box;">
-            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
-                <img src="${LOGO_URL}" style="height: 110px;" />
-                <h1 style="color: #004b47; font-size: 30px; font-weight: 900; margin: 10px 0;">تقرير إشراف الفروع الرسمي</h1>
+        const finalReportHTML = `
+          <div style="width: 700px; margin: 0; padding: 30px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right; box-sizing: border-box;">
+            <div style="text-align: center; border-bottom: 4px solid #004b47; padding-bottom: 15px; margin-bottom: 25px;">
+                <img src="${LOGO_URL}" style="height: 100px;" />
+                <h1 style="color: #004b47; font-size: 24px; font-weight: 900; margin: 10px 0;">تقرير إشراف الفروع الرسمي</h1>
             </div>
             
-            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
-                <div style="flex: 1; line-height: 2.2">
-                    <p style="margin:0;"><b>🏢 الفرع المستهدف:</b> ${branch || '---'}</p>
+            <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="flex: 1; line-height: 2">
+                    <p style="margin:0;"><b>🏢 الفرع المستهدف:</b> ${branch}</p>
                     <p style="margin:0;"><b>👤 المشرف المسؤول:</b> ${user.email}</p>
-                    <p style="margin:0;"><b>📅 التاريخ والوقت:</b> ${timestamp}</p>
+                    <p style="margin:0;"><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB', {hour12: true})}</p>
                 </div>
-                <div style="width: 180px; text-align: center; border-right: 3px solid #004b47; padding-right: 20px;">
-                    <p style="color: #64748b; font-weight: bold; font-size: 12px; margin-bottom: 5px;">معدل الامتثال</p>
-                    <div style="font-size: 48px; font-weight: 900; color: ${score >= 70 ? '#059669' : '#dc2626'}">${score}%</div>
+                <div style="width: 150px; text-align: center; border-right: 2px solid #004b47; padding-right: 15px;">
+                    <p style="color: #64748b; font-weight: bold; font-size: 11px; margin-bottom: 4px;">نسبة الجاهزية</p>
+                    <div style="font-size: 40px; font-weight: 900; color: ${scoreColor}">${score}%</div>
                 </div>
             </div>
 
-            ${sectionsHtml}
+            ${itemsContent}
 
-            <div style="margin-top: 60px; border-top: 4px solid #004b47; padding-top: 30px; page-break-inside: avoid;">
-                <p style="font-weight: 900; color: #004b47; font-size: 18px; margin-bottom: 15px;">توقيع المشرف المسؤول:</p>
-                <div style="text-align: right; min-height: 100px;">
-                   <img src="${signature}" style="width: 350px; border-bottom: 2px solid #004b47; display: block;" />
-                </div>
+            <div style="margin-top: 50px; border-top: 2px solid #004b47; padding-top: 25px; page-break-inside: avoid;">
+                <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 15px;">توقيع المشرف المسؤول:</p>
+                ${signatureBase64 ? `<img src="${signatureBase64}" style="width: 250px; height: auto; max-height: 120px; object-fit: contain; border-bottom: 1px solid #ddd;" />` : '<p style="color: red; font-size: 12px;">(لم يتم إضافة توقيع)</p>'}
             </div>
           </div>
         `;
 
-        // الحل الجذري: الحقن المباشر والانتظار
-        const container = document.createElement('div');
-        container.style.position = 'fixed';
-        container.style.top = '0';
-        container.style.left = '-2000px'; // بعيد عن العين
-        container.style.zIndex = '500';
-        container.innerHTML = fullContent;
-        document.body.appendChild(container);
+        // الحقن في عنصر مؤقت وتحديد السكرول بـ 0 لضمان عدم وجود فراغ
+        const element = document.createElement('div');
+        element.innerHTML = finalReportHTML;
+        element.style.position = 'absolute';
+        element.style.top = '0';
+        element.style.left = '-9999px';
+        document.body.appendChild(element);
 
-        const options = {
-          margin: 0,
+        const opt = {
+          margin: [0, 0, 10, 0],
           filename: `VERRA_Report_${branch}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false },
+          html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            scrollY: 0, // إجبار المحرك على التصوير من البداية
+            windowWidth: 800
+          },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // الانتظار ثانية واحدة للتأكد من الرسم قبل التصوير
+        alert("جاري إنشاء المعاينة... يرجى الانتظار");
+        
         setTimeout(() => {
-          html2pdf().from(container).set(options).save().then(() => {
-            document.body.removeChild(container);
+          html2pdf().from(element).set(opt).save().then(() => {
+            document.body.removeChild(element);
+          }).catch(err => {
+            console.error(err);
+            alert("حدث خطأ أثناء تحميل الملف");
           });
-        }, 1200);
+        }, 1000);
       };
 
       const handleFinalSubmit = async () => {
@@ -208,7 +216,7 @@
                   id: reportId, branch, score, inspector: user.email, date: timestampStr, timestamp: reportId, isCrit: score < 70,
                   signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos, type: "Branch Report"
               });
-              alert("✅ تم الإرسال بنجاح!");
+              alert("✅ تم الإرسال والمزامنة بنجاح!");
               window.location.reload();
           } catch (e) { alert("خطأ في الاتصال"); }
       };
@@ -225,12 +233,12 @@
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div className="text-right">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Overall Score</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Operational Score</p>
               <p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg shadow-blue-100">معاينة PDF</button>
-                <button onClick={handleFinalSubmit} className="verra-gradient text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95">إرسال</button>
+                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg shadow-blue-100 transition">معاينة PDF</button>
+                <button onClick={handleFinalSubmit} className="verra-gradient text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition">إرسال التقرير</button>
             </div>
           </div>
 
@@ -251,7 +259,7 @@
                     <span className="text-xs font-bold uppercase">{expanded.has(sec.title) ? 'Hide ▲' : 'Show ▼'}</span>
                 </div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
-                  <div key={i.id} className="item-card shadow-lg">
+                  <div key={i.id} className="item-card shadow-lg border border-gray-100">
                     <p className="text-md font-bold text-green-950 mb-5 leading-relaxed text-right white-space-pre-line">{i.q}</p>
                     <div className="flex gap-2 justify-end mb-6">
                       <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn ${answers[i.id]==='yes'?'active btn-yes':''}`}>نعم / Yes</button>
@@ -277,9 +285,9 @@
             ))}
             
             <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic border-b pb-2">التوقيع الرقمي</h3>
+              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic border-b pb-2 text-center">التوقيع الرقمي</h3>
               <canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas>
-              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline">مسح</button>
+              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline">مسح التوقيع</button>
             </div>
           </main>
         </div>
