@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VERRA PRO - الإدارة السحابية</title>
+    <title>VERRA PRO - لوحة الإدارة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -12,139 +12,195 @@
     <style>
         body { font-family: 'Cairo', sans-serif; background: #f1f5f9; -webkit-tap-highlight-color: transparent; }
         .hidden { display: none; }
-        .verra-card { background: white; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: flex-end; }
+        .verra-card { background: white; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: none; align-items: flex-end; }
         .modal.active { display: flex; }
-        .modal-content { background: white; width: 100%; height: 92vh; border-radius: 40px 40px 0 0; padding: 25px; overflow-y: auto; }
+        .modal-content { background: white; width: 100%; height: 92vh; border-radius: 40px 40px 0 0; padding: 25px; overflow-y: auto; position: relative; }
         .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     </style>
 </head>
-<body class="pb-32">
+<body class="pb-32 text-right">
+
+    <!-- شاشة التحميل -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white z-[200] flex flex-col items-center justify-center font-bold text-[#004b47]">
+        <div class="w-12 h-12 border-4 border-t-green-500 border-gray-200 rounded-full animate-spin mb-4"></div>
+        جاري مزامنة التقارير...
+    </div>
 
     <!-- الصفحة الرئيسية -->
     <div id="dashboardPage" class="page">
-        <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative text-right">
+        <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative">
             <h1 class="text-3xl font-black italic">VERRA <span class="text-[#d1ba89]">PRO</span></h1>
-            <p class="text-[10px] opacity-70 font-bold uppercase tracking-widest italic text-left">Admin Cloud Hub</p>
+            <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase italic">Control Center</p>
         </header>
-
-        <main class="px-6 -mt-16 relative z-10 text-right">
+        <main class="px-6 -mt-16 relative z-10">
             <div class="grid grid-cols-2 gap-4 mb-8 text-center">
-                <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg"><p class="text-[10px] text-gray-400 font-bold uppercase">الامتثال</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
-                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg"><p class="text-[10px] text-gray-400 font-bold uppercase">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
+                <div class="verra-card p-6 border-b-4 border-green-600"><p class="text-[10px] text-gray-400 font-bold uppercase">الامتثال</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
+                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600"><p class="text-[10px] text-gray-400 font-bold uppercase">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
             </div>
-
-            <!-- بطاقة إضافة فرع جديد سريعة -->
-            <div class="verra-card p-8 mb-6 border-r-[12px] border-[#d1ba89] shadow-xl">
-                <h3 class="font-black text-gray-800 text-lg mb-2 italic">إدارة الفروع</h3>
-                <p class="text-[10px] text-gray-500 mb-6 font-bold leading-relaxed">أضف فرعاً جديداً الآن ليظهر فوراً في قائمة المفتش الميداني.</p>
-                <button onclick="navigateTo('branchesPage')" class="w-full bg-[#004b47] text-white p-4 rounded-[20px] font-black text-sm active:scale-95 transition-all">إدارة الفروع السحابية</button>
+            <div class="verra-card p-8 mb-10 border-r-[12px] border-[#004b47] shadow-xl">
+                <h3 class="font-black text-gray-800 text-lg mb-2 italic">🛡️ تفتيش مشرف الجودة</h3>
+                <p class="text-[11px] text-gray-500 mb-8 font-bold leading-relaxed">بوابة المشرف الرسمية لإجراء عمليات التفتيش الميداني وإصدار تقارير الجودة.</p>
+                <a href="https://verrapizza.github.io/inspection/" class="w-full verra-gradient text-white p-5 rounded-[22px] font-black shadow-lg flex justify-between items-center text-center"><span>دخول الأداة</span><span>⬅</span></a>
             </div>
         </main>
     </div>
 
-    <!-- صفحة سجل التقارير -->
-    <div id="reportsPage" class="page hidden px-6 pt-10 text-right">
-        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89]">سجل التقارير</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm">رجوع</button></div>
-        <div id="reportsList" class="space-y-4 pb-24"></div>
+    <!-- سجل التقارير -->
+    <div id="reportsPage" class="page hidden px-6 pt-10">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8">سجل السحابة</h2>
+            <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm border">رجوع</button>
+        </div>
+        <div id="reportsList" class="space-y-4 pb-20"></div>
     </div>
 
-    <!-- صفحة إدارة الفروع (الجديدة) -->
-    <div id="branchesPage" class="page hidden px-6 pt-10 text-right">
-        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47]">الفروع المسجلة</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black border shadow-sm">إغلاق</button></div>
-        
-        <div class="bg-white p-6 rounded-[30px] shadow-sm mb-6">
-            <p class="text-xs font-bold text-gray-400 mb-4 italic">إضافة فرع جديد للسحابة:</p>
-            <div class="flex gap-2">
-                <input type="text" id="newBranchInput" placeholder="مثلاً: فرع الخالدية" class="flex-1 bg-gray-50 p-4 rounded-2xl outline-none border border-gray-100 font-bold">
-                <button onclick="addBranchToCloud()" class="bg-green-600 text-white px-6 rounded-2xl font-black">+</button>
+    <!-- نافذة تفاصيل التقرير والتحميل -->
+    <div id="reportDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black shadow-sm">X</button>
+                <h3 class="text-xl font-black text-green-950">تفاصيل التقرير الكامل</h3>
+            </div>
+            <div id="detailBody" class="space-y-4"></div>
+            <div class="mt-8 pb-10">
+                <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3">
+                    <span id="btnText">📄 تحميل PDF التقرير الكامل</span>
+                </button>
             </div>
         </div>
-
-        <div id="branchesList" class="space-y-3 pb-24">
-            <!-- قائمة الفروع من Firebase ستظهر هنا -->
-        </div>
     </div>
 
-    <!-- نافذة تفاصيل التقرير (تبقى كما هي للتحميل) -->
-    <div id="reportDetailModal" class="modal"><div class="modal-content text-right"><div class="flex justify-between items-center mb-6 border-b pb-4"><button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black">X</button><h3 class="text-xl font-black text-green-950">تفاصيل التقرير</h3></div><div id="detailBody" class="space-y-4"></div><div class="mt-8 pb-10"><button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl">📄 تحميل PDF الكامل</button></div></div></div>
-
-    <!-- المنيو السفلي -->
     <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl">
         <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1">الرئيسية</span></button>
         <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1">السجل</span></button>
-        <button onclick="navigateTo('branchesPage')" id="nav-branches" class="flex flex-col items-center text-white/40"><span class="text-2xl">🏢</span><span class="text-[9px] font-black mt-1">الفروع</span></button>
     </nav>
 
     <script>
+        const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
         const firebaseConfig = { apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0", authDomain: "verra-system-828f2.firebaseapp.com", projectId: "verra-system-828f2", storageBucket: "verra-system-828f2.firebasestorage.app", messagingSenderId: "961104891607", appId: "1:961104891607:web:5ffd3af4983a8b015b6a92" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        
         let cloudReports = [];
-        let cloudBranches = [];
 
-        function forceEnglishNumbers(str) { return str ? str.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : ""; }
+        function fixNums(str) { return str ? str.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : ""; }
+
+        const sectionsData = [
+          { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
+          { title: "تحضير الأغذية", items: [{id:11,q:"مراجعة ومتابعة بروسيس تحضير العجين"},{id:12,q:"متابعة بروسيس تكوير العجين"},{id:13,q:"مراجعة تحضير الصوصات"},{id:14,q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"},{id:15,q:"منع التلوث الخلطي أثناء التحضير"},{id:16,q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"},{id:17,q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"},{id:18,q:"وصول درجات حرارة الطهي لـ (≥75°م)"},{id:19,q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"},{id:20,q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"},{id:21,q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}]},
+          { title: "جودة المنتج", items: [{id:22,q:"معاينة جودة المنتج النهائي (قسم الباستا)"},{id:23,q:"معاينة جودة المنتج النهائي (قسم البيتزا)"},{id:24,q:"رفع صورة المنتج النهائي على الواتساب في كل الفروع"}]},
+          { title: "المنشأة والبيئة", items: [{id:25,q:"المنشأة تقع بعيداً عن مصادر التلوث"},{id:26,q:"خلو الجدران والأرضيات والأسقف من التشققات"},{id:27,q:"الأبواب محكمة الإغلاق وتغلق تلقائياً"},{id:28,q:"النوافذ مزودة بشبكات معدنية سليمة"},{id:29,q:"ميل مناسب للصرف في جميع المناطق"},{id:30,q:"أجهزة التكييف فعالة وتعمل بشكل صحيح"},{id:31,q:"وجود شفاطات فوق الأفران والشوايات"},{id:32,q:"إضاءة كافية في جميع مناطق التعامل مع الأغذية"},{id:33,q:"الأرضيات مقاومة للماء وغير زلقة وسهلة التنظيف"}]},
+          { title: "التنظيف والتعقيم", items: [{id:34,q:"جدول التنظيف موثق ويتم اتباعه بدقة"},{id:35,q:"المطهرات آمنة للأغذية وبالتركيزات الصحيحة"},{id:36,q:"تنظيف وتعقيم المعدات بعد كل استخدام"},{id:37,q:"التنظيف العميق يومياً لجميع الأسطح الملامسة"},{id:38,q:"حاويات النفايات تفتح بالقدم وتفرغ بانتظام"},{id:39,q:"التخلص من النفايات يمنع تلوث المياه أو الأغذية"},{id:40,q:"عقد مكافحة آفات ساري مع شركة متخصصة"},{id:41,q:"عدم وجود دلائل على القوارض أو الحشرات"}]},
+          { title: "النظافة الشخصية", items: [{id:42,q:"جميع العاملين يرتدون زياً نظيفاً وأغطية للشعر"},{id:43,q:"ارتداء الكمامات في مناطق الأغذية القابلة للتلف"},{id:44,q:"محطات غسل اليدين مزودة بالصابون والماء الساخن"},{id:45,q:"غسل اليدين قبل التعامل مع الأغذية وبعد الاستراحة"},{id:46,q:"عدم ارتداء المجوهرات أو طلاء الأظافر"},{id:47,q:"فحوصات طبية قبل التوظيف من جهات معتمدة"},{id:48,q:"فحوصات طبية روتينية سنوية لجميع العاملين"},{id:49,q:"استبعاد العاملين المصابين بالأمراض المعدية"}]},
+          { title: "المعدات والأدوات", items: [{id:50,q:"المعدات مصنوعة من مواد مقاومة للتآكل وآمنة"},{id:51,q:"مقاييس الحرارة معايرة وتعمل بشكل صحيح"},{id:52,q:"الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة"},{id:53,q:"تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل"},{id:54,q:"صيانة وتنظيف معدات الطهي بانتظام"},{id:55,q:"أسطح ملامسة للأغذية ناعمة وخالية من التشققات"}]},
+          { title: "التتبع والتوثيق", items: [{id:56,q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"},{id:57,q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"},{id:58,q:"دليل تتبع الأغذية متاح وكامل في المنشأة"},{id:59,q:"الاحتفاظ بسجلات التتبع 180 يوماً"},{id:60,q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"},{id:61,q:"سجلات اعتماد الموردين والشهادات"},{id:62,q:"جميع العاملين يحملون شهادات صحية سارية"},{id:63,q:"خطة HACCP موثقة ومعتمدة"},{id:64,q:"سجلات التنظيف والتعقيم كاملة ومحدثة"},{id:65,q:"الاحتفاظ بسجلات مراقبة درجة الحرارة"}]},
+          { title: "إمداد المياه والسباكة", items: [{id:66,q:"إمداد مياه الشرب كافٍ ونظيف تماماً"},{id:67,q:"تركيب فلاتر المياه وتنظيفها وصيانتها"},{id:68,q:"عدم وجود تسربات في مواسير الصرف"},{id:69,q:"إغلاق فتحات الصرف أثناء ساعات العمل"},{id:70,q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}]},
+          { title: "إدارة مسببات الحساسية", items: [{id:71,q:"معلومات مسببات الحساسية كاملة على الملصقات"},{id:72,q:"مناطق تحضير منفصلة للأصناف الخالية من الحساسية"},{id:73,q:"أدوات مخصصة لتحضير الأغذية الخاصة"},{id:74,q:"تدريب الموظفين على مسببات الحساسية"}]}
+        ];
 
         function startSync() {
-            // مزامنة التقارير
             db.collection("inspections").onSnapshot((snap) => {
-                cloudReports = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.timestamp || b.id) - (a.timestamp || a.id));
+                let data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                cloudReports = data.sort((a, b) => (b.timestamp || b.id) - (a.timestamp || a.id));
                 updateUI();
-            });
-
-            // مزامنة الفروع (جديد)
-            db.collection("branches").orderBy("name").onSnapshot((snap) => {
-                cloudBranches = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderBranches();
+                document.getElementById('loadingOverlay').classList.add('hidden');
             });
         }
-
-        function addBranchToCloud() {
-            const name = document.getElementById('newBranchInput').value;
-            if(!name) return alert("أدخل اسم الفرع!");
-            db.collection("branches").add({ name: name }).then(() => {
-                document.getElementById('newBranchInput').value = "";
-                alert("✅ تم إضافة الفرع للسحابة بنجاح.");
-            });
-        }
-
-        function deleteBranch(id) {
-            if(confirm("هل تريد حذف هذا الفرع نهائياً من السحابة؟")) {
-                db.collection("branches").doc(id).delete();
-            }
-        }
-
-        function renderBranches() {
-            document.getElementById('branchesList').innerHTML = cloudBranches.map(b => `
-                <div class="bg-white p-5 rounded-[25px] flex justify-between items-center shadow-sm border-r-8 border-[#004b47]">
-                    <span class="font-black text-gray-800">${b.name}</span>
-                    <button onclick="deleteBranch('${b.id}')" class="bg-red-50 text-red-500 p-2 rounded-xl text-xs font-bold">حذف</button>
-                </div>
-            `).join('');
-        }
-
-        // بقية الدوال (updateUI, renderList, viewDetail, generateFullPDF, navigateTo) تبقى كما هي في الرد السابق...
-        // ... (سأضع الاختصار هنا لضمان عمل الكود كاملاً) ...
 
         function updateUI() {
-            document.getElementById('reportCount').innerText = forceEnglishNumbers(cloudReports.length);
+            document.getElementById('reportCount').innerText = fixNums(cloudReports.length);
             if(cloudReports.length > 0) {
                 let avg = Math.round(cloudReports.reduce((s, r) => s + (r.score || 0), 0) / cloudReports.length);
-                document.getElementById('totalScore').innerText = forceEnglishNumbers(avg) + "%";
+                document.getElementById('totalScore').innerText = fixNums(avg) + "%";
             }
             if(!document.getElementById('reportsPage').classList.contains('hidden')) renderList();
         }
 
         function renderList() {
             document.getElementById('reportsList').innerHTML = cloudReports.map((r, i) => `
-                <div onclick="viewDetail(${i})" class="verra-card p-6 border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-500'} active:scale-95 transition-transform mb-4">
+                <div onclick="viewDetail(${i})" class="verra-card p-6 border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-500'} mb-4 active:scale-95 transition-transform">
                     <div class="flex justify-between items-start">
                         <h4 class="font-black text-gray-800 text-lg">${r.branch}</h4>
-                        <span class="text-xs font-black bg-gray-50 px-3 py-1 rounded-full">${forceEnglishNumbers(r.score)}%</span>
+                        <span class="text-xs font-black bg-gray-50 px-3 py-1 rounded-full">${fixNums(r.score)}%</span>
                     </div>
-                    <p class="text-[11px] text-gray-400 font-bold mt-2">📅 ${forceEnglishNumbers(r.date)} | المشرف: ${r.inspector ? r.inspector.split('@')[0] : '---'}</p>
+                    <p class="text-[11px] text-gray-400 font-bold mt-2">📅 ${fixNums(r.date)} | المشرف: ${r.inspector ? r.inspector.split('@')[0] : '---'}</p>
                 </div>`).join('');
+        }
+
+        function viewDetail(idx) {
+            const r = cloudReports[idx];
+            const body = document.getElementById('detailBody');
+            body.innerHTML = `
+                <div class="verra-card p-6 border border-gray-100 text-center mb-4">
+                    <h2 class="text-2xl font-black text-[#004b47] mb-2">${r.branch}</h2>
+                    <div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4">
+                        <div><p class="text-gray-400">📅 التاريخ</p><p>${fixNums(r.date)}</p></div>
+                        <div><p class="text-gray-400">👤 المفتش</p><p>${r.inspector}</p></div>
+                    </div>
+                    <div class="flex justify-between px-6 pt-2">
+                        <span class="font-bold text-gray-500">الامتثال العام:</span>
+                        <span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'}">${fixNums(r.score)}%</span>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-2xl text-center italic text-blue-800 text-[10px] font-bold">
+                    بإمكانك تحميل التقرير الكامل الذي يحتوي على الـ 74 بنداً بالصور عبر الزر أدناه.
+                </div>`;
+            
+            document.getElementById('downloadBtn').onclick = () => generateFullPDF(r);
+            document.getElementById('reportDetailModal').classList.add('active');
+        }
+
+        function generateFullPDF(r) {
+            document.getElementById('btnText').innerText = "جاري بناء الملف... ⏳";
+            let contentHtml = sectionsData.map(sec => `
+                <div style="background:#e8f5ee; padding:12px; border-right:8px solid #d1ba89; color:#004b47; font-weight:900; margin-top:30px; text-align:right; font-size:18px;">${sec.title}</div>
+                ${sec.items.map(i => {
+                    const ans = r.answers ? r.answers[i.id] : 'na';
+                    const note = r.notes ? r.notes[i.id] : '';
+                    const pics = (r.photos && r.photos[i.id]) ? r.photos[i.id] : [];
+                    let status = ans === 'yes' ? '✅ مطابق' : ans === 'no' ? '❌ مخالف' : '⚪ N/A';
+                    let color = ans === 'yes' ? '#059669' : ans === 'no' ? '#dc2626' : '#64748b';
+                    return `
+                        <div style="padding:15px; border-bottom:1px solid #f1f5f9; text-align:right; page-break-inside:avoid;">
+                            <p style="margin:0; font-weight:900; font-size:15px; color:#1e293b;">${fixNums(i.id)}. ${i.q}</p>
+                            <p style="font-size:13px; margin:8px 0; font-weight:bold; color:${color};">الحالة: ${status}</p>
+                            ${note ? `<div style="background:#fffbeb; padding:10px; border-radius:8px; font-size:12px; border:1px solid #fde68a; margin:10px 0; color:#92400e;">الملاحظة: ${note}</div>` : ''}
+                            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
+                                ${pics.map(p => `<img src="${p}" style="width:200px; height:150px; border-radius:12px; object-fit:cover; border:1px solid #e2e8f0;" />`).join('')}
+                            </div>
+                        </div>`;
+                }).join('')}
+            `).join('');
+
+            const html = `
+                <div style="width:800px; margin:0 auto; padding:40px; background:white; font-family:'Cairo'; direction:rtl; box-sizing:border-box;">
+                    <div style="text-align:center; border-bottom:5px solid #004b47; padding-bottom:25px; margin-bottom:40px;">
+                        <img src="${LOGO_URL}" style="height:120px; margin-bottom:15px;" />
+                        <h1 style="color:#004b47; margin:0; font-size:32px; font-weight:900;">تقرير تدقيق الجودة الشامل</h1>
+                        <p style="color:#64748b; font-size:14px;">نظام VERRA PRO السحابي</p>
+                    </div>
+                    <div style="background:#f8fafc; padding:30px; border-radius:20px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; margin-bottom:40px;">
+                        <div style="flex:1; line-height:2.2; text-align:right;">
+                            <p><b>🏢 المنشأة:</b> ${r.branch}</p>
+                            <p><b>👤 المفتش:</b> ${r.inspector}</p>
+                            <p><b>📅 التاريخ:</b> ${fixNums(r.date)}</p>
+                        </div>
+                        <div style="width:180px; text-align:center; border-right:3px solid #004b47; padding-right:25px;">
+                             <p style="font-size:12px; font-weight:900; color:#64748b;">الامتثال</p>
+                             <div style="font-size:50px; font-weight:900; color:${r.score >= 70 ? '#059669':'#dc2626'};">${fixNums(r.score)}%</div>
+                        </div>
+                    </div>
+                    ${contentHtml}
+                    <div style="margin-top:60px; border-top:3px solid #004b47; pt:30px; text-align:left;">
+                        <p style="font-weight:900; color:#004b47; margin-bottom:15px;">التوقيع المعتمد:</p>
+                        <img src="${r.signature}" style="width:250px; border-bottom:2px solid #004b47;" />
+                    </div>
+                </div>`;
+
+            const opt = { margin:0, filename:`Report_Full_${r.branch}.pdf`, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} };
+            html2pdf().from(html).set(opt).save().then(() => {
+                document.getElementById('btnText').innerText = "📄 تحميل PDF التقرير الكامل";
+            });
         }
 
         function navigateTo(id) {
@@ -152,10 +208,9 @@
             document.getElementById(id).classList.remove('hidden');
             document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-[#d1ba89]', 'text-white/40'));
             document.getElementById('nav-' + id.replace('Page','')).classList.replace('text-white/40', 'text-[#d1ba89]');
+            if(id === 'reportsPage') renderList();
         }
-
         function closeModal() { document.getElementById('reportDetailModal').classList.remove('active'); }
-        
         startSync();
     </script>
 </body>
