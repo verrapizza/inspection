@@ -34,10 +34,13 @@
     .upload-btn-gallery { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
     
-    /* أزرار التنقل الجديدة */
     .nav-btn { padding: 5px 14px; border-radius: 8px; font-size: 10px; font-weight: bold; transition: 0.3s; display: inline-flex; align-items: center; gap: 5px; }
     .logout-btn { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
     .home-btn { background: rgba(209, 186, 137, 0.2); color: #d1ba89; border: 1px solid rgba(209, 186, 137, 0.4); }
+
+    /* تنسيق زر المعاينة الذهبي المتناسق */
+    .preview-btn { background: #d1ba89 !important; color: #004b47 !important; font-weight: 900 !important; box-shadow: 0 4px 10px rgba(209, 186, 137, 0.3); }
+    .preview-btn:active { transform: scale(0.95); opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -57,7 +60,6 @@
     const db = firebase.firestore();
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
 
-    // البنود الـ 74 كاملة
     const sectionsData = [
       { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
       { title: "تحضير الأغذية", items: [{id:11,q:"مراجعة ومتابعة بروسيس تحضير العجين"},{id:12,q:"متابعة بروسيس تكوير العجين"},{id:13,q:"مراجعة تحضير الصوصات"},{id:14,q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"},{id:15,q:"منع التلوث الخلطي أثناء التحضير"},{id:16,q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"},{id:17,q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"},{id:18,q:"وصول درجات حرارة الطهي لـ (≥75°م)"},{id:19,q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"},{id:20,q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"},{id:21,q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}]},
@@ -108,12 +110,12 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // دالة الـ PDF الكاملة
       const handlePreview = () => {
         if (!branch) return alert("يرجى اختيار المنشأة أولاً");
         const score = getScore();
         const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
-        
+        const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
+
         let reportContent = sectionsData.map(sec => {
           let items = sec.items.map(i => {
             const ans = answers[i.id]; const note = notes[i.id] || ""; const pics = photos[i.id] || [];
@@ -143,7 +145,7 @@
                 <div style="flex: 1; line-height: 2">
                     <p><b>🏢 المنشأة:</b> ${branch}</p>
                     <p><b>👤 المفتش:</b> ${user.email}</p>
-                    <p><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB', { hour12: true })}</p>
+                    <p><b>📅 التاريخ:</b> ${timestamp}</p>
                 </div>
                 <div style="width: 150px; text-align: center; border-right: 3px solid #004b47; padding-right: 15px;">
                     <p style="color: #64748b; font-size: 11px;">معدل الامتثال</p>
@@ -181,13 +183,13 @@
                   signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos 
               });
 
-              alert("✅ تم الإرسال والمزامنة بنجاح!");
+              alert("✅ تم إرسال والمزامنة بنجاح!");
               window.location.reload();
           } catch (e) { alert("⚠️ خطأ في السحابة."); }
           finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl uppercase">VERRA PRO Loading...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl uppercase tracking-widest">Verifying System...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
@@ -195,7 +197,7 @@
           <div className="verra-gradient p-12 text-center shadow-xl rounded-b-[4rem] relative">
             <img src={LOGO_URL} className="h-32 mx-auto mb-4 drop-shadow-2xl" />
             <div className="flex flex-col items-center gap-3">
-                <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] text-white font-bold border border-white/10 uppercase">👤 {user.email}</span>
+                <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] text-white font-bold border border-white/10 uppercase tracking-tighter">👤 {user.email}</span>
                 <div className="flex gap-2">
                     <button onClick={() => window.location.href='index.html'} className="nav-btn home-btn">🏠 الرئيسية</button>
                     <button onClick={handleLogout} className="nav-btn logout-btn">تسجيل الخروج ↪</button>
@@ -205,12 +207,12 @@
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div className="text-right">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Overall Score</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Score</p>
               <p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg transition">معاينة</button>
-                <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition`}>{submitting ? '...':'إرسال التقرير'}</button>
+                <button onClick={handlePreview} className="nav-btn preview-btn px-5 py-2.5 rounded-xl shadow transition">معاينة</button>
+                <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-2.5 rounded-xl font-black shadow-lg text-xs active:scale-95 transition`}>{submitting ? '...' : 'إرسال'}</button>
             </div>
           </div>
 
@@ -228,7 +230,7 @@
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}>
                     <span className="text-lg">{sec.title}</span>
-                    <span className="text-xs font-bold uppercase">{expanded.has(sec.title) ? 'إخفاء ▲' : 'عرض ▼'}</span>
+                    <span className="text-xs font-bold uppercase">{expanded.has(sec.title) ? 'Hide ▲' : 'Show ▼'}</span>
                 </div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
                   <div key={i.id} className="item-card shadow-lg border border-gray-100">
