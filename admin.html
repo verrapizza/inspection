@@ -3,88 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VERRA Pro - الإصدار النهائي</title>
+    <title>VERRA Pro - لوحة التحكم الشاملة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         .page { transition: 0.3s; }
         .hidden { display: none; }
-        @media print {
-            nav, button, header { display: none !important; }
-            .page { display: block !important; padding: 0 !important; }
-            .print-only { display: block !important; }
-            body { background: white; }
-        }
+        @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .animate-slide-up { animation: slide-up 0.3s ease-out; }
+        @media print { nav, button, .no-print { display: none !important; } .print-only { display: block !important; } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-32">
-
-    <!-- شعار الطباعة (مخفي في التطبيق) -->
-    <div class="hidden print-only p-10 text-center border-b-2 mb-10">
-        <h1 class="text-4xl font-bold text-[#004d40]">تقرير سلامة الغذاء - VERRA</h1>
-        <p class="text-sm text-gray-500 mt-2">تقرير رسمي صادر عن نظام الإدارة الرقمي</p>
-    </div>
+<body class="bg-gray-100 text-gray-800 pb-32">
 
     <!-- الصفحة الرئيسية -->
     <div id="dashboardPage" class="page">
         <header class="bg-[#004d40] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative overflow-hidden">
             <div class="flex justify-between items-center relative z-10">
                 <div>
-                    <h1 class="text-3xl font-bold italic tracking-tighter">VERRA <span class="text-green-400 text-xs font-bold border px-1">2024</span></h1>
-                    <p class="text-[10px] mt-1 opacity-80 font-bold italic">نظام إدارة الجودة والامتثال</p>
+                    <h1 class="text-3xl font-bold italic tracking-tighter">VERRA <span class="text-green-400 text-xs font-bold border px-1 rounded">CORE</span></h1>
+                    <p class="text-[10px] mt-1 opacity-80 font-bold italic">نظام المراقبة والتدقيق المتكامل</p>
                 </div>
                 <div class="w-14 h-14 bg-green-500 rounded-[20px] flex items-center justify-center font-bold shadow-2xl border-2 border-white/20">R</div>
             </div>
         </header>
 
         <main class="px-6 -mt-16 relative z-10">
+            <!-- ملخص الحالة -->
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <div class="bg-white p-6 rounded-[35px] shadow-sm border-b-4 border-green-500">
-                    <p class="text-gray-400 text-[10px] font-bold">الامتثال</p>
-                    <h2 id="score" class="text-3xl font-bold text-green-600">100%</h2>
+                    <p class="text-gray-400 text-[10px] font-bold">معدل الامتثال</p>
+                    <h2 id="score" class="text-3xl font-bold text-green-600 font-mono">100%</h2>
                 </div>
-                <div class="bg-white p-6 rounded-[35px] shadow-sm border-b-4 border-red-500">
-                    <p class="text-gray-400 text-[10px] font-bold">مخالفات</p>
-                    <h2 id="crits" class="text-3xl font-bold text-red-600">0</h2>
+                <div onclick="navigateTo('reportsPage')" class="bg-white p-6 rounded-[35px] shadow-sm border-b-4 border-blue-500">
+                    <p class="text-gray-400 text-[10px] font-bold">إجمالي التقارير</p>
+                    <h2 id="totalReports" class="text-3xl font-bold text-blue-600 font-mono">0</h2>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-[40px] shadow-sm mb-8">
-                <h3 class="font-bold text-gray-700 mb-6 flex justify-between items-center">
-                    <span>المهام السريعة</span>
-                    <span class="text-[9px] bg-green-50 text-green-600 px-3 py-1 rounded-full font-bold">متصل الآن ✅</span>
-                </h3>
-                <div class="space-y-4">
-                    <button onclick="openModal('سجل حرارة')" class="w-full bg-blue-600 text-white p-5 rounded-3xl font-bold shadow-lg flex justify-between items-center">
-                        <span>🌡️ فحص درجة الحرارة</span>
-                        <span class="text-xs bg-white/20 px-3 py-1 rounded-lg">بدء +</span>
-                    </button>
+            <!-- بطاقة مشرف الجودة الجديدة -->
+            <div class="bg-white p-6 rounded-[40px] shadow-sm mb-8 border-r-[12px] border-[#004d40]">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">📋</span>
+                    <h3 class="font-bold text-gray-700 text-lg">تقرير مشرف الجودة</h3>
                 </div>
+                <p class="text-[10px] text-gray-400 mb-6 font-bold leading-relaxed">استخدم أداة التفتيش الرسمية لإجراء الجولات الميدانية، فحص المعايير، وإصدار التقارير النهائية.</p>
+                
+                <a href="https://verrapizza.github.io/inspection/" class="w-full bg-[#004d40] text-white p-5 rounded-[25px] font-bold shadow-lg flex justify-between items-center active:scale-95 transition-transform">
+                    <span>فتح أداة التفتيش</span>
+                    <span class="text-xl">⮕</span>
+                </a>
             </div>
+
+            <!-- زر تسجيل سريع للقراءات -->
+            <button onclick="openModal('تسجيل قراءة')" class="w-full bg-white p-5 rounded-[30px] shadow-sm border-2 border-dashed border-gray-200 text-gray-500 font-bold flex justify-center items-center gap-2 mb-10">
+                <span>➕</span>
+                <span>تسجيل سريع لدرجة الحرارة</span>
+            </button>
         </main>
     </div>
 
-    <!-- صفحة التقارير مع ميزة الطباعة -->
+    <!-- صفحة سجل التقارير -->
     <div id="reportsPage" class="page hidden px-6 pt-10">
         <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-bold">سجل التقارير</h2>
-            <button onclick="window.print()" class="bg-[#004d40] text-white text-[10px] px-4 py-2 rounded-xl font-bold">📄 طباعة التقرير</button>
+            <h2 class="text-2xl font-bold text-gray-800">سجل التقارير</h2>
+            <button onclick="window.print()" class="bg-gray-200 text-gray-700 text-[10px] px-4 py-2 rounded-xl font-bold">📄 طباعة</button>
         </div>
-        <div id="reportsList" class="space-y-4"></div>
-        <div class="hidden print-only mt-20 border-t pt-10 flex justify-between px-10">
-            <div class="text-center font-bold"><p>توقيع المفتش</p><p class="mt-10 border-b w-32 mx-auto"></p></div>
-            <div class="text-center font-bold"><p>ختم المنشأة</p><p class="mt-10 border-b w-32 mx-auto"></p></div>
+        <div id="reportsList" class="space-y-4">
+            <!-- ستظهر التقارير هنا سواء من التطبيق أو من أداة التفتيش -->
         </div>
     </div>
 
-    <!-- بقية الصفحات -->
-    <div id="branchesPage" class="page hidden px-6 pt-10"><h2 class="text-2xl font-bold mb-6">إدارة الفروع</h2><button onclick="addB()" class="w-full bg-gray-200 p-4 rounded-3xl font-bold text-gray-600 mb-6">+ إضافة فرع جديد</button><div id="branchesList" class="space-y-4"></div></div>
+    <!-- إدارة الفروع -->
+    <div id="branchesPage" class="page hidden px-6 pt-10">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold italic">الفروع</h2>
+            <button onclick="addBranch()" class="bg-[#004d40] text-white px-4 py-2 rounded-xl text-xs font-bold">+ فرع</button>
+        </div>
+        <div id="branchesList" class="space-y-4"></div>
+    </div>
 
-    <!-- القائمة السفلية -->
+    <!-- التنقل السفلي -->
     <nav class="fixed bottom-0 w-full bg-[#004d40] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl">
         <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-green-400"><span class="text-2xl">🏠</span><span class="text-[9px] font-bold mt-1">الرئيسية</span></button>
-        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-bold mt-1">التقارير</span></button>
+        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-bold mt-1">السجل</span></button>
         <button onclick="navigateTo('branchesPage')" id="nav-branches" class="flex flex-col items-center text-white/40"><span class="text-2xl">🏢</span><span class="text-[9px] font-bold mt-1">الفروع</span></button>
     </nav>
 
@@ -92,23 +95,31 @@
     <div id="logModal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-end">
         <div class="bg-white w-full rounded-t-[50px] p-10 animate-slide-up shadow-2xl">
             <div class="w-16 h-1.5 bg-gray-200 rounded-full mx-auto mb-10"></div>
-            <h3 class="text-2xl font-bold mb-8 text-center" id="modalTitle">تسجيل</h3>
+            <h3 class="text-xl font-bold mb-8 text-center" id="modalTitle text-gray-700">تسجيل بيانات</h3>
             <div class="space-y-6 mb-10">
                 <select id="bSel" class="w-full bg-gray-50 p-5 rounded-[25px] border-2 border-gray-100 font-bold"></select>
                 <input type="number" id="tVal" placeholder="0 °C" class="w-full bg-gray-50 p-6 rounded-[25px] text-4xl font-bold text-center border-2 border-gray-100 focus:border-green-500 outline-none">
             </div>
             <div class="flex gap-4">
-                <button onclick="closeModal()" class="flex-1 p-5 rounded-[25px] bg-gray-100 text-gray-400 font-bold">إلغاء</button>
-                <button onclick="saveEntry()" class="flex-1 p-5 rounded-[25px] bg-green-600 text-white font-bold shadow-lg">إرسال</button>
+                <button onclick="closeModal()" class="flex-1 p-5 rounded-[25px] bg-gray-100 text-gray-500 font-bold">إلغاء</button>
+                <button onclick="saveEntry()" class="flex-1 p-5 rounded-[25px] bg-green-600 text-white font-bold shadow-lg">حفظ</button>
             </div>
         </div>
     </div>
 
     <script>
+        // دمج تقارير LocalStorage
         let branches = JSON.parse(localStorage.getItem('v2_branches')) || [{name: "فرع مكة"}];
-        let reports = JSON.parse(localStorage.getItem('v2_reports')) || [];
+        let reports = [];
+
+        // تحديث التقارير من الذاكرة (مهم جداً للربط بين الأداة والتطبيق)
+        function refreshData() {
+            reports = JSON.parse(localStorage.getItem('v2_reports')) || [];
+            updateStats();
+        }
 
         function navigateTo(id) {
+            refreshData(); // تحديث البيانات عند التنقل
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
             document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-green-400', 'text-white/40'));
@@ -127,37 +138,63 @@
             let v = document.getElementById('tVal').value;
             let b = document.getElementById('bSel').value;
             if(!v) return;
-            reports.unshift({branch: b, value: v, isCrit: parseFloat(v) > 5, date: new Date().toLocaleString('ar-SA')});
+            
+            refreshData(); // جلب الحالة الأحدث
+            reports.unshift({
+                branch: b, 
+                value: v, 
+                isCrit: parseFloat(v) > 5, 
+                date: new Date().toLocaleString('ar-SA')
+            });
+            
             localStorage.setItem('v2_reports', JSON.stringify(reports));
-            closeModal(); updateStats(); alert("تم الحفظ وتحديث السجل.");
+            closeModal();
+            updateStats();
+            alert("تم الحفظ بنجاح.");
         }
 
         function renderReports() {
+            refreshData();
             const list = document.getElementById('reportsList');
+            if(reports.length === 0) {
+                list.innerHTML = '<div class="text-center py-20 text-gray-400 italic">لا توجد تقارير حالياً. ابدأ باستخدام أداة التفتيش.</div>';
+                return;
+            }
             list.innerHTML = reports.map(r => `
                 <div class="bg-white p-5 rounded-[30px] shadow-sm border-r-[10px] ${r.isCrit ? 'border-red-500' : 'border-green-500'}">
-                    <p class="font-bold text-gray-800">${r.branch}</p>
-                    <p class="text-[10px] text-gray-400 mb-2">${r.date}</p>
-                    <p class="text-xs font-bold ${r.isCrit ? 'text-red-500' : 'text-green-600'}">النتيجة: ${r.value}°C - ${r.isCrit ? 'خطر 🚨' : 'آمن ✅'}</p>
+                    <p class="font-bold text-gray-800">${r.branch || 'تقرير تفتيش'}</p>
+                    <p class="text-[9px] text-gray-400 mb-2">${r.date}</p>
+                    <p class="text-xs font-bold ${r.isCrit ? 'text-red-500' : 'text-green-600'}">
+                        ${r.value ? 'النتيجة: ' + r.value + '°C' : 'تم التدقيق ميدانياً'} 
+                        - ${r.isCrit ? 'يتطلب إجراء ⚠️' : 'مطابق ✅'}
+                    </p>
                 </div>
             `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalReports').innerText = reports.length;
+            let score = reports.length > 0 ? Math.round((reports.filter(r => !r.isCrit).length / reports.length) * 100) : 100;
+            document.getElementById('score').innerText = score + "%";
         }
 
         function renderBranches() {
             document.getElementById('branchesList').innerHTML = branches.map(b => `<div class="bg-white p-5 rounded-[25px] shadow-sm font-bold border-r-8 border-[#004d40]">${b.name}</div>`).join('');
         }
 
-        function addB() { let n = prompt("الفرع:"); if(n) { branches.push({name: n}); localStorage.setItem('v2_branches', JSON.stringify(branches)); updateStats(); renderBranches(); } }
-        function closeModal() { document.getElementById('logModal').classList.add('hidden'); }
-        
-        function updateStats() {
-            let crits = reports.filter(r => r.isCrit).length;
-            document.getElementById('crits').innerText = crits;
-            let score = reports.length > 0 ? Math.round((reports.filter(r => !r.isCrit).length / reports.length) * 100) : 100;
-            document.getElementById('score').innerText = score + "%";
+        function addBranch() {
+            let n = prompt("اسم الفرع:");
+            if(n) {
+                branches.push({name: n});
+                localStorage.setItem('v2_branches', JSON.stringify(branches));
+                renderBranches();
+            }
         }
 
-        updateStats();
+        function closeModal() { document.getElementById('logModal').classList.add('hidden'); }
+
+        // تشغيل أولي
+        refreshData();
     </script>
 </body>
 </html>
