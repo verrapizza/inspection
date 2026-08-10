@@ -3,73 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VERRA PRO - لوحة الإدارة الشاملة</title>
+    <title>VERRA PRO - لوحة الإدارة السحابية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    
+    <!-- PDF Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #f8fafc; overflow-x: hidden; }
+        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; overflow-x: hidden; }
         .hidden { display: none; }
-        .verra-card { background: white; border-radius: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: none; align-items: flex-end; }
+        .verra-card { background: white; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: flex-end; }
         .modal.active { display: flex; }
-        .modal-content { background: white; width: 100%; height: 85vh; border-radius: 40px 40px 0 0; padding: 25px; overflow-y: auto; }
+        .modal-content { background: white; width: 100%; height: 92vh; border-radius: 40px 40px 0 0; padding: 25px; overflow-y: auto; }
         .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
+        .item-row { border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
     </style>
 </head>
-<body class="pb-32 text-right">
+<body class="pb-32">
 
-    <!-- الرئيسية -->
+    <!-- شاشة التحميل اللحظي -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white z-[200] flex items-center justify-center font-bold text-[#004b47] animate-pulse">
+        جاري جلب التقارير من السحابة...
+    </div>
+
+    <!-- الصفحة الرئيسية -->
     <div id="dashboardPage" class="page">
         <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative">
-            <h1 class="text-3xl font-black italic uppercase">Verra <span class="text-[#d1ba89]">Pro</span></h1>
-            <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase">Admin Management Hub</p>
-        </header>
-        <main class="px-6 -mt-16 relative z-10">
-            <div class="grid grid-cols-2 gap-4 mb-8 text-center">
-                <div class="verra-card p-6 border-b-4 border-green-600"><p class="text-[10px] text-gray-400 font-bold mb-1">الامتثال</p><h2 id="totalScore" class="text-3xl font-black text-green-700">100%</h2></div>
-                <div class="verra-card p-6 border-b-4 border-blue-600"><p class="text-[10px] text-gray-400 font-bold mb-1">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-black italic">VERRA <span class="text-[#d1ba89]">PRO</span></h1>
+                    <p class="text-[10px] opacity-70 font-bold uppercase tracking-widest italic">CLOUD MANAGEMENT SYSTEM</p>
+                </div>
+                <div id="statusDot" class="w-4 h-4 bg-green-500 rounded-full border-4 border-[#004d40] shadow-[0_0_10px_#10b981]"></div>
             </div>
+        </header>
+
+        <main class="px-6 -mt-16 relative z-10 text-right">
+            <div class="grid grid-cols-2 gap-4 mb-8 text-center">
+                <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg">
+                    <p class="text-gray-400 text-[10px] font-bold uppercase">الالتزام العام</p>
+                    <h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2>
+                </div>
+                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg">
+                    <p class="text-gray-400 text-[10px] font-bold uppercase">تقارير السحابة</p>
+                    <h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2>
+                </div>
+            </div>
+
             <div class="verra-card p-8 mb-10 border-r-[12px] border-[#004b47] shadow-xl">
-                <h3 class="font-black text-gray-800 text-xl mb-2">🛡️ تفتيش الميدان</h3>
-                <p class="text-[11px] text-gray-500 mb-8 font-bold leading-relaxed">فتح أداة مشرف الجودة لإجراء جولة تفتيشية جديدة ومزامنتها فوراً.</p>
-                <a href="https://verrapizza.github.io/inspection/" class="w-full verra-gradient text-white p-5 rounded-[22px] font-black shadow-lg flex justify-between items-center active:scale-95 transition-all"><span>دخول الأداة</span><span>⬅</span></a>
+                <h3 class="font-black text-gray-800 text-lg mb-2">🛡️ تفتيش ميداني جديد</h3>
+                <p class="text-[10px] text-gray-500 mb-8 font-bold leading-relaxed italic">ادخل إلى بوابة المفتش لإجراء التدقيق ومزامنة النتائج فوراً مع السحابة.</p>
+                <a href="https://verrapizza.github.io/inspection/" class="w-full verra-gradient text-white p-5 rounded-[22px] font-black shadow-lg flex justify-between items-center active:scale-95 transition-all text-center">
+                    <span>فتح أداة الميدان</span>
+                    <span class="text-xl">⬅</span>
+                </a>
             </div>
         </main>
     </div>
 
-    <!-- السجل -->
-    <div id="reportsPage" class="page hidden px-6 pt-10">
-        <div class="flex justify-between items-center mb-10"><h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8">سجل تقارير الميدان</h2><button onclick="navigateTo('dashboardPage')" class="bg-gray-100 p-3 rounded-full text-xs font-black">إغلاق</button></div>
-        <div id="reportsList" class="space-y-4 pb-20"></div>
+    <!-- صفحة سجل التقارير -->
+    <div id="reportsPage" class="page hidden px-6 pt-10 text-right">
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8">سجل تقارير السحابة</h2>
+            <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm border">رجوع</button>
+        </div>
+        <div id="reportsList" class="space-y-4 pb-20">
+            <!-- التقارير ستظهر هنا من Firebase -->
+        </div>
     </div>
 
-    <!-- نافذة تفاصيل التقرير والتحميل -->
+    <!-- نافذة المعاينة والتحميل (Full Report Modal) -->
     <div id="reportDetailModal" class="modal">
         <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <button onclick="closeDetailModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black shadow-sm">X</button>
-                <h3 class="text-xl font-black text-green-900">معاينة التقرير</h3>
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black">X</button>
+                <h3 class="text-xl font-black text-green-900">معاينة التقرير الكامل</h3>
             </div>
-            <div id="detailBody" class="space-y-6"></div>
-            <div class="mt-10 pb-10">
-                <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3">
-                    <span>📄 تحميل التقرير الكامل (PDF)</span>
+            <div id="detailBody" class="space-y-4"></div>
+            <div class="mt-8 pb-10">
+                <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3 active:scale-95 transition-all">
+                    <span>📄 تحميل التقرير (74 بنداً) PDF</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- القائمة السفلية -->
-    <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl">
-        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1">الرئيسية</span></button>
-        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1">السجل</span></button>
+    <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl border-t border-white/10">
+        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1 uppercase">Main</span></button>
+        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1 uppercase">Cloud Logs</span></button>
     </nav>
 
     <script>
+        // --- 1. إعداد Firebase ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
+            authDomain: "verra-system-828f2.firebaseapp.com",
+            projectId: "verra-system-828f2",
+            storageBucket: "verra-system-828f2.firebasestorage.app",
+            messagingSenderId: "961104891607",
+            appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
         const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
-        
-        // بيانات الأقسام الـ 10 والـ 74 سؤالاً (مهمة لتركيب التقرير الكامل)
+
+        // --- 2. بيانات الأقسام الـ 74 بنداً ---
         const sectionsData = [
           { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
           { title: "تحضير الأغذية", items: [{id:11,q:"مراجعة ومتابعة بروسيس تحضير العجين"},{id:12,q:"متابعة بروسيس تكوير العجين"},{id:13,q:"مراجعة تحضير الصوصات"},{id:14,q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"},{id:15,q:"منع التلوث الخلطي أثناء التحضير"},{id:16,q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"},{id:17,q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"},{id:18,q:"وصول درجات حرارة الطهي لـ (≥75°م)"},{id:19,q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"},{id:20,q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"},{id:21,q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}]},
@@ -83,43 +127,59 @@
           { title: "إدارة مسببات الحساسية", items: [{id:71,q:"معلومات مسببات الحساسية كاملة على الملصقات"},{id:72,q:"مناطق تحضير منفصلة للأصناف الخالية من الحساسية"},{id:73,q:"أدوات مخصصة لتحضير الأغذية الخاصة"},{id:74,q:"تدريب الموظفين على مسببات الحساسية"}]}
         ];
 
-        let allReports = [];
+        // --- 3. المنطق البرمجي والمزامنة السحابية ---
+        let cloudReports = [];
 
-        function syncData() {
-            allReports = JSON.parse(localStorage.getItem('v2_reports')) || [];
-            document.getElementById('reportCount').innerText = allReports.length;
-            if (allReports.length > 0) {
-                const avg = Math.round(allReports.reduce((s, r) => s + r.score, 0) / allReports.length);
+        function initCloudSync() {
+            db.collection("inspections").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+                cloudReports = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                updateStats();
+                if(!document.getElementById('reportsPage').classList.contains('hidden')) renderReportsList();
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, (err) => {
+                alert("⚠️ فشل الاتصال بالسحابة. تأكد من إعدادات Firebase.");
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('reportCount').innerText = cloudReports.length;
+            if(cloudReports.length > 0) {
+                let avg = Math.round(cloudReports.reduce((s, r) => s + (r.score || 0), 0) / cloudReports.length);
                 document.getElementById('totalScore').innerText = avg + "%";
             }
-            document.getElementById('reportsList').innerHTML = allReports.map((r, index) => `
-                <div onclick="viewReportDetail(${index})" class="bg-white p-6 rounded-[30px] shadow-sm border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-600'} active:scale-95 transition-transform">
+        }
+
+        function renderReportsList() {
+            const list = document.getElementById('reportsList');
+            if (cloudReports.length === 0) {
+                list.innerHTML = '<div class="text-center py-20 text-gray-400 font-bold italic">لا توجد تقارير في السحابة..</div>';
+                return;
+            }
+            list.innerHTML = cloudReports.map((r, index) => `
+                <div onclick="viewReportDetail(${index})" class="verra-card p-6 border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-500'} active:scale-95">
                     <div class="flex justify-between items-start mb-2">
                         <h4 class="font-black text-gray-800 text-lg">${r.branch}</h4>
                         <span class="text-xs font-black bg-gray-50 px-3 py-1 rounded-full">${r.score}%</span>
                     </div>
-                    <p class="text-[10px] text-gray-400 font-bold">📅 ${r.date} | 👤 المشرف: ${r.inspector.split('@')[0]}</p>
-                </div>`).join('');
+                    <p class="text-[10px] text-gray-400 font-bold">📅 ${r.date} | 👤 ${r.inspector ? r.inspector.split('@')[0] : '---'}</p>
+                </div>
+            `).join('');
         }
 
-        function viewReportDetail(index) {
-            const r = allReports[index];
+        function viewReportDetail(idx) {
+            const r = cloudReports[idx];
             const body = document.getElementById('detailBody');
             body.innerHTML = `
-                <div class="verra-card p-6 border border-gray-100 text-center">
-                    <p class="text-gray-400 text-[10px] font-bold uppercase mb-1">المنشأة</p>
-                    <h2 class="text-2xl font-black text-[#004b47] mb-4">${r.branch}</h2>
-                    <div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t">
-                        <div><p class="text-gray-400">التاريخ</p><p>${r.date}</p></div>
-                        <div><p class="text-gray-400">المفتش</p><p>${r.inspector.split('@')[0]}</p></div>
-                    </div>
-                    <div class="mt-4 pt-4 border-t flex items-center justify-between px-6">
-                        <span class="text-gray-500 font-bold">نسبة الامتثال:</span>
+                <div class="verra-card p-6 border border-gray-100 text-center mb-4">
+                    <h2 class="text-2xl font-black text-[#004b47] mb-2">${r.branch}</h2>
+                    <p class="text-xs text-gray-400 font-bold mb-4">${r.date}</p>
+                    <div class="flex justify-between px-10 border-t pt-4">
+                        <span class="font-bold text-gray-500">الامتثال:</span>
                         <span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'}">${r.score}%</span>
                     </div>
                 </div>
-                <div class="text-center py-4 text-gray-400 font-bold text-xs italic">
-                    ملاحظة: اضغط زر التحميل أدناه لإنشاء النسخة الكاملة الـ 74 بنداً.
+                <div class="bg-blue-50 p-4 rounded-2xl text-center italic text-blue-800 text-[10px] font-bold">
+                    بإمكانك تحميل التقرير الكامل الذي يحتوي على الـ 74 بنداً بالصور والملاحظات عبر الزر أدناه.
                 </div>
             `;
             document.getElementById('downloadBtn').onclick = () => generateFullPDF(r);
@@ -127,29 +187,23 @@
         }
 
         function generateFullPDF(r) {
-            const scoreColor = r.score >= 70 ? '#10b981' : '#ef4444';
-            
-            // بناء محتوى التقرير الكامل الـ 74 بنداً
-            let sectionsHtml = sectionsData.map(sec => `
-                <div style="background: #e8f5ee; padding: 12px; font-weight: 900; border-right: 6px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 30px; text-align: right;">${sec.title}</div>
-                ${sec.items.map(item => {
-                    const ans = r.answers ? r.answers[item.id] : undefined;
-                    const note = r.notes ? r.notes[item.id] : "";
-                    const itemPhotos = (r.photos && r.photos[item.id]) ? r.photos[item.id] : [];
-                    
-                    let statusText = "⚪ لم يتم الإجابة";
-                    let statusColor = "#94a3b8";
-                    if(ans === 'yes') { statusText = "✅ مطابق للمعايير"; statusColor = "#059669"; }
-                    if(ans === 'no') { statusText = "❌ مخالف للمعايير"; statusColor = "#dc2626"; }
-                    if(ans === 'na') { statusText = "🔘 غير منطبق N/A"; statusColor = "#64748b"; }
+            let contentHtml = sectionsData.map(sec => `
+                <div style="background:#e8f5ee; padding:10px; border-right:6px solid #d1ba89; color:#004b47; font-weight:900; margin-top:25px; text-align:right;">${sec.title}</div>
+                ${sec.items.map(i => {
+                    const ans = r.answers ? r.answers[i.id] : 'na';
+                    const note = r.notes ? r.notes[i.id] : '';
+                    const pics = (r.photos && r.photos[i.id]) ? r.photos[i.id] : [];
+                    let status = "⚪ لم يتم الإجابة"; let color = "#666";
+                    if(ans==='yes'){status="✅ مطابق للمعايير"; color="green";}
+                    if(ans==='no'){status="❌ مخالفة حرجة"; color="red";}
 
                     return `
-                        <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; page-break-inside: avoid; text-align: right;">
-                            <p style="margin: 0; font-size: 15px; font-weight: 900; color: #1e293b;">${item.id}. ${item.q}</p>
-                            <p style="font-size: 13px; margin: 8px 0; color: ${statusColor}; font-weight: bold;">الحالة: ${statusText}</p>
-                            ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0; color: #92400e;">الملاحظة: ${note}</div>` : ''}
-                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
-                                ${itemPhotos.map(p => `<img src="${p}" style="width: 200px; height: 150px; border-radius: 12px; object-fit: cover; border: 1px solid #e2e8f0;" />`).join('')}
+                        <div style="padding:15px; border-bottom:1px solid #eee; text-align:right; page-break-inside:avoid;">
+                            <p style="margin:0; font-weight:bold; font-size:14px;">${i.id}. ${i.q}</p>
+                            <p style="color:${color}; font-size:12px; margin:5px 0;">الحالة: ${status}</p>
+                            ${note ? `<div style="background:#fff9e6; padding:8px; border-radius:5px; font-size:11px; margin:5px 0;">ملاحظة: ${note}</div>` : ''}
+                            <div style="display:flex; gap:10px; margin-top:10px;">
+                                ${pics.map(p => `<img src="${p}" style="width:180px; height:130px; border-radius:10px; object-fit:cover; border:1px solid #ddd;" />`).join('')}
                             </div>
                         </div>
                     `;
@@ -157,56 +211,46 @@
             `).join('');
 
             const html = `
-                <div style="width: 800px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box;">
-                    <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 25px; margin-bottom: 40px;">
-                        <img src="${LOGO_URL}" style="height: 120px; margin-bottom: 15px;" />
-                        <h1 style="color: #004b47; font-size: 32px; margin: 0; font-weight: 900;">تقرير تدقيق الجودة والسلامة الغذائية الشامل</h1>
-                        <p style="color: #64748b; font-size: 14px; margin-top: 5px;">نظام VERRA PRO السحابي لإدارة الامتثال</p>
+                <div style="width:800px; margin:0 auto; padding:40px; background:white; font-family:'Cairo'; direction:rtl; box-sizing:border-box;">
+                    <div style="text-align:center; border-bottom:5px solid #004b47; padding-bottom:20px; margin-bottom:30px;">
+                        <img src="${LOGO_URL}" style="height:100px; margin-bottom:10px;" />
+                        <h1 style="color:#004b47; margin:0; font-size:28px; font-weight:900;">تقرير تدقيق الجودة والامتثال الشامل</h1>
                     </div>
-
-                    <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-                        <div style="flex: 1; text-align: right; line-height: 2.2">
-                            <p style="margin:0;"><b>🏢 المنشأة المستهدفة:</b> ${r.branch}</p>
-                            <p style="margin:0;"><b>👤 المفتش المسؤول:</b> ${r.inspector}</p>
-                            <p style="margin:0;"><b>📅 تاريخ الجولة:</b> ${r.date}</p>
+                    <div style="background:#f8fafc; padding:25px; border-radius:15px; margin-bottom:30px; border:1px solid #eee; display:flex; justify-content:space-between;">
+                        <div style="flex:1; line-height:2">
+                            <p><b>🏢 المنشأة:</b> ${r.branch}</p>
+                            <p><b>👤 المفتش:</b> ${r.inspector}</p>
+                            <p><b>📅 التاريخ:</b> ${r.date}</p>
                         </div>
-                        <div style="width: 180px; text-align: center; border-right: 3px solid #004b47; padding-right: 25px;">
-                            <p style="color: #64748b; font-weight: 900; font-size: 12px; margin-bottom: 5px;">معدل الامتثال</p>
-                            <div style="font-size: 50px; font-weight: 900; color: ${scoreColor}">${r.score}%</div>
+                        <div style="width:150px; text-align:center; border-right:3px solid #004b47; padding-right:20px;">
+                             <p style="font-size:12px; color:#666;">النسبة</p>
+                             <div style="font-size:40px; font-weight:900; color:${r.score >= 70 ? 'green':'red'};">${r.score}%</div>
                         </div>
                     </div>
-
-                    ${sectionsHtml}
-
-                    <div style="margin-top: 60px; border-top: 3px solid #004b47; pt: 30px; display: flex; justify-content: space-between; align-items: flex-end;">
-                        <div style="text-align: center;">
-                            <p style="font-weight: 900; color: #004b47; margin-bottom: 15px">التوقيع الرقمي للمفتش المعتمد</p>
-                            <img src="${r.signature}" style="width: 250px; border-bottom: 2px solid #004b47" />
-                        </div>
-                        <p style="font-size: 10px; color: #94a3b8;">تقرير إلكتروني موثق - نظام Verra Pro</p>
+                    ${contentHtml}
+                    <div style="margin-top:50px; border-top:3px solid #004b47; pt:30px; text-align:left;">
+                        <p style="font-weight:900;">التوقيع الرقمي المعتمد:</p>
+                        <img src="${r.signature}" style="width:200px; border-bottom:2px solid #004b47;" />
                     </div>
                 </div>
             `;
 
-            const opt = {
-                margin: 0,
-                filename: `Report_Full_${r.branch}_${r.date}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 1.5, useCORS: true, letterRendering: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().from(html).set(opt).save().then(() => alert("✅ تم تحميل التقرير الكامل بنجاح."));
+            const opt = { margin: 0, filename: `Report_Full_${r.branch}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            html2pdf().from(html).set(opt).save();
         }
 
-        function closeDetailModal() { document.getElementById('reportDetailModal').classList.remove('active'); }
         function navigateTo(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
-            syncData();
+            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-[#d1ba89]', 'text-white/40'));
+            document.getElementById('nav-' + id.replace('Page','')).classList.replace('text-white/40', 'text-[#d1ba89]');
+            if(id === 'reportsPage') renderReportsList();
         }
-        window.addEventListener('focus', syncData);
-        syncData();
+
+        function closeModal() { document.getElementById('reportDetailModal').classList.remove('active'); }
+
+        // تشغيل المزامنة عند فتح الصفحة
+        initCloudSync();
     </script>
 </body>
 </html>
