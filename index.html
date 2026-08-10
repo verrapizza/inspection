@@ -73,12 +73,18 @@
       const canvasRef = useRef(null);
       const sigPad = useRef(null);
 
-      useEffect(() => {
-        auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
-        db.collection("branches").onSnapshot(snap => setBranches(snap.docs.map(d => d.data().name)));
-        if (canvasRef.current) sigPad.current = new SignaturePad(canvasRef.current);
-      }, [user]);
+      // داخل دالة App في أداة التفتيش:
+useEffect(() => {
+  auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
 
+  // جلب الفروع من السحابة مباشرة (Firebase)
+  const unsubscribe = db.collection("branches").orderBy("name").onSnapshot(snap => {
+    setBranches(snap.docs.map(d => d.data().name));
+  });
+
+  return () => unsubscribe(); // تنظيف الاتصال عند إغلاق التطبيق
+}, []);
+      
       const getScore = () => {
         const vals = Object.values(answers);
         const yes = vals.filter(v => v === 'yes').length;
