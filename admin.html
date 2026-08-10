@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VERRA PRO - لوحة الإدارة</title>
+    <title>VERRA PRO - لوحة الإدارة المركزية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -24,14 +24,14 @@
 
     <div id="loadingOverlay" class="fixed inset-0 bg-white z-[200] flex flex-col items-center justify-center font-bold text-[#004b47]">
         <div class="w-12 h-12 border-4 border-t-green-500 border-gray-200 rounded-full animate-spin mb-4"></div>
-        جاري مزامنة السحابة...
+        جاري مزامنة السحابة المركزية...
     </div>
 
     <!-- الصفحة الرئيسية -->
     <div id="dashboardPage" class="page">
         <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative text-right">
             <h1 class="text-3xl font-black italic">VERRA <span class="text-[#d1ba89]">PRO</span></h1>
-            <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase">Admin Dashboard</p>
+            <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase">Admin Management Hub</p>
         </header>
 
         <main class="px-6 -mt-16 relative z-10 text-right">
@@ -40,55 +40,64 @@
                 <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
             </div>
 
-            <!-- بطاقة تفتيش مشرف الجودة -->
+            <!-- بطاقة مشرف الجودة -->
             <div class="verra-card p-8 mb-6 border-r-[12px] border-[#004b47] shadow-xl">
                 <h3 class="font-black text-gray-800 text-lg mb-2 italic">🛡️ تفتيش مشرف الجودة</h3>
-                <p class="text-[11px] text-gray-500 mb-6 font-bold leading-relaxed italic">بوابة المشرف الرسمية لإجراء عمليات التفتيش الميداني ومزامنتها.</p>
+                <p class="text-[11px] text-gray-500 mb-6 font-bold leading-relaxed">بوابة الجودة وسلامة الغذاء (74 بنداً).</p>
                 <a href="https://verrapizza.github.io/inspection/" class="w-full bg-[#004b47] text-white p-4 rounded-[20px] font-black text-sm active:scale-95 transition-all block text-center">دخول الأداة ←</a>
             </div>
 
-            <!-- بطاقة تفتيش مشرف الفروع (المطلوبة) -->
+            <!-- بطاقة مشرف الفروع -->
             <div class="verra-card p-8 mb-6 border-r-[12px] border-blue-600 shadow-xl">
                 <h3 class="font-black text-gray-800 text-lg mb-2 italic">🏢 تفتيش مشرف الفروع</h3>
-                <p class="text-[11px] text-gray-500 mb-6 font-bold leading-relaxed italic">بوابة مشرف الفروع لمراقبة العمليات التشغيلية وجاهزية المرفق.</p>
+                <p class="text-[11px] text-gray-500 mb-6 font-bold leading-relaxed">بوابة التشغيل وجاهزية المرافق (17 بنداً).</p>
                 <a href="branches-inspector.html" class="w-full bg-blue-600 text-white p-4 rounded-[20px] font-black text-sm active:scale-95 transition-all block text-center">دخول الأداة ←</a>
             </div>
 
             <!-- إدارة الفروع -->
             <div class="verra-card p-8 mb-10 border-r-[12px] border-[#d1ba89] shadow-xl">
                 <h3 class="font-black text-gray-800 text-lg mb-2 italic">إدارة الفروع</h3>
-                <p class="text-[11px] text-gray-500 mb-6 font-bold leading-relaxed italic">إضافة فروع جديدة للسحابة لتظهر فوراً عند المفتشين.</p>
                 <button onclick="navigateTo('branchesPage')" class="w-full bg-[#d1ba89] text-[#004b47] p-4 rounded-[20px] font-black text-sm active:scale-95 transition-all">فتح قائمة الفروع</button>
             </div>
         </main>
     </div>
 
-    <!-- بقية الصفحات (السجل، الفروع، تفاصيل التقرير) تبقى كما هي تماماً لضمان عمل النظام -->
+    <!-- سجل التقارير -->
     <div id="reportsPage" class="page hidden px-6 pt-10 text-right">
-        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89]">سجل السحابة</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black border shadow-sm">رجوع</button></div>
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8">سجل الميدان</h2>
+            <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black border shadow-sm">رجوع</button>
+        </div>
         <div id="reportsList" class="space-y-4 pb-24 text-right"></div>
     </div>
 
+    <!-- إدارة الفروع -->
     <div id="branchesPage" class="page hidden px-6 pt-10 text-right">
-        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47]">إدارة الفروع</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black border">إغلاق</button></div>
+        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47]">الفروع</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black border">إغلاق</button></div>
         <div class="bg-white p-6 rounded-[30px] shadow-sm mb-6">
             <input type="text" id="newBranchInput" placeholder="اسم الفرع الجديد" class="w-full bg-gray-50 p-4 rounded-2xl outline-none border border-gray-100 font-bold mb-3">
-            <button onclick="addBranchToCloud()" class="w-full bg-green-600 text-white p-4 rounded-2xl font-black">إضافة للسحابة +</button>
+            <button onclick="addBranchToCloud()" class="w-full bg-green-600 text-white p-4 rounded-2xl font-black">إضافة +</button>
         </div>
         <div id="branchesList" class="space-y-3 pb-24"></div>
     </div>
 
+    <!-- نافذة تفاصيل التقرير والتحميل -->
     <div id="reportDetailModal" class="modal">
         <div class="modal-content text-right">
-            <div class="modal-header"><button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black shadow-sm flex items-center justify-center">X</button><h3 class="text-2xl font-black text-green-950">تفاصيل التقرير</h3></div>
+            <div class="modal-header"><button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black flex items-center justify-center">X</button><h3 class="text-2xl font-black text-green-950">تفاصيل التقرير</h3></div>
             <div id="detailBody" class="space-y-5"></div>
-            <div class="mt-10 pb-10 border-t pt-8"><button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3">📄 تحميل PDF التقرير الكامل</button></div>
+            <div class="mt-10 pb-10 border-t pt-8">
+                <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3">
+                    <span id="btnText">📄 تحميل التقرير الكامل PDF</span>
+                </button>
+            </div>
         </div>
     </div>
 
+    <!-- المنيو السفلي -->
     <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl">
         <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1">MAIN</span></button>
-        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1">SAJIL</span></button>
+        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1">LOGS</span></button>
         <button onclick="navigateTo('branchesPage')" id="nav-branches" class="flex flex-col items-center text-white/40"><span class="text-2xl">🏢</span><span class="text-[9px] font-black mt-1">BRANCHES</span></button>
     </nav>
 
@@ -100,6 +109,28 @@
         let cloudReports = []; let cloudBranches = [];
 
         function fixNums(str) { return str ? str.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : ""; }
+
+        // --- مصفوفة بيانات الجودة (74 بنداً) ---
+        const sectionsQuality = [
+            { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
+            { title: "تحضير الأغذية", items: [{id:11,q:"مراجعة ومتابعة بروسيس تحضير العجين"},{id:12,q:"متابعة بروسيس تكوير العجين"},{id:13,q:"مراجعة تحضير الصوصات"},{id:14,q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"},{id:15,q:"منع التلوث الخلطي أثناء التحضير"},{id:16,q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"},{id:17,q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"},{id:18,q:"وصول درجات حرارة الطهي لـ (≥75°م)"},{id:19,q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"},{id:20,q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"},{id:21,q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}]},
+            { title: "جودة المنتج", items: [{id:22,q:"معاينة جودة المنتج النهائي (قسم الباستا)"},{id:23,q:"معاينة جودة المنتج النهائي (قسم البيتزا)"},{id:24,q:"رفع صورة المنتج النهائي على الواتساب في كل الفروع"}]},
+            { title: "المنشأة والبيئة", items: [{id:25,q:"المنشأة تقع بعيداً عن مصادر التلوث"},{id:26,q:"خلو الجدران والأرضيات والأسقف من التشققات"},{id:27,q:"الأبواب محكمة الإغلاق وتغلق تلقائياً"},{id:28,q:"النوافذ مزودة بشبكات معدنية سليمة"},{id:29,q:"ميل مناسب للصرف في جميع المناطق"},{id:30,q:"أجهزة التكييف فعالة وتعمل بشكل صحيح"},{id:31,q:"وجود شفاطات فوق الأفران والشوايات"},{id:32,q:"إضاءة كافية في جميع مناطق التعامل مع الأغذية"},{id:33,q:"الأرضيات مقاومة للماء وغير زلقة وسهلة التنظيف"}]},
+            { title: "التنظيف والتعقيم", items: [{id:34,q:"جدول التنظيف موثق ويتم اتباعه بدقة"},{id:35,q:"المطهرات آمنة للأغذية وبالتركيزات الصحيحة"},{id:36,q:"تنظيف وتعقيم المعدات بعد كل استخدام"},{id:37,q:"التنظيف العميق يومياً لجميع الأسطح الملامسة"},{id:38,q:"حاويات النفايات تفتح بالقدم وتفرغ بانتظام"},{id:39,q:"التخلص من النفايات يمنع تلوث المياه أو الأغذية"},{id:40,q:"عقد مكافحة آفات ساري مع شركة متخصصة"},{id:41,q:"عدم وجود دلائل على القوارض أو الحشرات"}]},
+            { title: "النظافة الشخصية", items: [{id:42,q:"جميع العاملين يرتدون زياً نظيفاً وأغطية للشعر"},{id:43,q:"ارتداء الكمامات في مناطق الأغذية القابلة للتلف"},{id:44,q:"محطات غسل اليدين مزودة بالصابون والماء الساخن"},{id:45,q:"غسل اليدين قبل التعامل مع الأغذية وبعد الاستراحة"},{id:46,q:"عدم ارتداء المجوهرات أو طلاء الأظافر"},{id:47,q:"فحوصات طبية قبل التوظيف من جهات معتمدة"},{id:48,q:"فحوصات طبية روتينية سنوية لجميع العاملين"},{id:49,q:"استبعاد العاملين المصابين بالأمراض المعدية"}]},
+            { title: "المعدات والأدوات", items: [{id:50,q:"المعدات مصنوعة من مواد مقاومة للتآكل وآمنة"},{id:51,q:"مقاييس الحرارة معايرة وتعمل بشكل صحيح"},{id:52,q:"الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة"},{id:53,q:"تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل"},{id:54,q:"صيانة وتنظيف معدات الطهي بانتظام"},{id:55,q:"أسطح ملامسة للأغذية ناعمة وخالية من التشققات"}]},
+            { title: "التتبيع والتوثيق", items: [{id:56,q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"},{id:57,q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"},{id:58,q:"دليل تتبع الأغذية متاح وكامل في المنشأة"},{id:59,q:"الاحتفاظ بسجلات التتبع 180 يوماً"},{id:60,q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"},{id:61,q:"سجلات اعتماد الموردين والشهادات"},{id:62,q:"جميع العاملين يحملون شهادات صحية سارية"},{id:63,q:"خطة HACCP موثقة ومعتمدة"},{id:64,q:"سجلات التنظيف والتعقيم كاملة ومحدثة"},{id:65,q:"الاحتفاظ بسجلات مراقبة درجة الحرارة"}]},
+            { title: "إمداد المياه والسباكة", items: [{id:66,q:"إمداد مياه الشرب كافٍ ونظيف تماماً"},{id:67,q:"تركيب فلاتر المياه وتنظيفها وصيانتها"},{id:68,q:"عدم وجود تسربات في مواسير الصرف"},{id:69,q:"إغلاق فتحات الصرف أثناء ساعات العمل"},{id:70,q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}]},
+            { title: "إدارة مسببات الحساسية", items: [{id:71,q:"معلومات مسببات الحساسية كاملة على الملصقات"},{id:72,q:"مناطق تحضير منفصلة للأصناف الخالية من الحساسية"},{id:73,q:"أدوات مخصصة لتحضير الأغذية الخاصة"},{id:74,q:"تدريب الموظفين على مسببات الحساسية"}]}
+        ];
+
+        // --- مصفوفة بيانات الفروع (17 بنداً) ---
+        const sectionsBranches = [
+            { title: "قسم الواجهة والصالات | Exterior & Lounges", items: [{id:1,q:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)\nتشيك قسم واجهة المطعم"},{id:2,q:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)\nتشيك قسم صالة 1"},{id:3,q:"check bathroom hall 1 (general cleaning + perfume machine)\nتشيك الحمام صالة 1"},{id:4,q:"Check lounge section 2\nتشيك قسم صالة 2"},{id:5,q:"check bathroom hall 2\nتشيك الحمام صالة 2"}]},
+            { title: "قسم الإدارة والتشغيل | Admin & Operation", items: [{id:6,q:"checks, the cashier department (cashier + applications)\nتشيك قسم الكاشير"},{id:7,q:"Monitor and Google Maps\nمتابعة قوقل ماب"},{id:8,q:"Check all plants/trees\nالتشيك على الأشجار"},{id:9,q:"Check attendance and leave\nكشف الحضور"},{id:10,q:"conducted employee meeting today?\nالاجتماع اليومي"},{id:11,q:"Follow-up supervisors daily tasks\nمتابعة مهام المشرفين"}]},
+            { title: "الإنتاج والمخازن | Production & Store", items: [{id:12,q:"Check the juices section\nتشيك قسم العصائر"},{id:13,q:"Check store section\nتشيك المستودع"},{id:14,q:"Check Restaurant back side\nالقسم الخلفي"},{id:15,q:"Send orders schedule\nرفع الطلبات"},{id:16,q:"check requests\nتشيك الطلبات"}]},
+            { title: "العمال والمرافق | Staff & Facilities", items: [{id:17,q:"Check the employees (Personal hygiene)\nتشيك العمال"},{id:18,q:"General check (sanitary facilities + broken tools)\nتشيك عام للمرافق"}]}
+        ];
 
         function startSync() {
             db.collection("inspections").onSnapshot((snap) => {
@@ -124,40 +155,108 @@
 
         function renderList() {
             document.getElementById('reportsList').innerHTML = cloudReports.map((r, i) => `
-                <div onclick="viewDetail(${i})" class="verra-card p-6 border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-500'} mb-4 active:scale-95 transition-transform shadow-md">
+                <div onclick="viewDetail(${i})" class="verra-card p-6 border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-500'} mb-4 active:scale-95 transition-transform">
                     <div class="flex justify-between items-start">
                         <h4 class="font-black text-gray-800 text-lg">${r.branch}</h4>
                         <span class="text-xs font-black bg-gray-50 px-3 py-1 rounded-full">${fixNums(r.score)}%</span>
                     </div>
-                    <p class="text-[10px] text-gray-400 font-bold mt-1">👤 المشرف: ${r.inspector ? r.inspector.split('@')[0] : '---'}</p>
-                    <p class="text-[10px] text-gray-400 font-bold mt-1">📅 ${fixNums(r.date)}</p>
-                    <p class="text-[9px] text-blue-600 font-bold mt-1">${r.type || 'تقرير جودة'}</p>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1 uppercase italic tracking-wider">${r.type || 'Quality Audit'}</p>
+                    <p class="text-[11px] text-gray-400 font-bold mt-1">📅 ${fixNums(r.date)} | 👤 ${r.inspector ? r.inspector.split('@')[0] : '---'}</p>
                 </div>`).join('');
         }
 
         function viewDetail(idx) {
             const r = cloudReports[idx];
-            document.getElementById('detailBody').innerHTML = `
-                <div class="verra-card p-6 border border-gray-100 text-center mb-4 shadow-sm">
+            const body = document.getElementById('detailBody');
+            const isBranchReport = r.type && (r.type.includes("Branch") || r.type.includes("Operation"));
+
+            body.innerHTML = `
+                <div class="verra-card p-6 border border-gray-100 text-center mb-4">
+                    <p class="text-gray-400 text-[10px] font-bold uppercase mb-1">المنشأة</p>
                     <h2 class="text-2xl font-black text-[#004b47] mb-2">${r.branch}</h2>
-                    <div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4">
+                    <p class="text-[10px] text-blue-600 font-bold uppercase mb-4">${isBranchReport ? 'تقرير إشراف فروع' : 'تقرير جودة وسلامة'}</p>
+                    <div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b mb-4">
                         <div><p class="text-gray-400">📅 التاريخ</p><p>${fixNums(r.date)}</p></div>
-                        <div><p class="text-gray-400">👤 المفتش</p><p>${r.inspector}</p></div>
+                        <div><p class="text-gray-400">👤 المفتش</p><p>${r.inspector.split('@')[0]}</p></div>
                     </div>
-                    <div class="flex justify-between px-6 pt-2">
-                        <span class="font-bold text-gray-500 italic">الامتثال العام:</span>
+                    <div class="flex justify-between px-6">
+                        <span class="font-bold text-gray-500">الامتثال:</span>
                         <span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'}">${fixNums(r.score)}%</span>
                     </div>
                 </div>
-                <p class="text-center font-bold text-gray-400 text-xs italic">نوع التقرير: ${r.type || 'تفتيش مشرف الجودة'}</p>
+                <div class="bg-blue-50 p-4 rounded-2xl text-center italic text-blue-800 text-[10px] font-bold uppercase">Ready to export full detailed PDF</div>
             `;
-            document.getElementById('downloadBtn').onclick = () => alert("جاري تجهيز محرك الـ PDF لنسخة مشرف الفروع...");
+            
+            document.getElementById('downloadBtn').onclick = () => generateFullPDF(r);
             document.getElementById('reportDetailModal').classList.add('active');
+        }
+
+        function generateFullPDF(r) {
+            document.getElementById('btnText').innerText = "جاري بناء التقرير... ⏳";
+            
+            // اختيار مصفوفة الأسئلة الصحيحة بناءً على نوع التقرير
+            const isBranchReport = r.type && (r.type.includes("Branch") || r.type.includes("Operation"));
+            const targetSections = isBranchReport ? sectionsBranches : sectionsQuality;
+            const reportTitle = isBranchReport ? "تقرير إشراف الفروع التشغيلي" : "تقرير تدقيق الجودة والسلامة الغذائية";
+
+            let contentHtml = targetSections.map(sec => `
+                <div style="background:#e8f5ee; padding:12px; border-right:8px solid #d1ba89; color:#004b47; font-weight:900; margin-top:30px; text-align:right; font-size:18px;">${sec.title}</div>
+                ${sec.items.map(i => {
+                    const ans = r.answers ? r.answers[i.id] : 'na';
+                    const note = r.notes ? r.notes[i.id] : '';
+                    const pics = (r.photos && r.photos[i.id]) ? r.photos[i.id] : [];
+                    let status = ans === 'yes' ? '✅ مطابق / Yes' : ans === 'no' ? '❌ مخالف / No' : '🔘 N/A';
+                    let color = ans === 'yes' ? '#059669' : ans === 'no' ? '#dc2626' : '#64748b';
+
+                    return `
+                        <div style="padding:15px; border-bottom:1px solid #f1f5f9; text-align:right; page-break-inside:avoid;">
+                            <p style="margin:0; font-weight:900; font-size:15px; color:#1e293b; white-space: pre-line;">${i.q}</p>
+                            <p style="font-size:13px; margin:8px 0; font-weight:bold; color:${color};">الحالة: ${status}</p>
+                            ${note ? `<div style="background:#fffbeb; padding:10px; border-radius:8px; font-size:12px; border:1px solid #fde68a; margin:10px 0;">ملاحظة: ${note}</div>` : ''}
+                            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
+                                ${pics.map(p => `<img src="${p}" style="width:200px; height:150px; border-radius:12px; object-fit:cover; border:1px solid #e2e8f0;" />`).join('')}
+                            </div>
+                        </div>`;
+                }).join('')}
+            `).join('');
+
+            const html = `
+                <div style="width:800px; margin:0 auto; padding:40px; background:white; font-family:'Cairo'; direction:rtl; box-sizing:border-box;">
+                    <div style="text-align:center; border-bottom:5px solid #004b47; padding-bottom:25px; margin-bottom:40px;">
+                        <img src="${LOGO_URL}" style="height:120px; margin-bottom:15px;" />
+                        <h1 style="color:#004b47; margin:0; font-size:32px; font-weight:900;">${reportTitle}</h1>
+                        <p style="color:#64748b; font-size:14px;">نظام VERRA PRO السحابي لإدارة الامتثال</p>
+                    </div>
+                    <div style="background:#f8fafc; padding:30px; border-radius:20px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; margin-bottom:40px;">
+                        <div style="flex:1; line-height:2.2; text-align:right;">
+                            <p><b>🏢 المنشأة المستهدفة:</b> ${r.branch}</p>
+                            <p><b>👤 المفتش المسؤول:</b> ${r.inspector}</p>
+                            <p><b>📅 التاريخ والوقت:</b> ${fixNums(r.date)}</p>
+                        </div>
+                        <div style="width:180px; text-align:center; border-right:3px solid #004b47; padding-right:25px;">
+                             <p style="font-size:12px; font-weight:900; color:#64748b; margin-bottom:5px;">معدل الامتثال</p>
+                             <div style="font-size:50px; font-weight:900; color:${r.score >= 70 ? '#059669':'#dc2626'};">${fixNums(r.score)}%</div>
+                        </div>
+                    </div>
+                    ${contentHtml}
+                    <div style="margin-top:60px; border-top:3px solid #004b47; pt:30px; text-align:left;">
+                        <p style="font-weight:900; color:#004b47; margin-bottom:15px;">التوقيع الرقمي المعتمد:</p>
+                        <img src="${r.signature}" style="width:300px; border-bottom:2px solid #004b47;" />
+                    </div>
+                </div>`;
+
+            const opt = { margin:0, filename:`Verra_${r.branch}_Report.pdf`, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} };
+            html2pdf().from(html).set(opt).save().then(() => {
+                document.getElementById('btnText').innerText = "📄 تحميل PDF التقرير الكامل";
+            });
         }
 
         function addBranchToCloud() {
             const n = document.getElementById('newBranchInput').value; if(!n) return;
-            db.collection("branches").add({name: n}).then(() => document.getElementById('newBranchInput').value = "");
+            db.collection("branches").add({name: n}).then(() => {
+                document.getElementById('newBranchInput').value = "";
+                alert("✅ تم إضافة الفرع بنجاح.");
+            });
         }
 
         function renderBranches() {
@@ -169,6 +268,7 @@
             document.getElementById(id).classList.remove('hidden');
             document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-[#d1ba89]', 'text-white/40'));
             document.getElementById('nav-' + id.replace('Page','')).classList.replace('text-white/40', 'text-[#d1ba89]');
+            if(id === 'reportsPage') renderList();
         }
         function closeModal() { document.getElementById('reportDetailModal').classList.remove('active'); }
         startSync();
