@@ -19,18 +19,18 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; padding: 0; }
+    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; cursor: pointer; }
     .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
-    .ans-btn { width: 52px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; transition: 0.2s; }
+    .ans-btn { width: 60px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 10px; background: #f1f5f9; border: 1px solid #e2e8f0; transition: 0.2s; }
     .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
     .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
     .btn-na.active { background: #64748b !important; color: white; }
     .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid white; cursor: pointer; z-index: 50; }
-    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 15px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 5px; }
+    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 50; }
+    .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 4px; }
     .upload-btn-gallery { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
   </style>
@@ -52,89 +52,34 @@
     const db = firebase.firestore();
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
 
-    // البنود بدون ترقيم (عربي + إنجليزي)
     const sectionsData = [
-      { 
-        title: "قسم الواجهة والصالات | Front & Lounge", 
-        items: [
+      { title: "قسم الواجهة والصالات | Front & Lounge", items: [
           {id:1, q:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)\nتشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
           {id:2, q:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)\nتشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
           {id:3, q:"check bathroom hall 1 (general cleaning + tissue machine + soap machine + perfume machine)\nتشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
           {id:4, q:"Check lounge section 2 (tables + Chairs + walls and floor + air conditioning)\nتشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
           {id:5, q:"check bathroom hall 2 (general cleaning + tissue machine + soap machine + perfume machine)\nتشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"}
-        ]
-      },
-      { 
-        title: "قسم الإدارة والتشغيل | Admin & Operation", 
-        items: [
+      ]},
+      { title: "قسم الإدارة والتشغيل | Admin & Operation", items: [
           {id:6, q:"checks, the cashier department (net + phone + cashier + applications)\nتشيك قسم الكاشير ( نت + تلفون + متابعة عهدة الكاشير + تشيك على نظام فودو في الكاشير + التشيك على نظاف فيد اس + متابعة الدوامات في مواقع التطبيقات )"},
           {id:7, q:"Monitor and Google Maps.\n( متابعة قوقل ماب )"},
           {id:8, q:"Check and monitor all plants/trees in the branch, if available.\n( تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع . )"},
           {id:9, q:"Check attendance and leave تشيك ( كشف الحضور )"},
           {id:10, q:"Has a meeting been conducted with all employees today?\n( هل تم الاجتماع مع جميع الموظفين اليوم )"},
           {id:11, q:"Follow-up on branch supervisors' daily tasks\nمتابعة مهام مشرفين الفروع"}
-        ]
-      },
-      { 
-        title: "الإنتاج والمخزون | Production & Store", 
-        items: [
+      ]},
+      { title: "الإنتاج والمخزون | Production & Store", items: [
           {id:12, q:"Check the juices section (check the mixers + Clean the Pepsi machine + The keratin of the Pepsi machine with the gas tube + juice chiller + dates)\nتشيك قسم العصائر ( تشيك الخلاطات + نظافة مكينة البيبسي + كراتين التابعة للمكينة مع الغاز + ثلاجة العصائر + تواريخ )"},
           {id:13, q:"Check the store section (elevator + store arrangement + cleaning + stacking + date control + store under the stairs)\nتشيك قسم المستودع ( المصعد + ترتيب المستودع + نظافة + التكديس + مراقبة التواريخ + مستودع تحت الدرج مكة )"},
           {id:14, q:"Check Restaurant, back side (general cleaning + air curtains)\nتشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية + الغاز )"},
           {id:15, q:"Send orders according to schedule\nرفع الطلبات حسب الجدول"},
           {id:16, q:"check requests\nتشيك الطلبات"}
-        ]
-      },
-      { 
-        title: "العمال والمرافق | Staff & Facilities", 
-        items: [
+      ]},
+      { title: "العمال والمرافق | Staff & Facilities", items: [
           {id:17, q:"Check the employees (personal hygiene * uniform hygiene * nails * smell * health certificate * masks * gloves * harnet)\nتشيك العمال ( النظافة الشخصية * نظافة اليونفرم * اظافر * ريحة * كرت البلدية * الكمام * قلفزات * هرنت )"},
           {id:18, q:"General check (sanitary facilities + all lamps + tiles + Damaged or broken equipment + Damaged or broken tools)\nتشيك عام ( مرافق صحية + جميع اللمبات + البلاط + المكاين الخربانة او المكسرة + أدوات الخربانة او المكسرة )"}
-        ]
-      }
+      ]}
     ];
-
-    const buildReportHTML = (branch, email, score, answers, notes, photos, signature) => {
-        return `
-          <div style="width: 800px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right;">
-            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
-              <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 10px;" />
-              <h1 style="color: #004b47; font-size: 26px; font-weight: 900; margin:0;">تقرير إشراف الفروع | Branch Supervision Report</h1>
-            </div>
-            <div style="background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between;">
-              <div style="flex: 1; line-height: 2">
-                <p><b>🏢 الفرع / Branch:</b> ${branch || '---'}</p>
-                <p><b>👤 المشرف / Supervisor:</b> ${email}</p>
-                <p><b>📅 التاريخ / Date:</b> ${new Date().toLocaleString('en-GB')}</p>
-              </div>
-              <div style="width: 150px; text-align: center; border-right: 2px solid #ddd;">
-                <p style="color: #64748b; font-weight: bold; font-size: 11px">الامتثال التشغيلي</p>
-                <div style="font-size: 42px; font-weight: 900; color: ${score >= 70 ? '#10b981' : '#ef4444'}">${score}%</div>
-              </div>
-            </div>
-            ${sectionsData.map(sec => `
-              <div style="background: #e8f5ee; padding: 10px; font-weight: bold; border-right: 5px solid #d1ba89; color: #004b47; font-size: 16px; margin-top: 20px;">${sec.title}</div>
-              ${sec.items.map(i => {
-                const ans = answers[i.id]; const note = notes[i.id]; const itemPhotos = photos[i.id] || [];
-                return `
-                  <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
-                    <p style="margin: 0; font-size: 14px; font-weight: bold; color: #1e293b; white-space: pre-line;">${i.q}</p>
-                    <p style="font-size: 12px; margin: 8px 0;">الحالة: ${ans === 'yes' ? '✅ مطابق / Yes' : ans === 'no' ? '❌ ملاحظة / No' : '🔘 N/A'}</p>
-                    ${note ? `<div style="background: #fff9e6; padding: 8px; border-radius: 5px; font-size: 11px; margin-top: 5px;">Note: ${note}</div>` : ''}
-                    <div style="display: flex; gap: 8px; margin-top: 10px;">
-                      ${itemPhotos.map(p => `<img src="${p}" style="width: 180px; height: 130px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;" />`).join('')}
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            `).join('')}
-            <div style="margin-top: 40px; text-align: left;">
-              <p style="font-weight: 900; color: #004b47; margin-bottom:10px;">توقيع المشرف / Supervisor Signature:</p>
-              <img src="${signature}" style="width: 200px; border-bottom: 2px solid #004b47" />
-            </div>
-          </div>
-        `;
-    };
 
     function App() {
       const [user, setUser] = useState(null);
@@ -152,9 +97,6 @@
       useEffect(() => {
         auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
         db.collection("branches").orderBy("name").onSnapshot(snap => setBranches(snap.docs.map(d => d.data().name)));
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(pos => {});
-        }
       }, []);
 
       useEffect(() => { if (user && canvasRef.current) sigPad.current = new SignaturePad(canvasRef.current); }, [user]);
@@ -162,7 +104,7 @@
       const handlePhotoAction = (id, e) => {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result].slice(0,2)}));
+        reader.onload = (ev) => setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result].slice(0,1)}));
         reader.readAsDataURL(file);
       };
 
@@ -173,55 +115,112 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
+      // --- محرك بناء الـ PDF المصلح ---
+      const handlePreview = () => {
+        const score = getScore();
+        const signature = sigPad.current ? sigPad.current.toDataURL() : "";
+        const scoreColor = score >= 70 ? '#059669' : '#dc2626';
+
+        const pdfHtml = `
+          <div style="width: 800px; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right; box-sizing: border-box;">
+            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
+              <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 10px;" />
+              <h1 style="color: #004b47; font-size: 28px; font-weight: 900; margin:0;">تقرير إشراف الفروع | Supervision Report</h1>
+            </div>
+            
+            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between;">
+              <div style="flex: 1; line-height: 2.2">
+                <p><b>🏢 الفرع:</b> ${branch || '---'}</p>
+                <p><b>👤 المشرف:</b> ${user.email}</p>
+                <p><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB', {hour12: true})}</p>
+              </div>
+              <div style="width: 150px; text-align: center; border-right: 3px solid #004b47; padding-right: 20px;">
+                <p style="color: #64748b; font-weight: bold; font-size: 12px; margin-bottom:5px;">نسبة الجاهزية</p>
+                <div style="font-size: 45px; font-weight: 900; color: ${scoreColor}">${score}%</div>
+              </div>
+            </div>
+
+            ${sectionsData.map(sec => `
+              <div style="background: #e8f5ee; padding: 12px; font-weight: 900; border-right: 6px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px;">${sec.title}</div>
+              ${sec.items.map(i => {
+                const ans = answers[i.id]; const note = notes[i.id]; const pics = photos[i.id] || [];
+                let status = "🔘 N/A"; let color = "#64748b";
+                if(ans === 'yes') { status = "✅ تم الإنجاز / Yes"; color = "#059669"; }
+                if(ans === 'no') { status = "❌ يوجد ملاحظة / No"; color = "#dc2626"; }
+
+                return `
+                  <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; page-break-inside: avoid;">
+                    <p style="margin: 0; font-size: 15px; font-weight: 900; color: #1e293b; white-space: pre-line;">${i.q}</p>
+                    <p style="font-size: 13px; margin: 8px 0; font-weight: bold; color: ${color};">الحالة: ${status}</p>
+                    ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0; color: #92400e;">الملاحظة: ${note}</div>` : ''}
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                      ${pics.map(p => `<img src="${p}" style="width: 220px; height: 160px; object-fit: cover; border-radius: 12px; border: 1px solid #e2e8f0;" />`).join('')}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            `).join('')}
+
+            <div style="margin-top: 60px; border-top: 3px solid #004b47; padding-top: 30px; text-align: left;">
+              <p style="font-weight: 900; color: #004b47; margin-bottom:15px;">توقيع المشرف المسؤول:</p>
+              <img src="${signature}" style="width: 250px; border-bottom: 2px solid #004b47" />
+            </div>
+          </div>
+        `;
+
+        const opt = { 
+          margin: 0, 
+          filename: `BranchReport_${branch}.pdf`, 
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+        };
+
+        html2pdf().from(pdfHtml).set(opt).save();
+      };
+
       const handleFinalSubmit = async () => {
-          if(!branch) return alert("يرجى اختيار الفرع أولاً");
+          if(!branch) return alert("يرجى اختيار الفرع");
           if(submitting) return;
           setSubmitting(true);
           const score = getScore();
           const reportId = Date.now();
           const timestampStr = new Date().toLocaleString('en-GB', { hour12: true });
 
-          const reportData = { id: reportId, branch, score, inspector: user.email, date: timestampStr, timestamp: reportId, isCrit: score < 70, type: "Branch Operation Report" };
-
           try {
               let local = JSON.parse(localStorage.getItem('v2_reports')) || [];
-              local.unshift(reportData);
+              local.unshift({ id: reportId, branch, score, inspector: user.email, date: timestampStr, isCrit: score < 70, type: "Branch Operation" });
               localStorage.setItem('v2_reports', JSON.stringify(local.slice(0, 30)));
 
               await db.collection("inspections").add({ 
-                  ...reportData, signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos 
+                  id: reportId, branch, score, inspector: user.email, date: timestampStr, timestamp: reportId, isCrit: score < 70,
+                  signature: sigPad.current ? sigPad.current.toDataURL() : "",
+                  answers, notes, photos, type: "Branch Operation"
               });
 
-              alert("✅ تم إرسال تقرير الإشراف بنجاح!");
+              alert("✅ تم الإرسال والمزامنة بنجاح!");
               window.location.reload();
-          } catch (error) { alert("⚠️ فشل الاتصال بالسحابة."); }
+          } catch (error) { alert("⚠️ خطأ في الاتصال."); }
           finally { setSubmitting(false); }
       };
 
-      const handlePreview = () => {
-        const signature = sigPad.current ? sigPad.current.toDataURL() : "";
-        const html = buildReportHTML(branch, user.email, getScore(), answers, notes, photos, signature);
-        const opt = { margin:0, filename:`Supervision_${branch}.pdf`, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4'} };
-        html2pdf().from(html).set(opt).save();
-      };
-
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl">جاري التحميل...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl">VERRA PRO...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
         <div className="pb-40 text-right">
           <div className="verra-gradient p-12 text-center shadow-xl rounded-b-[4rem]">
             <img src={LOGO_URL} className="h-32 mx-auto mb-4 drop-shadow-2xl" />
-            <h1 className="text-white font-black text-xl italic uppercase tracking-tighter text-center">بوابة مشرف الفروع</h1>
+            <h1 className="text-white font-black text-xl italic uppercase tracking-tighter">بوابة مشرف الفروع</h1>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div className="text-right">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Operational Score</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Score</p>
               <p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 transition shadow-lg shadow-blue-100">معاينة</button>
+                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg shadow-blue-100 transition">معاينة PDF</button>
                 <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition`}>{submitting ? '...':'إرسال التقرير'}</button>
             </div>
           </div>
@@ -245,17 +244,17 @@
                 </div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
                   <div key={i.id} className="item-card shadow-lg border border-gray-100">
-                    <p className="text-md font-bold text-green-950 mb-5 leading-relaxed text-right">{i.q}</p>
+                    <p className="text-md font-bold text-green-950 mb-5 leading-relaxed text-right white-space-pre-line">{i.q}</p>
                     <div className="flex gap-2 justify-end mb-6">
                       <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn ${answers[i.id]==='yes'?'active btn-yes':''}`}>نعم / Yes</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn ${answers[i.id]==='no'?'active btn-no':''}`}>لا / No</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn ${answers[i.id]==='na'?'active btn-na':''}`}>N/A</button>
                     </div>
-                    <textarea className="notes-input shadow-inner text-right p-4 rounded-xl" placeholder="Write observation / الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
+                    <textarea className="notes-input shadow-inner text-right p-4 rounded-xl" placeholder="الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
                     
                     <div className="mt-5 flex flex-wrap gap-3 items-center justify-end">
-                        <label className="upload-btn active:scale-95 shadow-md">📷 كاميرا / Camera<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
-                        <label className="upload-btn upload-btn-gallery active:scale-95 shadow-md">🖼️ معرض / Gallery<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
+                        <label className="upload-btn active:scale-95 shadow-md">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
+                        <label className="upload-btn upload-btn-gallery active:scale-95 shadow-md">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
                         <div className="flex flex-wrap mr-auto">
                           {(photos[i.id] || []).map((img, px) => (
                             <div key={px} className="relative m-1">
@@ -270,9 +269,9 @@
             ))}
             
             <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic tracking-widest border-b pb-2">Digital Authorized Signature / التوقيع الرقمي</h3>
+              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic tracking-widest border-b pb-2">التوقيع الرقمي / Signature</h3>
               <canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas>
-              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline decoration-red-200">Reset Signature / مسح</button>
+              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline decoration-red-200">مسح</button>
             </div>
           </main>
         </div>
@@ -282,14 +281,12 @@
     function Login({ auth, logo }) {
       const [email, setEmail] = useState(""); const [pass, setPass] = useState("");
       return (
-        <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
-           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ Invalid Login"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-md text-center">
+        <div className="h-screen verra-gradient flex items-center justify-center p-6">
+           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ خطأ"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-md text-center">
               <img src={logo} className="h-28 mx-auto mb-8 drop-shadow-2xl" />
-              <h1 className="text-3xl font-black text-green-900 mb-2 italic">VERRA PRO</h1>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-10 text-center">Operation Management Hub</p>
-              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="Email / البريد" value={email} onChange={v=>setEmail(v.target.value)} />
-              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="Password / الكلمة" value={pass} onChange={v=>setPass(v.target.value)} />
-              <button type="submit" className="w-full verra-gradient text-white font-black py-5 rounded-3xl shadow-xl active:scale-95 transition uppercase tracking-widest">Login System</button>
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none" placeholder="Email" value={email} onChange={v=>setEmail(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none" type="password" placeholder="Password" value={pass} onChange={v=>setPass(v.target.value)} />
+              <button type="submit" className="w-full verra-gradient text-white font-black py-5 rounded-3xl shadow-xl">دخول</button>
            </form>
         </div>
       );
