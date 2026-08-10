@@ -83,7 +83,6 @@
     function App() {
       const [user, setUser] = useState(null);
       const [loading, setLoading] = useState(true);
-      const [submitting, setSubmitting] = useState(false);
       const [branch, setBranch] = useState("");
       const [branches, setBranches] = useState([]);
       const [answers, setAnswers] = useState({});
@@ -114,14 +113,13 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // --- الحل الجذري والنهائي لمشكلة الـ PDF الفارغ ---
       const handlePreview = () => {
         if (!branch) return alert("يرجى اختيار المنشأة أولاً");
         const score = getScore();
         const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
         const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
 
-        // بناء محتوى التقرير باستخدام HTML خالص لضمان قراءته من المحرك
+        // بناء محتوى التقرير مع تصغير الصور
         let itemsHtml = sectionsData.map(sec => {
           let rows = sec.items.map(i => {
             const ans = answers[i.id];
@@ -132,26 +130,26 @@
             if (ans === 'no') { statusText = "مخالفة ❌"; color = "#dc2626"; }
 
             return `
-              <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
-                <p style="margin: 0; font-size: 14px; font-weight: bold; color: #1e293b;">${i.q.replace(/\n/g, '<br>')}</p>
-                <p style="font-size: 12px; margin: 8px 0; color: ${color}; font-weight: bold;">الحالة: ${statusText}</p>
-                ${note ? `<div style="background: #fff9e6; padding: 10px; border-radius: 8px; border: 1px solid #fde68a; font-size: 11px; margin-top: 5px;">ملاحظة: ${note}</div>` : ""}
-                ${pic ? `<div style="margin-top: 10px;"><img src="${pic}" style="width: 300px; border-radius: 10px; border: 1px solid #ddd;" /></div>` : ""}
+              <div style="padding: 12px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
+                <p style="margin: 0; font-size: 13px; font-weight: bold; color: #1e293b;">${i.q.replace(/\n/g, '<br>')}</p>
+                <p style="font-size: 11px; margin: 6px 0; font-weight: bold; color: ${color}; text-align: left;">الحالة: ${statusText}</p>
+                ${note ? `<div style="background: #fff9e6; padding: 8px; border-radius: 5px; font-size: 10px; margin-top: 5px; border: 1px solid #fde68a;">ملاحظة: ${note}</div>` : ""}
+                ${pic ? `<div style="margin-top: 10px; text-align: center;"><img src="${pic}" style="max-width: 250px; max-height: 180px; border-radius: 8px; border: 1px solid #eee;" /></div>` : ""}
               </div>
             `;
           }).join("");
 
-          return `<div style="background: #e8f5ee; padding: 12px; margin-top: 25px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: 900; font-size: 16px;">${sec.title}</div>${rows}`;
+          return `<div style="background: #e8f5ee; padding: 10px; margin-top: 20px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: 900; font-size: 15px;">${sec.title}</div>${rows}`;
         }).join("");
 
         const fullTemplate = `
-          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: sans-serif; text-align: right; box-sizing: border-box; border: 1px solid #ddd;">
+          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: sans-serif; text-align: right; box-sizing: border-box;">
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
-                <img src="${LOGO_URL}" style="height: 110px;" />
-                <h1 style="color: #004b47; font-size: 28px; font-weight: 900; margin: 10px 0;">تقرير إشراف الفروع الرسمي</h1>
+                <img src="${LOGO_URL}" style="height: 100px;" />
+                <h1 style="color: #004b47; font-size: 26px; font-weight: 900; margin: 10px 0;">تقرير إشراف الفروع الرسمي</h1>
             </div>
             
-            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="flex: 1; line-height: 2.2">
                     <p style="margin:0;"><b>🏢 المنشأة المستهدفة:</b> ${branch}</p>
                     <p style="margin:0;"><b>👤 المشرف المسؤول:</b> ${user.email}</p>
@@ -159,44 +157,36 @@
                 </div>
                 <div style="width: 180px; text-align: center; border-right: 3px solid #004b47; padding-right: 20px;">
                     <p style="color: #64748b; font-weight: bold; font-size: 12px; margin-bottom: 5px;">معدل الامتثال</p>
-                    <div style="font-size: 48px; font-weight: 900; color: ${score >= 70 ? '#059669' : '#dc2626'}">${score}%</div>
+                    <div style="font-size: 45px; font-weight: 900; color: ${score >= 70 ? '#059669' : '#dc2626'}">${score}%</div>
                 </div>
             </div>
 
             ${itemsHtml}
 
             <div style="margin-top: 60px; border-top: 4px solid #004b47; padding-top: 30px; page-break-inside: avoid;">
-                <p style="font-weight: 900; color: #004b47; font-size: 18px; margin-bottom: 20px;">توقيع المشرف المسؤول:</p>
-                ${signatureImg ? `<img src="${signatureImg}" style="width: 350px; border-bottom: 2px solid #004b47; display: block;" />` : "<p style='color:red'>لم يتم التوقيع</p>"}
+                <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 20px;">توقيع المشرف المسؤول:</p>
+                <div style="text-align: right; width: 350px; height: 120px; border-bottom: 2px solid #004b47;">
+                  ${signatureImg ? `<img src="${signatureImg}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />` : "<p style='color:red; font-size: 12px;'>لم يتم التوقيع</p>"}
+                </div>
             </div>
+            <p style="text-align: center; font-size: 9px; color: #999; margin-top: 30px;">تم إنشاء هذا التقرير آلياً عبر نظام VERRA PRO</p>
           </div>
         `;
 
-        // إعدادات المحرك
         const options = {
-          margin: 5,
-          filename: `Report_${branch}_${new Date().getTime()}.pdf`,
+          margin: 0,
+          filename: `BranchReport_${branch}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { 
-            scale: 2, 
-            useCORS: true, 
-            logging: false, 
-            scrollY: 0,
-            backgroundColor: '#ffffff'
-          },
+          html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        alert("جاري إنشاء الملف... يرجى الانتظار ثوانٍ قليلة.");
-
-        // التمرير مباشرة للنص لضمان عدم وجود صفحة فارغة
-        html2pdf().from(fullTemplate).set(options).save().catch(err => alert("خطأ في التحميل: " + err));
+        alert("جاري إنشاء المعاينة... يرجى الانتظار");
+        html2pdf().from(fullTemplate).set(options).save();
       };
 
       const handleFinalSubmit = async () => {
           if(!branch) return alert("اختر الفرع");
-          if(submitting) return;
-          setSubmitting(true);
           const score = getScore();
           const reportId = Date.now();
           const timestampStr = new Date().toLocaleString('en-GB', { hour12: true });
@@ -211,10 +201,9 @@
               alert("✅ تم الإرسال والمزامنة بنجاح!");
               window.location.reload();
           } catch (e) { alert("⚠️ خطأ في الاتصال بالسحابة."); }
-          finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-green-900 animate-pulse text-2xl tracking-widest italic">VERRA PRO SYSTEM...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-green-900 animate-pulse text-2xl">جاري التحميل...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
@@ -226,19 +215,19 @@
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div className="text-right">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Score</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none text-right">Compliance Score</p>
               <p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
                 <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg shadow-blue-100 transition">معاينة PDF</button>
-                <button onClick={handleFinalSubmit} disabled={submitting} className="verra-gradient text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition">{submitting ? '...' : 'إرسال'}</button>
+                <button onClick={handleFinalSubmit} className="verra-gradient text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition">إرسال</button>
             </div>
           </div>
 
           <main className="p-5 max-w-3xl mx-auto space-y-8 mt-4">
             <div className="card p-7 border-r-[15px] border-[#004b47] shadow-xl">
-                <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950" value={branch} onChange={e=>setBranch(e.target.value)}>
-                    <option value="">-- اختر من القائمة --</option>
+                <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950 text-right" value={branch} onChange={e=>setBranch(e.target.value)}>
+                    <option value="">-- اختر الفرع --</option>
                     {branches.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
             </div>
@@ -278,7 +267,7 @@
             ))}
             
             <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic border-b pb-2 text-center">التوقيع الرقمي المعتمد</h3>
+              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic border-b pb-2 text-center underline decoration-green-300 underline-offset-8">التوقيع الرقمي المعتمد</h3>
               <canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas>
               <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline">مسح التوقيع</button>
             </div>
@@ -290,8 +279,8 @@
     function Login({ auth, logo }) {
       const [email, setEmail] = useState(""); const [pass, setPass] = useState("");
       return (
-        <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
-           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ خطأ في الدخول"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-sm text-center">
+        <div className="h-screen verra-gradient flex items-center justify-center p-6">
+           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ خطأ"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-sm text-center">
               <img src={logo} className="h-24 mx-auto mb-6 shadow-2xl rounded-full" />
               <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" value={email} onChange={v=>setEmail(v.target.value)} />
               <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
