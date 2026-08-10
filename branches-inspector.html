@@ -19,7 +19,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; cursor: pointer; }
     .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
@@ -102,7 +102,7 @@
       const handlePhotoAction = (id, e) => {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result].slice(0,1)}));
+        reader.onload = (ev) => setPhotos(prev => ({...prev, [id]: [ev.target.result]}));
         reader.readAsDataURL(file);
       };
 
@@ -113,104 +113,107 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // --- وظيفة الـ PDF النهائية المضمونة بإذن الله ---
+      // --- وظيفة التحميل النهائية المضمونة (إعادة رسم المحتوى بالكامل) ---
       const handlePreview = () => {
         const score = getScore();
         const signature = sigPad.current ? sigPad.current.toDataURL() : "";
-        const scoreColor = score >= 70 ? '#059669' : '#dc2626';
+        const timestamp = new Date().toLocaleString('en-GB', {hour12: true});
 
-        // بناء جسم التقرير
-        let reportContent = sectionsData.map(sec => `
-          <div style="background: #e8f5ee; padding: 10px; margin-top: 20px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: bold; font-size: 16px; text-align: right;">${sec.title}</div>
-          ${sec.items.map(i => {
-            const ans = answers[i.id]; const note = notes[i.id] || ''; const pics = photos[i.id] || [];
-            let stText = "N/A"; let stCol = "#64748b";
-            if(ans==='yes'){stText="مطابق ✅"; stCol="#059669";}
-            if(ans==='no'){stText="يوجد ملاحظة ❌"; stCol="#dc2626";}
+        let sectionsHtml = sectionsData.map(sec => {
+          let itemsHtml = sec.items.map(i => {
+            const ans = answers[i.id];
+            const note = notes[i.id] || '';
+            const pic = photos[i.id] ? photos[i.id][0] : null;
+            let status = "N/A"; let color = "#64748b";
+            if(ans==='yes'){status="مطابق ✅"; color="#059669";}
+            if(ans==='no'){status="مخالفة ❌"; color="#dc2626";}
+            
             return `
-              <div style="padding: 15px; border-bottom: 1px solid #eee; text-align: right;">
-                <p style="margin: 0; font-size: 14px; font-weight: bold; color: #1e293b;">${i.q.replace(/\n/g, '<br>')}</p>
-                <p style="font-size: 12px; margin: 8px 0; font-weight: bold; color: ${stCol};">الحالة: ${stText}</p>
-                ${note ? `<div style="background: #fffbeb; padding: 8px; font-size: 11px; margin: 5px 0; border: 1px solid #fde68a;">ملاحظة: ${note}</div>` : ''}
-                ${pics.length > 0 ? `<img src="${pics[0]}" style="width: 250px; height: 180px; object-fit: cover; border-radius: 8px; margin-top: 10px; border: 1px solid #ddd;" />` : ''}
+              <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
+                <p style="margin: 0; font-size: 14px; font-weight: bold; color: #333;">${i.q.replace(/\n/g, '<br>')}</p>
+                <p style="font-size: 12px; margin: 8px 0; color: ${color}; font-weight: bold;">الحالة: ${status}</p>
+                ${note ? `<div style="background: #fff9e6; padding: 8px; border: 1px solid #fde68a; border-radius: 5px; font-size: 11px; margin-top: 5px;">ملاحظة: ${note}</div>` : ''}
+                ${pic ? `<img src="${pic}" style="width: 300px; max-height: 200px; object-fit: cover; border-radius: 10px; margin-top: 10px; border: 1px solid #ddd;" />` : ''}
               </div>`;
-          }).join('')}
-        `).join('');
+          }).join('');
 
-        const containerHtml = `
-          <div id="pdf-export-root" style="width: 780px; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box;">
+          return `<div style="background: #e8f5ee; padding: 10px; margin-top: 25px; border-right: 8px solid #d1ba89; color: #004b47; font-weight: 900; font-size: 16px;">${sec.title}</div>${itemsHtml}`;
+        }).join('');
+
+        const fullContent = `
+          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right; box-sizing: border-box;">
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
-              <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 10px;" />
-              <h1 style="color: #004b47; font-size: 26px; font-weight: 900; margin: 0;">تقرير إشراف الفروع الميداني</h1>
+                <img src="${LOGO_URL}" style="height: 110px;" />
+                <h1 style="color: #004b47; font-size: 30px; font-weight: 900; margin: 10px 0;">تقرير إشراف الفروع الرسمي</h1>
             </div>
             
-            <div style="background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
-              <div style="flex: 1; line-height: 2.2; text-align: right;">
-                <p><b>🏢 المنشأة:</b> ${branch || '---'}</p>
-                <p><b>👤 المفتش:</b> ${user.email}</p>
-                <p><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB', {hour12: true})}</p>
-              </div>
-              <div style="width: 150px; text-align: center; border-right: 2px solid #ddd;">
-                 <p style="color: #64748b; font-weight: bold; font-size: 12px;">نسبة الجاهزية</p>
-                 <div style="font-size: 45px; font-weight: 900; color: ${scoreColor};">${score}%</div>
-              </div>
+            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="flex: 1; line-height: 2.2">
+                    <p style="margin:0;"><b>🏢 الفرع المستهدف:</b> ${branch || '---'}</p>
+                    <p style="margin:0;"><b>👤 المشرف المسؤول:</b> ${user.email}</p>
+                    <p style="margin:0;"><b>📅 التاريخ والوقت:</b> ${timestamp}</p>
+                </div>
+                <div style="width: 180px; text-align: center; border-right: 3px solid #004b47; padding-right: 20px;">
+                    <p style="color: #64748b; font-weight: bold; font-size: 12px; margin-bottom: 5px;">معدل الامتثال</p>
+                    <div style="font-size: 48px; font-weight: 900; color: ${score >= 70 ? '#059669' : '#dc2626'}">${score}%</div>
+                </div>
             </div>
 
-            ${reportContent}
+            ${sectionsHtml}
 
-            <div style="margin-top: 50px; border-top: 3px solid #004b47; padding-top: 30px;">
-              <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 20px; text-align: right;">توقيع المشرف المسؤول:</p>
-              <div style="text-align: right;">
-                <img src="${signature}" style="width: 300px; max-height: 150px; border-bottom: 2px solid #004b47; display: inline-block;" />
-              </div>
+            <div style="margin-top: 60px; border-top: 4px solid #004b47; padding-top: 30px; page-break-inside: avoid;">
+                <p style="font-weight: 900; color: #004b47; font-size: 18px; margin-bottom: 15px;">توقيع المشرف المسؤول:</p>
+                <div style="text-align: right; min-height: 100px;">
+                   <img src="${signature}" style="width: 350px; border-bottom: 2px solid #004b47; display: block;" />
+                </div>
             </div>
           </div>
         `;
 
-        // الحقن الفوري في الدوم لضمان التحويل
-        const printArea = document.createElement('div');
-        printArea.innerHTML = containerHtml;
-        document.body.appendChild(printArea);
+        // الحل الجذري: الحقن المباشر والانتظار
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '-2000px'; // بعيد عن العين
+        container.style.zIndex = '500';
+        container.innerHTML = fullContent;
+        document.body.appendChild(container);
 
         const options = {
           margin: 0,
           filename: `VERRA_Report_${branch}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
+          html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // استخدام مؤقت لضمان تحميل الصور والتوقيع
+        // الانتظار ثانية واحدة للتأكد من الرسم قبل التصوير
         setTimeout(() => {
-          html2pdf().from(printArea).set(options).save().then(() => {
-            document.body.removeChild(printArea);
+          html2pdf().from(container).set(options).save().then(() => {
+            document.body.removeChild(container);
           });
-        }, 800);
+        }, 1200);
       };
 
       const handleFinalSubmit = async () => {
-          if(!branch) return alert("يرجى اختيار الفرع");
+          if(!branch) return alert("اختر الفرع");
           const score = getScore();
           const reportId = Date.now();
           const timestampStr = new Date().toLocaleString('en-GB', { hour12: true });
-
           try {
               let local = JSON.parse(localStorage.getItem('v2_reports')) || [];
               local.unshift({ id: reportId, branch, score, inspector: user.email, date: timestampStr, isCrit: score < 70, type: "Branch Report" });
               localStorage.setItem('v2_reports', JSON.stringify(local.slice(0, 30)));
-
               await db.collection("inspections").add({ 
                   id: reportId, branch, score, inspector: user.email, date: timestampStr, timestamp: reportId, isCrit: score < 70,
-                  signature: sigPad.current ? sigPad.current.toDataURL() : "",
-                  answers, notes, photos, type: "Branch Report"
+                  signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos, type: "Branch Report"
               });
-
-              alert("✅ تم الإرسال والمزامنة بنجاح!");
+              alert("✅ تم الإرسال بنجاح!");
               window.location.reload();
-          } catch (error) { alert("⚠️ خطأ في الاتصال."); }
+          } catch (e) { alert("خطأ في الاتصال"); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">VERRA PRO Loading...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-green-900 animate-pulse text-2xl">جاري التحميل...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
@@ -222,20 +225,19 @@
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div className="text-right">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Score</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Overall Score</p>
               <p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg shadow-blue-100 transition">معاينة PDF</button>
-                <button onClick={handleFinalSubmit} className="verra-gradient text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition">إرسال التقرير</button>
+                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg shadow-blue-100">معاينة PDF</button>
+                <button onClick={handleFinalSubmit} className="verra-gradient text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95">إرسال</button>
             </div>
           </div>
 
           <main className="p-5 max-w-3xl mx-auto space-y-8 mt-4">
             <div className="card p-7 border-r-[15px] border-[#004b47] shadow-xl">
-                <p className="text-[10px] font-black text-gray-400 uppercase mb-2">اختر الفرع / Select Branch:</p>
                 <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950" value={branch} onChange={e=>setBranch(e.target.value)}>
-                    <option value="">-- اختر من القائمة --</option>
+                    <option value="">-- اختر الفرع --</option>
                     {branches.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
             </div>
@@ -246,10 +248,10 @@
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}>
                     <span className="text-lg">{sec.title}</span>
-                    <span className="text-xs font-bold bg-white/30 px-3 py-1 rounded-full uppercase">{expanded.has(sec.title) ? 'Hide ▲' : 'Show ▼'}</span>
+                    <span className="text-xs font-bold uppercase">{expanded.has(sec.title) ? 'Hide ▲' : 'Show ▼'}</span>
                 </div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
-                  <div key={i.id} className="item-card shadow-lg border border-gray-100">
+                  <div key={i.id} className="item-card shadow-lg">
                     <p className="text-md font-bold text-green-950 mb-5 leading-relaxed text-right white-space-pre-line">{i.q}</p>
                     <div className="flex gap-2 justify-end mb-6">
                       <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn ${answers[i.id]==='yes'?'active btn-yes':''}`}>نعم / Yes</button>
@@ -264,7 +266,7 @@
                         <div className="flex flex-wrap mr-auto">
                           {(photos[i.id] || []).map((img, px) => (
                             <div key={px} className="relative m-1">
-                              <img src={img} className="photo-thumb" /><div className="del-img" onClick={()=>setPhotos({...photos, [i.id]: photos[i.id].filter((_,x)=>x!==px)})}>×</div>
+                              <img src={img} className="photo-thumb" /><div className="del-img" onClick={()=>setPhotos({...photos, [i.id]: []})}>×</div>
                             </div>
                           ))}
                         </div>
@@ -275,9 +277,9 @@
             ))}
             
             <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic tracking-widest border-b pb-2 text-center">توقيع المشرف المسؤول</h3>
+              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic border-b pb-2">التوقيع الرقمي</h3>
               <canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas>
-              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline decoration-red-200">مسح التوقيع</button>
+              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline">مسح</button>
             </div>
           </main>
         </div>
@@ -288,11 +290,11 @@
       const [email, setEmail] = useState(""); const [pass, setPass] = useState("");
       return (
         <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
-           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ خطأ"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-sm text-center">
+           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ خطأ"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-sm text-center text-right">
               <img src={logo} className="h-24 mx-auto mb-6 shadow-2xl rounded-full" />
-              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" value={email} onChange={v=>setEmail(v.target.value)} />
-              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
-              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl">تسجيل الدخول</button>
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right" placeholder="Email" value={email} onChange={v=>setEmail(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right" type="password" placeholder="Password" value={pass} onChange={v=>setPass(v.target.value)} />
+              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl">دخول</button>
            </form>
         </div>
       );
