@@ -3,110 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VERRA Pro - النظام المتكامل النهائي</title>
+    <title>VERRA Pro - الإصدار النهائي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         .page { transition: 0.3s; }
         .hidden { display: none; }
-        @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        .alert-pulse { animation: pulse-red 1.5s infinite; }
+        @media print {
+            nav, button, header { display: none !important; }
+            .page { display: block !important; padding: 0 !important; }
+            .print-only { display: block !important; }
+            body { background: white; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-32">
 
+    <!-- شعار الطباعة (مخفي في التطبيق) -->
+    <div class="hidden print-only p-10 text-center border-b-2 mb-10">
+        <h1 class="text-4xl font-bold text-[#004d40]">تقرير سلامة الغذاء - VERRA</h1>
+        <p class="text-sm text-gray-500 mt-2">تقرير رسمي صادر عن نظام الإدارة الرقمي</p>
+    </div>
+
     <!-- الصفحة الرئيسية -->
     <div id="dashboardPage" class="page">
-        <header class="bg-[#004d40] p-8 pb-24 rounded-b-[50px] text-white shadow-xl relative overflow-hidden">
+        <header class="bg-[#004d40] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative overflow-hidden">
             <div class="flex justify-between items-center relative z-10">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tighter italic">VERRA <span class="text-green-400 text-xs">ULTIMATE</span></h1>
-                    <p class="text-[10px] opacity-70 font-bold italic">نظام التشغيل الذكي 2024</p>
+                    <h1 class="text-3xl font-bold italic tracking-tighter">VERRA <span class="text-green-400 text-xs font-bold border px-1">2024</span></h1>
+                    <p class="text-[10px] mt-1 opacity-80 font-bold italic">نظام إدارة الجودة والامتثال</p>
                 </div>
-                <div class="relative">
-                    <span id="taskBadge" class="absolute -top-1 -right-1 bg-red-500 text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#004d40] font-bold hidden">0</span>
-                    <div class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center font-bold shadow-xl border-2 border-white/20">R</div>
-                </div>
+                <div class="w-14 h-14 bg-green-500 rounded-[20px] flex items-center justify-center font-bold shadow-2xl border-2 border-white/20">R</div>
             </div>
         </header>
 
-        <main class="px-5 -mt-16 relative z-10">
-            <!-- كروت الإحصائيات -->
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-white p-5 rounded-[35px] shadow-sm border-b-4 border-green-500 text-center">
-                    <p class="text-gray-400 text-[9px] font-bold">نسبة الامتثال</p>
-                    <h2 id="complianceScore" class="text-3xl font-bold text-green-600">100%</h2>
+        <main class="px-6 -mt-16 relative z-10">
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-white p-6 rounded-[35px] shadow-sm border-b-4 border-green-500">
+                    <p class="text-gray-400 text-[10px] font-bold">الامتثال</p>
+                    <h2 id="score" class="text-3xl font-bold text-green-600">100%</h2>
                 </div>
-                <div onclick="navigateTo('actionsPage')" class="bg-white p-5 rounded-[35px] shadow-sm border-b-4 border-red-500 text-center">
-                    <p class="text-gray-400 text-[9px] font-bold">إجراءات تصحيحية</p>
-                    <h2 id="pendingActions" class="text-3xl font-bold text-red-600">0</h2>
+                <div class="bg-white p-6 rounded-[35px] shadow-sm border-b-4 border-red-500">
+                    <p class="text-gray-400 text-[10px] font-bold">مخالفات</p>
+                    <h2 id="crits" class="text-3xl font-bold text-red-600">0</h2>
                 </div>
             </div>
 
-            <h3 class="font-bold text-gray-700 mb-4 px-1">العمليات اليومية</h3>
-            <div class="grid grid-cols-1 gap-4">
-                <div class="bg-white p-6 rounded-[30px] flex justify-between items-center shadow-sm border-r-[12px] border-blue-500">
-                    <div class="flex items-center gap-4">
-                        <span class="text-3xl">🌡️</span>
-                        <div><p class="font-bold text-sm">فحص CCP</p><p class="text-[9px] text-gray-400 font-bold">درجات الحرارة</p></div>
-                    </div>
-                    <button onclick="openModal('سجل حرارة')" class="bg-blue-600 text-white text-[10px] px-6 py-2.5 rounded-xl font-bold shadow-lg">بدء</button>
+            <div class="bg-white p-6 rounded-[40px] shadow-sm mb-8">
+                <h3 class="font-bold text-gray-700 mb-6 flex justify-between items-center">
+                    <span>المهام السريعة</span>
+                    <span class="text-[9px] bg-green-50 text-green-600 px-3 py-1 rounded-full font-bold">متصل الآن ✅</span>
+                </h3>
+                <div class="space-y-4">
+                    <button onclick="openModal('سجل حرارة')" class="w-full bg-blue-600 text-white p-5 rounded-3xl font-bold shadow-lg flex justify-between items-center">
+                        <span>🌡️ فحص درجة الحرارة</span>
+                        <span class="text-xs bg-white/20 px-3 py-1 rounded-lg">بدء +</span>
+                    </button>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- صفحة الإجراءات التصحيحية (جديدة) -->
-    <div id="actionsPage" class="page hidden px-5 pt-10">
-        <h2 class="text-2xl font-bold mb-2">الإجراءات التصحيحية</h2>
-        <p class="text-xs text-gray-400 mb-8 italic italic">يجب معالجة المخالفات الحرجة لإغلاق التقرير</p>
-        <div id="actionsList" class="space-y-4">
-            <!-- المهام الحرجة تظهر هنا -->
+    <!-- صفحة التقارير مع ميزة الطباعة -->
+    <div id="reportsPage" class="page hidden px-6 pt-10">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-bold">سجل التقارير</h2>
+            <button onclick="window.print()" class="bg-[#004d40] text-white text-[10px] px-4 py-2 rounded-xl font-bold">📄 طباعة التقرير</button>
+        </div>
+        <div id="reportsList" class="space-y-4"></div>
+        <div class="hidden print-only mt-20 border-t pt-10 flex justify-between px-10">
+            <div class="text-center font-bold"><p>توقيع المفتش</p><p class="mt-10 border-b w-32 mx-auto"></p></div>
+            <div class="text-center font-bold"><p>ختم المنشأة</p><p class="mt-10 border-b w-32 mx-auto"></p></div>
         </div>
     </div>
 
     <!-- بقية الصفحات -->
-    <div id="reportsPage" class="page hidden px-5 pt-10"><h2 class="text-2xl font-bold mb-6">سجل التقارير</h2><div id="reportsList" class="space-y-4"></div></div>
-    <div id="branchesPage" class="page hidden px-5 pt-10"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold font-bold">إدارة الفروع</h2><button onclick="addB()" class="bg-[#004d40] text-white px-4 py-2 rounded-xl text-xs font-bold">+ فرع</button></div><div id="branchesList" class="space-y-4"></div></div>
+    <div id="branchesPage" class="page hidden px-6 pt-10"><h2 class="text-2xl font-bold mb-6">إدارة الفروع</h2><button onclick="addB()" class="w-full bg-gray-200 p-4 rounded-3xl font-bold text-gray-600 mb-6">+ إضافة فرع جديد</button><div id="branchesList" class="space-y-4"></div></div>
 
     <!-- القائمة السفلية -->
-    <nav class="fixed bottom-0 w-full bg-[#004d40] text-white flex justify-around p-4 z-50 rounded-t-[45px] shadow-2xl">
-        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-green-400"><span class="text-xl">🏠</span><span class="text-[8px] font-bold">الرئيسية</span></button>
-        <button onclick="navigateTo('actionsPage')" id="nav-actions" class="flex flex-col items-center text-white/40"><span class="text-xl">⚠️</span><span class="text-[8px] font-bold">الإجراءات</span></button>
-        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-xl">📋</span><span class="text-[8px] font-bold">السجل</span></button>
-        <button onclick="navigateTo('branchesPage')" id="nav-branches" class="flex flex-col items-center text-white/40"><span class="text-xl">🏢</span><span class="text-[8px] font-bold">الفروع</span></button>
+    <nav class="fixed bottom-0 w-full bg-[#004d40] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl">
+        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-green-400"><span class="text-2xl">🏠</span><span class="text-[9px] font-bold mt-1">الرئيسية</span></button>
+        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-bold mt-1">التقارير</span></button>
+        <button onclick="navigateTo('branchesPage')" id="nav-branches" class="flex flex-col items-center text-white/40"><span class="text-2xl">🏢</span><span class="text-[9px] font-bold mt-1">الفروع</span></button>
     </nav>
 
-    <!-- مودال التسجيل -->
-    <div id="logModal" class="fixed inset-0 bg-black/70 z-[60] hidden flex items-end">
-        <div class="bg-white w-full rounded-t-[45px] p-8 animate-slide-up shadow-2xl">
-            <div class="w-16 h-1.5 bg-gray-200 rounded-full mx-auto mb-8"></div>
-            <h3 class="text-2xl font-bold mb-8 text-center text-gray-800" id="modalTitle">تسجيل القراءة</h3>
-            <div class="space-y-6 mb-10 text-right">
-                <select id="bSel" class="w-full bg-gray-50 p-4 rounded-2xl border-2 border-gray-100 font-bold italic">
-                    ${branches.map(b => `<option>${b.name}</option>`).join('')}
-                </select>
-                <input type="number" id="tVal" placeholder="0 °C" class="w-full bg-gray-50 p-5 rounded-3xl text-4xl font-bold text-center border-2 border-gray-100 focus:border-green-500 outline-none">
+    <!-- المودال -->
+    <div id="logModal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-end">
+        <div class="bg-white w-full rounded-t-[50px] p-10 animate-slide-up shadow-2xl">
+            <div class="w-16 h-1.5 bg-gray-200 rounded-full mx-auto mb-10"></div>
+            <h3 class="text-2xl font-bold mb-8 text-center" id="modalTitle">تسجيل</h3>
+            <div class="space-y-6 mb-10">
+                <select id="bSel" class="w-full bg-gray-50 p-5 rounded-[25px] border-2 border-gray-100 font-bold"></select>
+                <input type="number" id="tVal" placeholder="0 °C" class="w-full bg-gray-50 p-6 rounded-[25px] text-4xl font-bold text-center border-2 border-gray-100 focus:border-green-500 outline-none">
             </div>
             <div class="flex gap-4">
-                <button onclick="closeModal()" class="flex-1 p-5 rounded-3xl bg-gray-100 text-gray-400 font-bold">إلغاء</button>
-                <button onclick="saveEntry()" class="flex-1 p-5 rounded-3xl bg-green-600 text-white font-bold shadow-lg">حفظ وإرسال</button>
+                <button onclick="closeModal()" class="flex-1 p-5 rounded-[25px] bg-gray-100 text-gray-400 font-bold">إلغاء</button>
+                <button onclick="saveEntry()" class="flex-1 p-5 rounded-[25px] bg-green-600 text-white font-bold shadow-lg">إرسال</button>
             </div>
         </div>
     </div>
 
     <script>
-        let branches = JSON.parse(localStorage.getItem('vb_branches')) || [{name: "مكة"}, {name: "جدة"}];
-        let reports = JSON.parse(localStorage.getItem('vb_reports')) || [];
-        let actions = JSON.parse(localStorage.getItem('vb_actions')) || [];
+        let branches = JSON.parse(localStorage.getItem('v2_branches')) || [{name: "فرع مكة"}];
+        let reports = JSON.parse(localStorage.getItem('v2_reports')) || [];
 
         function navigateTo(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
             document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-green-400', 'text-white/40'));
             document.getElementById('nav-' + id.replace('Page','')).classList.replace('text-white/40', 'text-green-400');
-            if(id === 'actionsPage') renderActions();
             if(id === 'reportsPage') renderReports();
             if(id === 'branchesPage') renderBranches();
         }
@@ -118,70 +124,38 @@
         }
 
         function saveEntry() {
-            let v = parseFloat(document.getElementById('tVal').value);
+            let v = document.getElementById('tVal').value;
             let b = document.getElementById('bSel').value;
-            if(isNaN(v)) return;
-
-            let isCrit = v > 5;
-            let reportId = Date.now();
-            
-            reports.unshift({id: reportId, branch: b, value: v, isCrit: isCrit, date: new Date().toLocaleString('ar-SA')});
-            
-            // إذا كان حرجاً، افتح "إجراء تصحيحي" تلقائياً
-            if(isCrit) {
-                actions.unshift({id: reportId, branch: b, value: v, status: 'open', date: new Date().toLocaleString('ar-SA')});
-                alert("⚠️ تم رصد قراءة حرجة! تم فتح طلب إجراء تصحيحي فوراً.");
-            } else {
-                alert("تم الحفظ بنجاح ✅");
-            }
-
-            localStorage.setItem('vb_reports', JSON.stringify(reports));
-            localStorage.setItem('vb_actions', JSON.stringify(actions));
-            closeModal();
-            updateStats();
+            if(!v) return;
+            reports.unshift({branch: b, value: v, isCrit: parseFloat(v) > 5, date: new Date().toLocaleString('ar-SA')});
+            localStorage.setItem('v2_reports', JSON.stringify(reports));
+            closeModal(); updateStats(); alert("تم الحفظ وتحديث السجل.");
         }
 
-        function renderActions() {
-            const list = document.getElementById('actionsList');
-            list.innerHTML = actions.length === 0 ? '<p class="text-center text-gray-400 py-20 italic">لا توجد مخالفات حالية.. كل شيء آمن ✅</p>' : 
-            actions.map(a => `
-                <div class="bg-white p-5 rounded-3xl shadow-sm border-r-8 ${a.status === 'open' ? 'border-red-500' : 'border-green-500'} flex justify-between items-center">
-                    <div>
-                        <p class="font-bold text-sm text-gray-800">${a.branch}</p>
-                        <p class="text-[9px] text-gray-400">حرارة حرجة: ${a.value}°C</p>
-                        <p class="text-[9px] font-bold ${a.status === 'open' ? 'text-red-500 italic alert-pulse' : 'text-green-600'}">${a.status === 'open' ? 'بانتظار المعالجة..' : 'تم الإصلاح ✓'}</p>
-                    </div>
-                    ${a.status === 'open' ? `<button onclick="resolveAction(${a.id})" class="bg-green-600 text-white text-[10px] px-4 py-2 rounded-xl font-bold">معالجة</button>` : ''}
+        function renderReports() {
+            const list = document.getElementById('reportsList');
+            list.innerHTML = reports.map(r => `
+                <div class="bg-white p-5 rounded-[30px] shadow-sm border-r-[10px] ${r.isCrit ? 'border-red-500' : 'border-green-500'}">
+                    <p class="font-bold text-gray-800">${r.branch}</p>
+                    <p class="text-[10px] text-gray-400 mb-2">${r.date}</p>
+                    <p class="text-xs font-bold ${r.isCrit ? 'text-red-500' : 'text-green-600'}">النتيجة: ${r.value}°C - ${r.isCrit ? 'خطر 🚨' : 'آمن ✅'}</p>
                 </div>
             `).join('');
         }
 
-        function resolveAction(id) {
-            if(confirm("هل تم اتخاذ إجراء تصحيحي وإعادة الحرارة للنطاق الآمن؟")) {
-                actions = actions.map(a => a.id === id ? {...a, status: 'resolved'} : a);
-                localStorage.setItem('vb_actions', JSON.stringify(actions));
-                renderActions();
-                updateStats();
-            }
+        function renderBranches() {
+            document.getElementById('branchesList').innerHTML = branches.map(b => `<div class="bg-white p-5 rounded-[25px] shadow-sm font-bold border-r-8 border-[#004d40]">${b.name}</div>`).join('');
         }
 
+        function addB() { let n = prompt("الفرع:"); if(n) { branches.push({name: n}); localStorage.setItem('v2_branches', JSON.stringify(branches)); updateStats(); renderBranches(); } }
+        function closeModal() { document.getElementById('logModal').classList.add('hidden'); }
+        
         function updateStats() {
-            let openActions = actions.filter(a => a.status === 'open').length;
-            document.getElementById('pendingActions').innerText = openActions;
-            document.getElementById('taskBadge').innerText = openActions;
-            document.getElementById('taskBadge').style.display = openActions > 0 ? 'flex' : 'none';
-            
-            // حساب نسبة الامتثال
+            let crits = reports.filter(r => r.isCrit).length;
+            document.getElementById('crits').innerText = crits;
             let score = reports.length > 0 ? Math.round((reports.filter(r => !r.isCrit).length / reports.length) * 100) : 100;
-            document.getElementById('complianceScore').innerText = score + "%";
-            
-            document.getElementById('branchStats').innerText = branches.length;
+            document.getElementById('score').innerText = score + "%";
         }
-
-        function closeModal() { document.getElementById('logModal').classList.add('hidden'); document.getElementById('tVal').value=""; }
-        function addB() { let n = prompt("الفرع:"); if(n) { branches.push({name: n}); localStorage.setItem('vb_branches', JSON.stringify(branches)); updateStats(); navigateTo('branchesPage'); } }
-        function renderBranches() { document.getElementById('branchesList').innerHTML = branches.map(b => `<div class="bg-white p-5 rounded-3xl shadow-sm font-bold border-r-8 border-[#004d40]">${b.name}</div>`).join(''); }
-        function renderReports() { document.getElementById('reportsList').innerHTML = reports.map(r => `<div class="bg-white p-4 rounded-2xl shadow-sm border-r-4 ${r.isCrit ? 'border-red-500' : 'border-green-500'} font-bold text-[10px] mb-2">${r.branch}: ${r.value}°C (${r.date})</div>`).join(''); }
 
         updateStats();
     </script>
