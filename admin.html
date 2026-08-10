@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VERRA PRO - لوحة الإدارة</title>
+    <title>VERRA PRO - الإدارة المتكاملة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -12,31 +12,19 @@
     <style>
         body { font-family: 'Cairo', sans-serif; background: #f1f5f9; -webkit-tap-highlight-color: transparent; }
         .hidden { display: none; }
-        .verra-card { background: white; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; }
+        .verra-card { background: white; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         
-        /* تحسين تصميم النافذة المنبثقة لمنع القص */
+        /* تصميم النافذة المنبثقة المحسن */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: none; align-items: flex-end; }
         .modal.active { display: flex; }
         .modal-content { 
-            background: white; 
-            width: 100%; 
-            height: 94vh; 
-            border-radius: 45px 45px 0 0; 
-            padding: 35px 25px 40px 25px; /* زيادة التباعد العلوي */
-            overflow-y: auto; 
-            position: relative; 
+            background: white; width: 100%; height: 94vh; border-radius: 45px 45px 0 0; 
+            padding: 0 25px 40px 25px; overflow-y: auto; position: relative; 
         }
         .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 15px;
-            position: sticky;
-            top: -10px; /* لتثبيت الرأس عند التمرير */
-            background: white;
-            z-index: 20;
+            position: sticky; top: 0; background: white; padding: 35px 0 15px 0;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #f1f5f9; z-index: 50; margin-bottom: 25px;
         }
 
         .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
@@ -47,59 +35,81 @@
     <!-- شاشة التحميل -->
     <div id="loadingOverlay" class="fixed inset-0 bg-white z-[200] flex flex-col items-center justify-center font-bold text-[#004b47]">
         <div class="w-12 h-12 border-4 border-t-green-500 border-gray-200 rounded-full animate-spin mb-4"></div>
-        جاري مزامنة السحابة...
+        جاري المزامنة مع السحابة...
     </div>
 
-    <!-- الصفحة الرئيسية -->
+    <!-- الصفحة 1: الرئيسية -->
     <div id="dashboardPage" class="page">
         <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative text-right">
-            <h1 class="text-3xl font-black italic">VERRA <span class="text-[#d1ba89]">PRO</span></h1>
-            <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase">Admin Dashboard</p>
+            <h1 class="text-3xl font-black italic uppercase">Verra <span class="text-[#d1ba89]">Pro</span></h1>
+            <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase italic">Cloud Admin Hub</p>
         </header>
+
         <main class="px-6 -mt-16 relative z-10 text-right">
             <div class="grid grid-cols-2 gap-4 mb-8 text-center">
                 <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">الامتثال</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
                 <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
             </div>
-            <div class="verra-card p-8 mb-10 border-r-[12px] border-[#004b47] shadow-xl italic">
-                <h3 class="font-black text-gray-800 text-lg mb-2">تفتيش الميدان</h3>
+
+            <!-- بطاقة مشرف الجودة -->
+            <div class="verra-card p-8 mb-6 border-r-[12px] border-[#004b47] shadow-xl">
+                <h3 class="font-black text-gray-800 text-lg mb-2">🛡️ تفتيش مشرف الجودة</h3>
+                <p class="text-[10px] text-gray-500 mb-6 font-bold leading-relaxed italic">بوابة المشرف الرسمية لإجراء عمليات التفتيش الميداني ومزامنتها.</p>
                 <a href="https://verrapizza.github.io/inspection/" class="w-full verra-gradient text-white p-5 rounded-[22px] font-black shadow-lg flex justify-between items-center text-center"><span>دخول الأداة</span><span>⬅</span></a>
+            </div>
+
+            <!-- بطاقة إدارة الفروع -->
+            <div class="verra-card p-8 mb-10 border-r-[12px] border-[#d1ba89] shadow-xl">
+                <h3 class="font-black text-gray-800 text-lg mb-2 italic">إدارة الفروع</h3>
+                <p class="text-[10px] text-gray-500 mb-6 font-bold leading-relaxed">إضافة فروع جديدة للسحابة لتظهر فوراً عند المفتشين.</p>
+                <button onclick="navigateTo('branchesPage')" class="w-full bg-gray-100 text-[#004b47] p-4 rounded-[20px] font-black text-sm active:scale-95 transition-all">فتح قائمة الفروع</button>
             </div>
         </main>
     </div>
 
-    <!-- سجل التقارير -->
+    <!-- الصفحة 2: السجل -->
     <div id="reportsPage" class="page hidden px-6 pt-10 text-right">
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8">سجل السحابة</h2>
             <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black border shadow-sm">رجوع</button>
         </div>
-        <div id="reportsList" class="space-y-4 pb-24 text-right"></div>
+        <div id="reportsList" class="space-y-4 pb-24"></div>
     </div>
 
-    <!-- نافذة التفاصيل المصححة -->
+    <!-- الصفحة 3: إدارة الفروع -->
+    <div id="branchesPage" class="page hidden px-6 pt-10 text-right">
+        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47]">إدارة الفروع</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black border shadow-sm">إغلاق</button></div>
+        <div class="bg-white p-6 rounded-[30px] shadow-sm mb-8">
+            <p class="text-xs font-bold text-gray-400 mb-4 italic text-right">إضافة فرع جديد للسحابة:</p>
+            <div class="flex gap-2">
+                <input type="text" id="newBranchInput" placeholder="اسم الفرع..." class="flex-1 bg-gray-50 p-4 rounded-2xl outline-none border border-gray-100 font-bold text-right">
+                <button onclick="addBranchToCloud()" class="bg-green-600 text-white px-6 rounded-2xl font-black shadow-lg active:scale-95">+</button>
+            </div>
+        </div>
+        <div id="branchesList" class="space-y-3 pb-24 text-right"></div>
+    </div>
+
+    <!-- نافذة التفاصيل والتحميل -->
     <div id="reportDetailModal" class="modal">
         <div class="modal-content text-right">
             <div class="modal-header">
-                <button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black shadow-sm flex items-center justify-center">X</button>
-                <h3 class="text-2xl font-black text-green-950">تفاصيل التقرير</h3>
+                <button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black flex items-center justify-center">X</button>
+                <h3 class="text-xl font-black text-green-950">تفاصيل التقرير</h3>
             </div>
-            
-            <div id="detailBody" class="space-y-5">
-                <!-- المحتوى يظهر هنا بالكامل -->
-            </div>
-
-            <div class="mt-10 pb-10 border-t pt-8">
-                <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3 active:scale-95 transition-all">
+            <div id="detailBody" class="space-y-4"></div>
+            <div class="mt-8 pb-10 border-t pt-8">
+                <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3">
                     <span id="btnText">📄 تحميل PDF التقرير الكامل</span>
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- التنقل السفلي -->
     <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl">
         <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1 uppercase">Main</span></button>
         <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1 uppercase">Sajil</span></button>
+        <button onclick="navigateTo('branchesPage')" id="nav-branches" class="flex flex-col items-center text-white/40"><span class="text-2xl">🏢</span><span class="text-[9px] font-black mt-1 uppercase">Branches</span></button>
     </nav>
 
     <script>
@@ -107,7 +117,9 @@
         const firebaseConfig = { apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0", authDomain: "verra-system-828f2.firebaseapp.com", projectId: "verra-system-828f2", storageBucket: "verra-system-828f2.firebasestorage.app", messagingSenderId: "961104891607", appId: "1:961104891607:web:5ffd3af4983a8b015b6a92" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        
         let cloudReports = [];
+        let cloudBranches = [];
 
         function fixNums(str) { return str ? str.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : ""; }
 
@@ -126,10 +138,13 @@
 
         function startSync() {
             db.collection("inspections").onSnapshot((snap) => {
-                let data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                cloudReports = data.sort((a, b) => (b.timestamp || b.id) - (a.timestamp || a.id));
+                cloudReports = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) => (b.timestamp || b.id) - (a.timestamp || a.id));
                 updateUI();
                 document.getElementById('loadingOverlay').classList.add('hidden');
+            });
+            db.collection("branches").orderBy("name").onSnapshot((snap) => {
+                cloudBranches = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderBranches();
             });
         }
 
@@ -140,6 +155,27 @@
                 document.getElementById('totalScore').innerText = fixNums(avg) + "%";
             }
             if(!document.getElementById('reportsPage').classList.contains('hidden')) renderList();
+        }
+
+        function addBranchToCloud() {
+            const name = document.getElementById('newBranchInput').value;
+            if(!name) return alert("أدخل اسم الفرع!");
+            db.collection("branches").add({ name }).then(() => {
+                document.getElementById('newBranchInput').value = "";
+                alert("✅ تم الإضافة.");
+            });
+        }
+
+        function deleteBranch(id) {
+            if(confirm("حذف الفرع نهائياً؟")) db.collection("branches").doc(id).delete();
+        }
+
+        function renderBranches() {
+            document.getElementById('branchesList').innerHTML = cloudBranches.map(b => `
+                <div class="bg-white p-5 rounded-[25px] flex justify-between items-center shadow-sm border-r-8 border-[#004b47] mb-2">
+                    <span class="font-black text-gray-800">${b.name}</span>
+                    <button onclick="deleteBranch('${b.id}')" class="bg-red-50 text-red-500 p-2 rounded-xl text-xs font-bold">حذف</button>
+                </div>`).join('');
         }
 
         function renderList() {
@@ -155,29 +191,24 @@
 
         function viewDetail(idx) {
             const r = cloudReports[idx];
-            const body = document.getElementById('detailBody');
-            body.innerHTML = `
-                <div class="verra-card p-6 border border-gray-100 text-center mb-4">
+            document.getElementById('detailBody').innerHTML = `
+                <div class="verra-card p-6 border border-gray-100 text-center mb-4 shadow-sm">
                     <h2 class="text-2xl font-black text-[#004b47] mb-2">${r.branch}</h2>
                     <div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4">
-                        <div><p class="text-gray-400">📅 التاريخ</p><p>${fixNums(r.date)}</p></div>
-                        <div><p class="text-gray-400">👤 المفتش</p><p>${r.inspector}</p></div>
+                        <div><p class="text-gray-400">التاريخ</p><p>${fixNums(r.date)}</p></div>
+                        <div><p class="text-gray-400">المفتش</p><p>${r.inspector}</p></div>
                     </div>
-                    <div class="flex justify-between px-6 pt-2">
+                    <div class="flex justify-between px-6">
                         <span class="font-bold text-gray-500">معدل الامتثال:</span>
                         <span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'}">${fixNums(r.score)}%</span>
                     </div>
-                </div>
-                <div class="bg-blue-50 p-4 rounded-2xl text-center italic text-blue-800 text-[10px] font-bold">
-                    بإمكانك تحميل التقرير الكامل الذي يحتوي على الـ 74 بنداً بالصور عبر الزر أدناه.
                 </div>`;
-            
             document.getElementById('downloadBtn').onclick = () => generateFullPDF(r);
             document.getElementById('reportDetailModal').classList.add('active');
         }
 
         function generateFullPDF(r) {
-            document.getElementById('btnText').innerText = "جاري بناء الملف... ⏳";
+            document.getElementById('btnText').innerText = "جاري البناء... ⏳";
             let contentHtml = sectionsData.map(sec => `
                 <div style="background:#e8f5ee; padding:12px; border-right:8px solid #d1ba89; color:#004b47; font-weight:900; margin-top:30px; text-align:right; font-size:18px;">${sec.title}</div>
                 ${sec.items.map(i => {
@@ -186,15 +217,12 @@
                     const pics = (r.photos && r.photos[i.id]) ? r.photos[i.id] : [];
                     let status = ans === 'yes' ? '✅ مطابق' : ans === 'no' ? '❌ مخالف' : '⚪ N/A';
                     let color = ans === 'yes' ? '#059669' : ans === 'no' ? '#dc2626' : '#64748b';
-                    return `
-                        <div style="padding:15px; border-bottom:1px solid #f1f5f9; text-align:right; page-break-inside:avoid;">
-                            <p style="margin:0; font-weight:900; font-size:15px; color:#1e293b;">${fixNums(i.id)}. ${i.q}</p>
-                            <p style="font-size:13px; margin:8px 0; font-weight:bold; color:${color};">الحالة: ${status}</p>
-                            ${note ? `<div style="background:#fffbeb; padding:10px; border-radius:8px; font-size:12px; border:1px solid #fde68a; margin:10px 0; color:#92400e;">الملاحظة: ${note}</div>` : ''}
-                            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
-                                ${pics.map(p => `<img src="${p}" style="width:200px; height:150px; border-radius:12px; object-fit:cover; border:1px solid #e2e8f0;" />`).join('')}
-                            </div>
-                        </div>`;
+                    return `<div style="padding:15px; border-bottom:1px solid #f1f5f9; text-align:right; page-break-inside:avoid;">
+                        <p style="margin:0; font-weight:900; font-size:15px; color:#1e293b;">${fixNums(i.id)}. ${i.q}</p>
+                        <p style="font-size:13px; margin:8px 0; font-weight:bold; color:${color};">الحالة: ${status}</p>
+                        ${note ? `<div style="background:#fffbeb; padding:10px; border-radius:8px; font-size:12px; border:1px solid #fde68a; margin:10px 0; color:#92400e;">الملاحظة: ${note}</div>` : ''}
+                        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">${pics.map(p => `<img src="${p}" style="width:200px; height:150px; border-radius:12px; object-fit:cover; border:1px solid #e2e8f0;" />`).join('')}</div>
+                    </div>`;
                 }).join('')}
             `).join('');
 
@@ -205,27 +233,15 @@
                         <h1 style="color:#004b47; margin:0; font-size:32px; font-weight:900;">تقرير تدقيق الجودة الشامل</h1>
                     </div>
                     <div style="background:#f8fafc; padding:30px; border-radius:20px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; margin-bottom:40px;">
-                        <div style="flex:1; line-height:2.2; text-align:right;">
-                            <p><b>🏢 المنشأة:</b> ${r.branch}</p>
-                            <p><b>👤 المفتش:</b> ${r.inspector}</p>
-                            <p><b>📅 التاريخ:</b> ${fixNums(r.date)}</p>
-                        </div>
-                        <div style="width:180px; text-align:center; border-right:3px solid #004b47; padding-right:25px;">
-                             <p style="font-size:12px; font-weight:900; color:#64748b;">الامتثال</p>
-                             <div style="font-size:50px; font-weight:900; color:${r.score >= 70 ? '#059669':'#dc2626'};">${fixNums(r.score)}%</div>
-                        </div>
+                        <div style="flex:1; line-height:2.2; text-align:right;"><p>🏢 المنشأة: ${r.branch}</p><p>👤 المفتش: ${r.inspector}</p><p>📅 التاريخ: ${fixNums(r.date)}</p></div>
+                        <div style="width:180px; text-align:center; border-right:3px solid #004b47; padding-right:25px;"><p style="font-size:12px; font-weight:900; color:#64748b;">الامتثال</p><div style="font-size:50px; font-weight:900; color:${r.score >= 70 ? '#059669':'#dc2626'};">${fixNums(r.score)}%</div></div>
                     </div>
                     ${contentHtml}
-                    <div style="margin-top:60px; border-top:3px solid #004b47; pt:30px; text-align:left;">
-                        <p style="font-weight:900; color:#004b47; margin-bottom:15px;">التوقيع المعتمد:</p>
-                        <img src="${r.signature}" style="width:250px; border-bottom:2px solid #004b47;" />
-                    </div>
+                    <div style="margin-top:60px; border-top:3px solid #004b47; pt:30px; text-align:left;"><p style="font-weight:900; color:#004b47; margin-bottom:15px;">التوقيع المعتمد:</p><img src="${r.signature}" style="width:250px; border-bottom:2px solid #004b47;" /></div>
                 </div>`;
 
-            const opt = { margin:0, filename:`Report_Full_${r.branch}.pdf`, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} };
-            html2pdf().from(html).set(opt).save().then(() => {
-                document.getElementById('btnText').innerText = "📄 تحميل PDF التقرير الكامل";
-            });
+            const opt = { margin:0, filename:`Report_${r.branch}.pdf`, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} };
+            html2pdf().from(html).set(opt).save().then(() => { document.getElementById('btnText').innerText = "📄 تحميل PDF التقرير الكامل"; });
         }
 
         function navigateTo(id) {
@@ -233,7 +249,6 @@
             document.getElementById(id).classList.remove('hidden');
             document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-[#d1ba89]', 'text-white/40'));
             document.getElementById('nav-' + id.replace('Page','')).classList.replace('text-white/40', 'text-[#d1ba89]');
-            if(id === 'reportsPage') renderList();
         }
         function closeModal() { document.getElementById('reportDetailModal').classList.remove('active'); }
         startSync();
