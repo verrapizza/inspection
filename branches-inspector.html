@@ -31,7 +31,10 @@
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 50; }
     .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 4px; }
+    .upload-btn-gallery { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
+    .logout-btn { background: rgba(239, 68, 68, 0.2); color: #ef4444; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.3); transition: 0.3s; }
+    .logout-btn:active { background: #ef4444; color: white; }
   </style>
 </head>
 <body>
@@ -94,20 +97,26 @@
       const sigPad = useRef(null);
 
       useEffect(() => {
-        auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
+        const unsubscribe = auth.onAuthStateChanged(u => { setUser(u); setLoading(false); });
         db.collection("branches").orderBy("name").onSnapshot(snap => setBranches(snap.docs.map(d => d.data().name)));
+        return () => unsubscribe();
       }, []);
 
       useEffect(() => { if (user && canvasRef.current) sigPad.current = new SignaturePad(canvasRef.current); }, [user]);
 
-      // تعديل دالة رفع الصور للسماح بـ 3 صور
+      const handleLogout = () => {
+        if(confirm("هل تريد تسجيل الخروج من النظام؟")) {
+          auth.signOut();
+        }
+      };
+
       const handlePhotoAction = (id, e) => {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
           setPhotos(prev => ({
             ...prev,
-            [id]: [...(prev[id] || []), ev.target.result].slice(0, 3) // الحد الأقصى 3 صور
+            [id]: [...(prev[id] || []), ev.target.result].slice(0, 3) // دعم 3 صور
           }));
         };
         reader.readAsDataURL(file);
@@ -124,7 +133,7 @@
         if (!branch) return alert("يرجى اختيار المنشأة أولاً");
         const score = getScore();
         const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
-        const scoreColor = score >= 70 ? '#059669' : '#dc2626';
+        const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
 
         let itemsHtml = sectionsData.map(sec => {
           let rows = sec.items.map(i => {
@@ -148,7 +157,6 @@
               </div>
             `;
           }).join("");
-
           return `<div style="background: #e8f5ee; padding: 10px; margin-top: 20px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: 900; font-size: 15px;">${sec.title}</div>${rows}`;
         }).join("");
 
@@ -158,21 +166,18 @@
                 <img src="${LOGO_URL}" style="height: 100px;" />
                 <h1 style="color: #004b47; font-size: 26px; font-weight: 900; margin: 10px 0;">تقرير إشراف الفروع الرسمي</h1>
             </div>
-            
             <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="flex: 1; line-height: 2">
                     <p style="margin:0;"><b>🏢 المنشأة المستهدفة:</b> ${branch}</p>
                     <p style="margin:0;"><b>👤 المشرف المسؤول:</b> ${user.email}</p>
-                    <p style="margin:0;"><b>📅 التاريخ والوقت:</b> ${new Date().toLocaleString('en-GB', { hour12: true })}</p>
+                    <p style="margin:0;"><b>📅 التاريخ والوقت:</b> ${timestamp}</p>
                 </div>
                 <div style="width: 180px; text-align: center; border-right: 3px solid #004b47; padding-right: 20px;">
                     <p style="color: #64748b; font-weight: bold; font-size: 12px; margin-bottom: 5px;">معدل الامتثال</p>
                     <div style="font-size: 45px; font-weight: 900; color: ${score >= 70 ? '#059669' : '#dc2626'}">${score}%</div>
                 </div>
             </div>
-
             ${itemsHtml}
-
             <div style="margin-top: 60px; border-top: 4px solid #004b47; padding-top: 30px; page-break-inside: avoid;">
                 <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 15px;">توقيع المشرف المسؤول:</p>
                 <div style="text-align: right; width: 350px; height: 120px; border-bottom: 2px solid #004b47;">
@@ -182,14 +187,7 @@
           </div>
         `;
 
-        const options = {
-          margin: [0, 0, 10, 0],
-          filename: `BranchReport_${branch}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
+        const options = { margin: 0, filename: `BranchReport_${branch}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
         alert("جاري إنشاء المعاينة... يرجى الانتظار");
         html2pdf().from(fullTemplate).set(options).save();
       };
@@ -215,14 +213,17 @@
           finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl">جاري التحميل...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">جاري تحميل النظام...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
         <div className="pb-40 text-right">
-          <div className="verra-gradient p-12 text-center shadow-xl rounded-b-[4rem]">
+          <div className="verra-gradient p-12 text-center shadow-xl rounded-b-[4rem] relative">
             <img src={LOGO_URL} className="h-32 mx-auto mb-4 drop-shadow-2xl" />
-            <h1 className="text-white font-black text-xl italic uppercase tracking-tighter text-center">بوابة مشرف الفروع</h1>
+            <div className="flex flex-col items-center gap-2">
+                <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] text-white font-bold border border-white/10 uppercase tracking-tighter">👤 {user.email}</span>
+                <button onClick={handleLogout} className="logout-btn">تسجيل الخروج ↪</button>
+            </div>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
@@ -238,7 +239,7 @@
 
           <main className="p-5 max-w-3xl mx-auto space-y-8 mt-4">
             <div className="card p-7 border-r-[15px] border-[#004b47] shadow-xl">
-                <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950" value={branch} onChange={e=>setBranch(e.target.value)}>
+                <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950 text-right" value={branch} onChange={e=>setBranch(e.target.value)}>
                     <option value="">-- اختر الفرع --</option>
                     {branches.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
@@ -260,7 +261,7 @@
                       <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn ${answers[i.id]==='no'?'active btn-no':''}`}>لا / No</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn ${answers[i.id]==='na'?'active btn-na':''}`}>N/A</button>
                     </div>
-                    <textarea className="notes-input shadow-inner text-right p-4 rounded-xl" placeholder="الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
+                    <textarea className="notes-input shadow-inner text-right p-4 rounded-xl" placeholder="Write observation / الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
                     
                     <div className="mt-5 flex flex-wrap gap-3 items-center justify-end">
                         <label className="upload-btn active:scale-95 shadow-md">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
@@ -268,8 +269,7 @@
                         <div className="flex flex-wrap mr-auto">
                           {(photos[i.id] || []).map((img, px) => (
                             <div key={px} className="relative m-1">
-                              <img src={img} className="photo-thumb" />
-                              <div className="del-img" onClick={()=>setPhotos({...photos, [i.id]: photos[i.id].filter((_,x)=>x!==px)})}>×</div>
+                              <img src={img} className="photo-thumb" /><div className="del-img" onClick={()=>setPhotos({...photos, [i.id]: photos[i.id].filter((_,x)=>x!==px)})}>×</div>
                             </div>
                           ))}
                         </div>
@@ -297,7 +297,7 @@
               <img src={logo} className="h-24 mx-auto mb-6 shadow-2xl rounded-full" />
               <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="Email" value={email} onChange={v=>setEmail(v.target.value)} />
               <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="Password" value={pass} onChange={v=>setPass(v.target.value)} />
-              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition">دخول</button>
+              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl">دخول</button>
            </form>
         </div>
       );
