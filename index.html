@@ -33,14 +33,10 @@
     .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 4px; }
     .upload-btn-gallery { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
-    
     .nav-btn { padding: 5px 14px; border-radius: 8px; font-size: 10px; font-weight: bold; transition: 0.3s; display: inline-flex; align-items: center; gap: 5px; }
     .logout-btn { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
     .home-btn { background: rgba(209, 186, 137, 0.2); color: #d1ba89; border: 1px solid rgba(209, 186, 137, 0.4); }
-
-    /* تنسيق زر المعاينة الذهبي المتناسق */
     .preview-btn { background: #d1ba89 !important; color: #004b47 !important; font-weight: 900 !important; box-shadow: 0 4px 10px rgba(209, 186, 137, 0.3); }
-    .preview-btn:active { transform: scale(0.95); opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -68,7 +64,7 @@
       { title: "التنظيف والتعقيم", items: [{id:34,q:"جدول التنظيف موثق ويتم اتباعه بدقة"},{id:35,q:"المطهرات آمنة للأغذية وبالتركيزات الصحيحة"},{id:36,q:"تنظيف وتعقيم المعدات بعد كل استخدام"},{id:37,q:"التنظيف العميق يومياً لجميع الأسطح الملامسة"},{id:38,q:"حاويات النفايات تفتح بالقدم وتفرغ بانتظام"},{id:39,q:"التخلص من النفايات يمنع تلوث المياه أو الأغذية"},{id:40,q:"عقد مكافحة آفات ساري مع شركة متخصصة"},{id:41,q:"عدم وجود دلائل على القوارض أو الحشرات"}]},
       { title: "النظافة الشخصية", items: [{id:42,q:"جميع العاملين يرتدون زياً نظيفاً وأغطية للشعر"},{id:43,q:"ارتداء الكمامات في مناطق الأغذية القابلة للتلف"},{id:44,q:"محطات غسل اليدين مزودة بالصابون والماء الساخن"},{id:45,q:"غسل اليدين قبل التعامل مع الأغذية وبعد الاستراحة"},{id:46,q:"عدم ارتداء المجوهرات أو طلاء الأظافر"},{id:47,q:"فحوصات طبية قبل التوظيف من جهات معتمدة"},{id:48,q:"فحوصات طبية روتينية سنوية لجميع العاملين"},{id:49,q:"استبعاد العاملين المصابين بالأمراض المعدية"}]},
       { title: "المعدات والأدوات", items: [{id:50,q:"المعدات مصنوعة من مواد مقاومة للتآكل وآمنة"},{id:51,q:"مقاييس الحرارة معايرة وتعمل بشكل صحيح"},{id:52,q:"الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة"},{id:53,q:"تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل"},{id:54,q:"صيانة وتنظيف معدات الطهي بانتظام"},{id:55,q:"أسطح ملامسة للأغذية ناعمة وخالية من التشققات"}]},
-      { title: "التتبع والتوثيق", items: [{id:56,q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"},{id:57,q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"},{id:58,q:"دليل تتبع الأغذية متاح وكامل في المنشأة"},{id:59,q:"الاحتفاظ بسجلات التتبع 180 يوماً"},{id:60,q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"},{id:61,q:"سجلات اعتماد الموردين والشهادات"},{id:62,q:"جميع العاملين يحملون شهادات صحية سارية"},{id:63,q:"خطة HACCP موثقة ومعتمدة"},{id:64,q:"سجلات التنظيف والتعقيم كاملة ومحدثة"},{id:65,q:"الاحتفاظ بسجلات مراقبة درجة الحرارة"}]},
+      { title: "التتبيع والتوثيق", items: [{id:56,q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"},{id:57,q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"},{id:58,q:"دليل تتبع الأغذية متاح وكامل في المنشأة"},{id:59,q:"الاحتفاظ بسجلات التتبع 180 يوماً"},{id:60,q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"},{id:61,q:"سجلات اعتماد الموردين والشهادات"},{id:62,q:"جميع العاملين يحملون شهادات صحية سارية"},{id:63,q:"خطة HACCP موثقة ومعتمدة"},{id:64,q:"سجلات التنظيف والتعقيم كاملة ومحدثة"},{id:65,q:"الاحتفاظ بسجلات مراقبة درجة الحرارة"}]},
       { title: "إمداد المياه والسباكة", items: [{id:66,q:"إمداد مياه الشرب كافٍ ونظيف تماماً"},{id:67,q:"تركيب فلاتر المياه وتنظيفها وصيانتها"},{id:68,q:"عدم وجود تسربات في مواسير الصرف"},{id:69,q:"إغلاق فتحات الصرف أثناء ساعات العمل"},{id:70,q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}]},
       { title: "إدارة مسببات الحساسية", items: [{id:71,q:"معلومات مسببات الحساسية كاملة على الملصقات"},{id:72,q:"مناطق تحضير منفصلة للأصناف الخالية من الحساسية"},{id:73,q:"أدوات مخصصة لتحضير الأغذية الخاصة"},{id:74,q:"تدريب الموظفين على مسببات الحساسية"}]}
     ];
@@ -94,12 +90,33 @@
 
       useEffect(() => { if (user && canvasRef.current) sigPad.current = new SignaturePad(canvasRef.current); }, [user]);
 
-      const handleLogout = () => { if(confirm("هل تريد تسجيل الخروج؟")) auth.signOut(); };
+      const handleLogout = () => { if(confirm("خروج؟")) auth.signOut(); };
 
-      const handlePhotoAction = (id, e) => {
+      // --- وظيفة ضغط الصور (الحل الجديد للمشكلة) ---
+      const compressImage = (base64Str) => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.src = base64Str;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 600; 
+            const scaleSize = MAX_WIDTH / img.width;
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scaleSize;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.6)); 
+          };
+        });
+      };
+
+      const handlePhotoAction = async (id, e) => {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result].slice(0, 3)}));
+        reader.onload = async (ev) => {
+          const compressed = await compressImage(ev.target.result);
+          setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), compressed].slice(0, 3)}));
+        };
         reader.readAsDataURL(file);
       };
 
@@ -111,7 +128,7 @@
       };
 
       const handlePreview = () => {
-        if (!branch) return alert("يرجى اختيار المنشأة أولاً");
+        if (!branch) return alert("اختر المنشأة");
         const score = getScore();
         const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
         const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
@@ -125,10 +142,14 @@
             return `
               <div style="padding: 12px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
                 <p style="margin: 0; font-size: 13px; font-weight: bold; color: #1e293b;">${i.id}. ${i.q}</p>
-                <p style="font-size: 11px; margin: 5px 0; font-weight: bold; color: ${color}; text-align: right;">الحالة: ${status}</p>
-                ${note ? `<div style="background: #fff9e6; padding: 6px; border-radius: 5px; font-size: 10px; border: 1px solid #fde68a;">ملاحظة: ${note}</div>` : ""}
-                <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
-                    ${pics.map(p => `<img src="${p}" style="width: 140px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;" />`).join('')}
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 8px;">
+                    <div style="flex: 1;">
+                        <p style="font-size: 11px; font-weight: bold; color: ${color}; text-align: right;">الحالة: ${status}</p>
+                        ${note ? `<div style="background: #fff9e6; padding: 6px; border-radius: 5px; font-size: 10px; margin-top: 5px; border: 1px solid #fde68a;">ملاحظة: ${note}</div>` : ""}
+                    </div>
+                    <div style="margin-right: 15px; display: flex; gap: 5px;">
+                      ${pics.map(p => `<img src="${p}" style="width: 140px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;" />`).join('')}
+                    </div>
                 </div>
               </div>`;
           }).join("");
@@ -154,7 +175,7 @@
             </div>
             ${reportContent}
             <div style="margin-top: 50px; border-top: 4px solid #004b47; padding-top: 30px; page-break-inside: avoid;">
-                <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 20px;">توقيع المفتش المعتمد:</p>
+                <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 20px; text-align: right;">توقيع المفتش المعتمد:</p>
                 <div style="text-align: right; width: 350px; height: 120px; border-bottom: 2px solid #004b47;">
                   ${signatureImg ? `<img src="${signatureImg}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />` : "<p style='color:red'>لم يتم التوقيع</p>"}
                 </div>
@@ -183,13 +204,13 @@
                   signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos 
               });
 
-              alert("✅ تم إرسال والمزامنة بنجاح!");
+              alert("✅ تم الإرسال والمزامنة بنجاح!");
               window.location.reload();
-          } catch (e) { alert("⚠️ خطأ في السحابة."); }
+          } catch (e) { alert("⚠️ خطأ في السحابة: " + e.message); }
           finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl uppercase tracking-widest">Verifying System...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl tracking-widest uppercase">Verifying System...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
