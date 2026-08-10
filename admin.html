@@ -3,161 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VERRA Pro - المزامنة الشاملة</title>
+    <title>VERRA PRO - لوحة الإدارة</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .page { transition: 0.3s; }
+        body { font-family: 'Cairo', sans-serif; background: #f8fafc; }
+        .page { transition: 0.3s ease-in-out; }
         .hidden { display: none; }
-        @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .animate-slide-up { animation: slide-up 0.3s ease-out; }
+        .verra-card { background: white; border-radius: 35px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+        .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 pb-32">
+<body class="pb-32">
 
     <!-- الصفحة الرئيسية -->
-    <div id="dashboardPage" class="page">
-        <header class="bg-[#004d40] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative overflow-hidden">
+    <div id="dashboardPage" class="page text-right">
+        <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative overflow-hidden">
             <div class="flex justify-between items-center relative z-10">
                 <div>
-                    <h1 class="text-3xl font-bold italic tracking-tighter">VERRA <span class="text-green-400 text-xs font-bold border px-1 rounded">SYNC</span></h1>
-                    <p class="text-[10px] mt-1 opacity-80 font-bold italic font-mono uppercase">Food Safety Smart Hub</p>
+                    <h1 class="text-3xl font-black italic tracking-tighter">VERRA <span class="text-[#d1ba89]">PRO</span></h1>
+                    <p class="text-[10px] mt-1 font-bold opacity-80 uppercase italic">Quality Control Center</p>
                 </div>
-                <div class="w-14 h-14 bg-green-500 rounded-[20px] flex items-center justify-center font-bold shadow-2xl border-2 border-white/20">R</div>
+                <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 shadow-xl font-black">R</div>
             </div>
         </header>
 
         <main class="px-6 -mt-16 relative z-10">
-            <!-- عدادات المزامنة -->
+            <!-- الإحصائيات -->
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-white p-6 rounded-[35px] shadow-sm border-b-4 border-green-500">
-                    <p class="text-gray-400 text-[10px] font-bold">حالة المزامنة</p>
-                    <h2 id="syncStatus" class="text-sm font-bold text-green-600 italic">متصل ✅</h2>
+                <div class="verra-card p-6 border-b-4 border-green-600 text-center shadow-lg">
+                    <p class="text-gray-400 text-[10px] font-bold mb-1 uppercase">الامتثال العام</p>
+                    <h2 id="totalScore" class="text-3xl font-black text-green-700">100%</h2>
                 </div>
-                <div onclick="navigateTo('reportsPage')" class="bg-white p-6 rounded-[35px] shadow-sm border-b-4 border-blue-500">
-                    <p class="text-gray-400 text-[10px] font-bold">إجمالي التقارير</p>
-                    <h2 id="totalReports" class="text-3xl font-bold text-blue-600 font-mono">0</h2>
+                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 text-center shadow-lg">
+                    <p class="text-gray-400 text-[10px] font-bold mb-1 uppercase">التقارير</p>
+                    <h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2>
                 </div>
             </div>
 
-            <!-- بطاقة المشرف المحدثة -->
-            <div class="bg-white p-6 rounded-[40px] shadow-sm mb-8 border-r-[12px] border-[#004d40]">
-                <h3 class="font-bold text-gray-700 text-lg mb-2">تفتيش مشرف الجودة</h3>
-                <p class="text-[10px] text-gray-400 mb-6 font-bold leading-relaxed">عند الانتهاء من التقرير في الأداة الخارجية، اضغط "حفظ" ثم عُد هنا لرؤيته تلقائياً.</p>
+            <!-- بطاقة مشرف الجودة المطلبوبة -->
+            <div class="verra-card p-8 mb-10 border-r-[12px] border-[#004b47] shadow-xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-3xl">📋</span>
+                    <h3 class="font-black text-gray-800 text-xl">تقرير مشرف الجودة</h3>
+                </div>
+                <p class="text-[11px] text-gray-500 mb-8 font-bold leading-relaxed">بوابة المشرف الرسمية لإجراء عمليات التفتيش الميداني، فحص المعايير، وإصدار تقارير الجودة المعتمدة.</p>
                 
-                <a href="https://verrapizza.github.io/inspection/" class="w-full bg-[#004d40] text-white p-5 rounded-[25px] font-bold shadow-lg flex justify-between items-center active:scale-95 transition-transform">
-                    <span>دخول أداة التفتيش</span>
-                    <span class="text-xl">⮕</span>
+                <a href="https://verrapizza.github.io/inspection/" class="w-full verra-gradient text-white p-5 rounded-[22px] font-black shadow-lg flex justify-between items-center active:scale-95 transition-all">
+                    <span class="text-sm">دخول أداة إنشاء التقارير</span>
+                    <span class="text-xl">⬅</span>
                 </a>
             </div>
-
-            <button onclick="refreshData()" class="w-full text-xs text-gray-400 font-bold underline mb-10">تحديث البيانات يدوياً 🔄</button>
         </main>
     </div>
 
     <!-- صفحة سجل التقارير -->
-    <div id="reportsPage" class="page hidden px-6 pt-10">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 italic underline decoration-green-500 underline-offset-8">سجل التقارير</h2>
-            <button onclick="navigateTo('dashboardPage')" class="bg-gray-200 p-3 rounded-full text-sm font-bold">⬅</button>
+    <div id="reportsPage" class="page hidden px-6 pt-10 text-right">
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8">سجل تقارير الميدان</h2>
+            <button onclick="navigateTo('dashboardPage')" class="bg-gray-100 p-3 rounded-full text-xs font-black">إغلاق</button>
         </div>
         <div id="reportsList" class="space-y-4">
             <!-- التقارير تظهر هنا -->
         </div>
     </div>
 
-    <!-- إدارة الفروع -->
-    <div id="branchesPage" class="page hidden px-6 pt-10">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold italic">الفروع</h2>
-            <button onclick="addBranch()" class="bg-[#004d40] text-white px-4 py-2 rounded-xl text-xs font-bold">+ فرع</button>
-        </div>
-        <div id="branchesList" class="space-y-4"></div>
-    </div>
-
     <!-- القائمة السفلية -->
-    <nav class="fixed bottom-0 w-full bg-[#004d40] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl">
-        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-green-400"><span class="text-2xl">🏠</span><span class="text-[9px] font-bold mt-1">الرئيسية</span></button>
-        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-bold mt-1">التقارير</span></button>
-        <button onclick="navigateTo('branchesPage')" id="nav-branches" class="flex flex-col items-center text-white/40"><span class="text-2xl">🏢</span><span class="text-[9px] font-bold mt-1">الفروع</span></button>
+    <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl">
+        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1">الرئيسية</span></button>
+        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1">السجل</span></button>
     </nav>
 
     <script>
-        // تعريف الأسماء المحتملة للمفاتيح في أداة التفتيش
-        const POSSIBLE_KEYS = ['v2_reports', 'reports', 'inspection_reports', 'saved_reports', 'inspection_data'];
-        let allReports = [];
-
-        // وظيفة البحث الذكي عن البيانات
-        function refreshData() {
-            allReports = [];
+        // وظيفة تحديث البيانات من الذاكرة المشتركة
+        function syncData() {
+            const data = localStorage.getItem('v2_reports');
+            const reports = data ? JSON.parse(data) : [];
             
-            // 1. البحث في الأسماء الشائعة
-            POSSIBLE_KEYS.forEach(key => {
-                let data = localStorage.getItem(key);
-                if (data) {
-                    try {
-                        let parsed = JSON.parse(data);
-                        if (Array.isArray(parsed)) {
-                            allReports = [...allReports, ...parsed];
-                        } else if (typeof parsed === 'object') {
-                            allReports.push(parsed); // لو كان تقرير واحد فقط
-                        }
-                    } catch (e) { console.error("Error parsing key: " + key); }
-                }
-            });
-
-            // 2. إزالة التكرار بناءً على التاريخ أو الـ ID لو وجد
-            allReports = allReports.filter((v, i, a) => a.findIndex(t => (t.id === v.id || JSON.stringify(t) === JSON.stringify(v))) === i);
+            // تحديث الأرقام في الرئيسية
+            document.getElementById('reportCount').innerText = reports.length;
             
-            // ترتيب من الأحدث للأقدم
-            allReports.sort((a, b) => new Date(b.date || b.timestamp) - new Date(a.date || a.timestamp));
+            if (reports.length > 0) {
+                const avg = Math.round(reports.reduce((s, r) => s + r.score, 0) / reports.length);
+                document.getElementById('totalScore').innerText = avg + "%";
+            } else {
+                document.getElementById('totalScore').innerText = "100%";
+            }
 
-            updateStats();
-            if(!document.getElementById('reportsPage').classList.contains('hidden')) renderReports();
-        }
-
-        function navigateTo(id) {
-            refreshData();
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-green-400', 'text-white/40'));
-            const shortId = id.replace('Page','');
-            document.getElementById('nav-' + shortId).classList.replace('text-white/40', 'text-green-400');
-        }
-
-        function renderReports() {
+            // عرض القائمة في صفحة السجل
             const list = document.getElementById('reportsList');
-            if(allReports.length === 0) {
-                list.innerHTML = '<div class="text-center py-20 text-gray-400 italic">لا توجد تقارير في الذاكرة. تأكد من ضغط "حفظ" في أداة التفتيش.</div>';
+            if (reports.length === 0) {
+                list.innerHTML = '<div class="text-center py-20 text-gray-400 italic font-bold">لا توجد تقارير ميدانية بعد..</div>';
                 return;
             }
-            list.innerHTML = allReports.map(r => `
-                <div class="bg-white p-5 rounded-[30px] shadow-sm border-r-[10px] ${r.status === 'خطر' || r.isCrit ? 'border-red-500' : 'border-green-500'}">
-                    <p class="font-bold text-gray-800">${r.branch || r.title || 'تقرير تفتيش'}</p>
-                    <p class="text-[9px] text-gray-400 mb-2">${r.date || 'تاريخ غير معروف'}</p>
-                    <div class="flex justify-between items-center">
-                        <p class="text-xs font-bold text-gray-600 italic">النتيجة: ${r.value || r.score || 'تم الفحص'}</p>
-                        <span class="text-[10px] font-bold px-2 py-1 rounded-lg ${r.isCrit ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}">
-                            ${r.isCrit ? 'غير مطابق ⚠️' : 'مطابق ✅'}
-                        </span>
+
+            list.innerHTML = reports.map(r => `
+                <div class="bg-white p-6 rounded-[30px] shadow-md border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-600'}">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-black text-gray-800 text-lg">${r.branch}</h4>
+                        <span class="text-xs font-black px-3 py-1 rounded-full ${r.score < 70 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}">${r.score}%</span>
                     </div>
+                    <p class="text-[10px] text-gray-400 font-bold mb-1">📅 التاريخ: ${r.date}</p>
+                    <p class="text-[10px] text-gray-400 font-bold italic">👤 المشرف: ${r.inspector ? r.inspector.split('@')[0] : 'غير معروف'}</p>
                 </div>
             `).join('');
         }
 
-        function updateStats() {
-            document.getElementById('totalReports').innerText = allReports.length;
+        function navigateTo(id) {
+            syncData(); // مزامنة قبل الانتقال
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.replace('text-[#d1ba89]', 'text-white/40'));
+            document.getElementById('nav-' + id.replace('Page','')).classList.replace('text-white/40', 'text-[#d1ba89]');
         }
 
-        // ميزة ذكية: تحديث البيانات تلقائياً بمجرد عودة المستخدم للتطبيق (دون عمل ريفريش)
-        window.addEventListener('focus', () => {
-            console.log("Welcome back! Refreshing reports...");
-            refreshData();
-        });
-
-        // تشغيل أولي
-        refreshData();
+        // تحديث تلقائي عند العودة للتبويب
+        window.addEventListener('focus', syncData);
+        syncData();
     </script>
 </body>
 </html>
