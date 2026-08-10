@@ -6,6 +6,8 @@
     <title>VERRA PRO - لوحة الإدارة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- مكتبة تحميل الـ PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body { font-family: 'Cairo', sans-serif; background: #f8fafc; overflow-x: hidden; }
         .hidden { display: none; }
@@ -13,6 +15,7 @@
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: flex-end; }
         .modal.active { display: flex; }
         .modal-content { background: white; width: 100%; height: 90vh; border-radius: 40px 40px 0 0; padding: 30px; overflow-y: auto; }
+        .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     </style>
 </head>
 <body class="pb-32 text-right">
@@ -21,7 +24,7 @@
     <div id="dashboardPage" class="page">
         <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative">
             <h1 class="text-3xl font-black italic">VERRA <span class="text-[#d1ba89]">PRO</span></h1>
-            <p class="text-[10px] opacity-80 uppercase italic">Control Center</p>
+            <p class="text-[10px] opacity-80 uppercase italic tracking-widest">Control Center</p>
         </header>
         <main class="px-6 -mt-16 relative z-10">
             <div class="grid grid-cols-2 gap-4 mb-8 text-center">
@@ -30,27 +33,33 @@
             </div>
             <div class="verra-card p-8 mb-10 border-r-[12px] border-[#004b47] shadow-xl">
                 <h3 class="font-black text-gray-800 text-xl mb-2">🛡️ تقرير المشرف</h3>
-                <p class="text-[11px] text-gray-500 mb-8 font-bold leading-relaxed">بوابة المشرف لإجراء عمليات التفتيش الميداني وإصدار تقارير الجودة.</p>
-                <a href="https://verrapizza.github.io/inspection/" class="w-full bg-[#004b47] text-white p-5 rounded-[22px] font-black shadow-lg flex justify-between items-center active:scale-95 transition-all text-center"><span>دخول الأداة</span><span>⬅</span></a>
+                <p class="text-[11px] text-gray-500 mb-8 font-bold leading-relaxed">بوابة المشرف الرسمية لإجراء عمليات التفتيش الميداني وإصدار تقارير الجودة.</p>
+                <a href="https://verrapizza.github.io/inspection/" class="w-full verra-gradient text-white p-5 rounded-[22px] font-black shadow-lg flex justify-between items-center active:scale-95 transition-all text-center"><span>دخول الأداة</span><span>⬅</span></a>
             </div>
         </main>
     </div>
 
-    <!-- صفحة سجل التقارير -->
+    <!-- صفحة السجل -->
     <div id="reportsPage" class="page hidden px-6 pt-10">
         <div class="flex justify-between items-center mb-10"><h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8">سجل تقارير الميدان</h2><button onclick="navigateTo('dashboardPage')" class="bg-gray-100 p-3 rounded-full text-xs font-black">إغلاق</button></div>
         <div id="reportsList" class="space-y-4 pb-20"></div>
     </div>
 
-    <!-- نافذة تفاصيل التقرير (Modal) -->
+    <!-- نافذة تفاصيل التقرير -->
     <div id="reportDetailModal" class="modal">
         <div class="modal-content">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-black text-green-900" id="detailTitle">تفاصيل التقرير</h3>
-                <button onclick="closeDetailModal()" class="bg-red-50 text-red-500 p-3 rounded-full font-bold">X</button>
+                <button onclick="closeDetailModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black shadow-sm">X</button>
+                <h3 class="text-2xl font-black text-green-900">تفاصيل التقرير</h3>
             </div>
             <div id="detailBody" class="space-y-6">
-                <!-- محتوى التقرير يظهر هنا -->
+                <!-- المحتوى يظهر هنا -->
+            </div>
+            <!-- زر التحميل المضاف -->
+            <div class="mt-10 pb-10 border-t pt-6">
+                <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3 active:scale-95 transition-all">
+                    <span>📄 تحميل التقرير بصيغة PDF</span>
+                </button>
             </div>
         </div>
     </div>
@@ -62,6 +71,7 @@
 
     <script>
         let allReports = [];
+        const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
 
         function syncData() {
             allReports = JSON.parse(localStorage.getItem('v2_reports')) || [];
@@ -71,61 +81,108 @@
                 document.getElementById('totalScore').innerText = avg + "%";
             }
             document.getElementById('reportsList').innerHTML = allReports.map((r, index) => `
-                <div onclick="viewReportDetail(${index})" class="bg-white p-6 rounded-[30px] shadow-md border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-600'} active:scale-95 transition-transform">
+                <div onclick="viewReportDetail(${index})" class="bg-white p-6 rounded-[30px] shadow-md border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-500'} active:scale-95 transition-transform">
                     <div class="flex justify-between items-start">
                         <h4 class="font-black text-gray-800 text-lg">${r.branch}</h4>
                         <span class="text-xs font-black bg-gray-50 px-3 py-1 rounded-full">${r.score}%</span>
                     </div>
-                    <p class="text-[10px] text-gray-400 font-bold mb-1">📅 ${r.date}</p>
-                    <p class="text-[10px] text-gray-400 font-bold italic">👤 المشرف: ${r.inspector ? r.inspector.split('@')[0] : 'غير معروف'}</p>
+                    <p class="text-[10px] text-gray-400 font-bold mb-1 italic">📅 ${r.date}</p>
                 </div>`).join('');
         }
 
+        // دالة عرض التفاصيل مع ربط زر التحميل
         function viewReportDetail(index) {
             const r = allReports[index];
             const modal = document.getElementById('reportDetailModal');
             const body = document.getElementById('detailBody');
             
-            let itemsHtml = "";
+            let violationsHtml = "";
             if (r.answers) {
-                // محاكاة الأقسام لعرضها بشكل منظم
-                itemsHtml = `<div class="bg-green-50 p-4 rounded-3xl mb-4 border border-green-100">
-                    <p class="font-bold text-green-800">خلاصة: ${r.score}% امتثال</p>
-                </div>`;
-                
-                // عرض الأجوبة التي تم اختيار "لا" فيها أولاً كمخالفات
                 Object.entries(r.answers).forEach(([id, ans]) => {
                     if (ans === 'no') {
-                        itemsHtml += `<div class="bg-red-50 p-4 rounded-2xl border border-red-100 mb-2">
-                            <p class="font-bold text-red-700 text-xs">⚠️ مخالفة في البند رقم ${id}</p>
-                            <p class="text-[10px] text-red-500">${r.notes[id] || 'لا توجد ملاحظات'}</p>
-                            <div class="flex gap-2 mt-2">
-                                ${(r.photos[id] || []).map(p => `<img src="${p}" class="w-16 h-16 rounded-lg border object-cover">`).join('')}
-                            </div>
-                        </div>`;
+                        violationsHtml += `
+                            <div class="bg-red-50 p-4 rounded-2xl border border-red-100 mb-2">
+                                <p class="font-bold text-red-700 text-xs">⚠️ مخالفة في البند رقم ${id}</p>
+                                <p class="text-[10px] text-red-500">${r.notes[id] || 'لا توجد ملاحظات مكتوبة'}</p>
+                            </div>`;
                     }
                 });
             }
 
             body.innerHTML = `
                 <div class="border-b pb-4">
-                    <p class="text-gray-500 text-xs uppercase font-bold">المنشأة</p>
-                    <p class="text-xl font-black text-green-950">${r.branch}</p>
+                    <p class="text-gray-400 text-[10px] uppercase font-bold mb-1">المنشأة المستهدفة</p>
+                    <p class="text-2xl font-black text-green-950">${r.branch}</p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><p class="text-gray-400 text-[10px]">التاريخ</p><p class="text-xs font-bold">${r.date}</p></div>
-                    <div><p class="text-gray-400 text-[10px]">المفتش</p><p class="text-xs font-bold">${r.inspector}</p></div>
+                    <div><p class="text-gray-400 text-[10px] font-bold">التاريخ</p><p class="text-xs font-black">${r.date}</p></div>
+                    <div><p class="text-gray-400 text-[10px] font-bold">المفتش</p><p class="text-xs font-black italic">${r.inspector}</p></div>
                 </div>
-                <div class="pt-4">
-                    <h4 class="font-black text-gray-700 mb-3 underline">تفاصيل الملاحظات والصور:</h4>
-                    ${itemsHtml || '<p class="text-center text-gray-400">لا توجد مخالفات مسجلة.</p>'}
+                <div class="bg-green-50 p-6 rounded-[30px] border border-green-100 text-center">
+                    <p class="text-[10px] text-green-600 font-bold uppercase mb-1">نسبة الالتزام الإجمالية</p>
+                    <h2 class="text-4xl font-black text-green-700">${r.score}%</h2>
                 </div>
-                <div class="pt-6">
-                    <p class="text-gray-400 text-[10px] mb-2">التوقيع المعتمد:</p>
-                    <img src="${r.signature}" class="w-48 bg-gray-50 border rounded-xl mx-auto">
+                <div class="pt-2">
+                    <h4 class="font-black text-gray-800 mb-4 underline decoration-[#d1ba89]">رصد المخالفات:</h4>
+                    ${violationsHtml || '<p class="text-center py-4 bg-gray-50 rounded-2xl text-gray-400 font-bold text-xs italic">لا توجد مخالفات مسجلة ✅</p>'}
+                </div>
+                <div class="pt-4 text-center">
+                    <p class="text-gray-400 text-[10px] font-bold mb-3 uppercase">التوقيع الرقمي المعتمد</p>
+                    <img src="${r.signature}" class="w-48 bg-gray-50 border-b-2 border-green-800 mx-auto rounded-xl">
                 </div>
             `;
+
+            // تفعيل وظيفة التحميل عند الضغط على الزر
+            document.getElementById('downloadBtn').onclick = () => generatePDFReport(r);
+            
             modal.classList.add('active');
+        }
+
+        // دالة توليد الـ PDF الاحترافي (بناءً على قالب المفتش)
+        function generatePDFReport(r) {
+            const scoreColor = r.score >= 70 ? '#10b981' : '#ef4444';
+            const html = `
+                <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box; text-align: right;">
+                    <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
+                        <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 10px;" />
+                        <h1 style="color: #004b47; font-size: 28px; margin: 0; font-weight: 900;">تقرير تدقيق الجودة الرسمي</h1>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 25px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #eee;">
+                        <div style="flex: 1; line-height: 2">
+                            <p><b>🏢 المنشأة:</b> ${r.branch}</p>
+                            <p><b>👤 المفتش المعتمد:</b> ${r.inspector}</p>
+                            <p><b>📅 تاريخ الفحص:</b> ${r.date}</p>
+                        </div>
+                        <div style="width: 150px; text-align: center; border-right: 2px solid #ddd; padding-right: 20px;">
+                            <p style="color: #666; font-size: 12px">درجة الامتثال</p>
+                            <div style="font-size: 40px; font-weight: 900; color: ${scoreColor}">${r.score}%</div>
+                        </div>
+                    </div>
+                    <h3 style="color: #004b47; border-bottom: 2px solid #004b47; padding-bottom: 5px;">ملخص المخالفات والملاحظات:</h3>
+                    ${Object.entries(r.answers || {}).filter(([id, ans]) => ans === 'no').map(([id, ans]) => `
+                        <div style="padding: 15px; border-bottom: 1px solid #eee;">
+                            <p style="font-weight: bold; margin: 0;">بند رقم ${id}</p>
+                            <p style="font-size: 13px; color: #ef4444; margin: 5px 0;">الحالة: غير مطابق ❌</p>
+                            <p style="font-size: 12px; color: #666; background: #fffdf5; padding: 5px;">الملاحظة: ${r.notes[id] || '---'}</p>
+                        </div>
+                    `).join('') || '<p style="text-align:center; padding:20px; color:#10b981">جميع البنود مطابقة للمعايير ✅</p>'}
+                    <div style="margin-top: 50px; text-align: left; padding-left: 20px;">
+                        <p style="font-weight: 900; margin-bottom: 10px;">اعتماد المفتش:</p>
+                        <img src="${r.signature}" style="width: 150px; border-bottom: 2px solid #004b47" />
+                    </div>
+                    <p style="margin-top: 50px; text-align: center; font-size: 10px; color: #999;">تم توليد هذا التقرير آلياً عبر لوحة إدارة VERRA PRO</p>
+                </div>
+            `;
+
+            const opt = {
+                margin: 0,
+                filename: `Report_${r.branch}_${r.date}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().from(html).set(opt).save().then(() => alert("✅ تم تحميل التقرير بنجاح."));
         }
 
         function closeDetailModal() {
