@@ -19,7 +19,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; }
+    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; -webkit-tap-highlight-color: transparent; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; cursor: pointer; }
     .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
@@ -52,50 +52,37 @@
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
 
     const sectionsData = [
-      { 
-        title: "الواجهة والصالات | Exterior & Lounges", 
-        items: [
+      { title: "الواجهة والصالات | Exterior & Lounges", items: [
           {id:1, q:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)\nتشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
           {id:2, q:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)\nتشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
           {id:3, q:"check bathroom hall 1 (general cleaning + tissue machine + soap machine + perfume machine)\nتشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
           {id:4, q:"Check lounge section 2 (tables + Chairs + walls and floor + air conditioning)\nتشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
           {id:5, q:"check bathroom hall 2 (general cleaning + tissue machine + soap machine + perfume machine)\nتشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"}
-        ]
-      },
-      { 
-        title: "الإدارة والعمليات | Admin & Operations", 
-        items: [
+      ]},
+      { title: "الإدارة والعمليات | Admin & Operations", items: [
           {id:6, q:"checks, the cashier department (net + phone + cashier + applications)\nتشيك قسم الكاشير ( نت + تلفون + متابعة عهدة الكاشير + تشيك على نظام فودو في الكاشير + التشيك على نظاف فيد اس + متابعة الدوامات في مواقع التطبيقات )"},
           {id:7, q:"Monitor and Google Maps.\n( متابعة قوقل ماب )"},
           {id:8, q:"Check and monitor all plants/trees in the branch, if available.\n( تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع . )"},
           {id:9, q:"Check attendance and leave تشيك ( كشف الحضور )"},
           {id:10, q:"Has a meeting been conducted with all employees today?\n( هل تم الاجتماع مع جميع الموظفين اليوم )"},
           {id:11, q:"Follow-up on branch supervisors' daily tasks\nمتابعة مهام مشرفين الفروع"}
-        ]
-      },
-      { 
-        title: "الإنتاج والمخزون | Production & Inventory", 
-        items: [
+      ]},
+      { title: "الإنتاج والمخزون | Production & Inventory", items: [
           {id:12, q:"Check the juices section (check the mixers + Clean the Pepsi machine + The keratin of the Pepsi machine with the gas tube + juice chiller + dates)\nتشيك قسم العصائر ( تشيك الخلاطات + نظافة مكينة البيبسي + كراتين التابعة للمكينة مع الغاز + ثلاجة العصائر + تواريخ )"},
           {id:13, q:"Check the store section (elevator + store arrangement + cleaning + stacking + date control + store under the stairs)\nتشيك قسم المستودع ( المصعد + ترتيب المستودع + نظافة + التكديس + مراقبة التواريخ + مستودع تحت الدرج مكة )"},
           {id:14, q:"Check Restaurant, back side (general cleaning + air curtains)\nتشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية + الغاز )"},
           {id:15, q:"Send orders according to schedule\nرفع الطلبات حسب الجدول"},
           {id:16, q:"check requests\nتشيك الطلبات"}
-        ]
-      },
-      { 
-        title: "العمال والمرافق | Staff & Facilities", 
-        items: [
+      ]},
+      { title: "العمال والمرافق | Staff & Facilities", items: [
           {id:17, q:"Check the employees (personal hygiene * uniform hygiene * nails * smell * health certificate * masks * gloves * harnet)\nتشيك العمال ( النظافة الشخصية * نظافة اليونفرم * اظافر * ريحة * كرت البلدية * الكمام * قلفزات * هرنت )"},
           {id:18, q:"General check (sanitary facilities + all lamps + tiles + Damaged or broken equipment + Damaged or broken tools)\nتشيك عام ( مرافق صحية + جميع اللمبات + البلاط + المكاين الخربانة او المكسرة + أدوات الخربانة او المكسرة )"}
-        ]
-      }
+      ]}
     ];
 
     function App() {
       const [user, setUser] = useState(null);
       const [loading, setLoading] = useState(true);
-      const [submitting, setSubmitting] = useState(false);
       const [branch, setBranch] = useState("");
       const [branches, setBranches] = useState([]);
       const [answers, setAnswers] = useState({});
@@ -126,85 +113,83 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // --- وظيفة الـ PDF الجديدة والمضمونة (تم إصلاح مشكلة الصفحة الفارغة) ---
+      // --- وظيفة الـ PDF النهائية المضمونة بإذن الله ---
       const handlePreview = () => {
         const score = getScore();
         const signature = sigPad.current ? sigPad.current.toDataURL() : "";
         const scoreColor = score >= 70 ? '#059669' : '#dc2626';
 
-        // بناء المحتوى بشكل جدول لتجنب مشاكل العرض
-        let bodyHtml = sectionsData.map(sec => `
-          <div style="background: #e8f5ee; padding: 10px; margin-top: 25px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: bold; font-size: 16px;">${sec.title}</div>
+        // بناء جسم التقرير
+        let reportContent = sectionsData.map(sec => `
+          <div style="background: #e8f5ee; padding: 10px; margin-top: 20px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: bold; font-size: 16px; text-align: right;">${sec.title}</div>
           ${sec.items.map(i => {
-            const ans = answers[i.id];
-            const note = notes[i.id] || '';
-            const pics = photos[i.id] || [];
-            let stText = "🔘 N/A"; let stCol = "#64748b";
-            if(ans==='yes'){stText="✅ مطابق"; stCol="#059669";}
-            if(ans==='no'){stText="❌ يوجد ملاحظة"; stCol="#dc2626";}
+            const ans = answers[i.id]; const note = notes[i.id] || ''; const pics = photos[i.id] || [];
+            let stText = "N/A"; let stCol = "#64748b";
+            if(ans==='yes'){stText="مطابق ✅"; stCol="#059669";}
+            if(ans==='no'){stText="يوجد ملاحظة ❌"; stCol="#dc2626";}
             return `
-              <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
+              <div style="padding: 15px; border-bottom: 1px solid #eee; text-align: right;">
                 <p style="margin: 0; font-size: 14px; font-weight: bold; color: #1e293b;">${i.q.replace(/\n/g, '<br>')}</p>
                 <p style="font-size: 12px; margin: 8px 0; font-weight: bold; color: ${stCol};">الحالة: ${stText}</p>
-                ${note ? `<div style="background: #fffbeb; padding: 8px; border-radius: 5px; font-size: 11px; color: #92400e; margin-top: 5px;">الملاحظة: ${note}</div>` : ''}
-                <div style="margin-top: 10px;">
-                  ${pics.map(p => `<img src="${p}" style="width: 280px; height: 180px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; display: inline-block; margin: 5px;" />`).join('')}
-                </div>
+                ${note ? `<div style="background: #fffbeb; padding: 8px; font-size: 11px; margin: 5px 0; border: 1px solid #fde68a;">ملاحظة: ${note}</div>` : ''}
+                ${pics.length > 0 ? `<img src="${pics[0]}" style="width: 250px; height: 180px; object-fit: cover; border-radius: 8px; margin-top: 10px; border: 1px solid #ddd;" />` : ''}
               </div>`;
           }).join('')}
         `).join('');
 
-        const finalHtml = `
-          <div id="pdf-container" style="width: 750px; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right;">
-            <div style="text-align: center; border-bottom: 4px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
+        const containerHtml = `
+          <div id="pdf-export-root" style="width: 780px; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; box-sizing: border-box;">
+            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
               <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 10px;" />
               <h1 style="color: #004b47; font-size: 26px; font-weight: 900; margin: 0;">تقرير إشراف الفروع الميداني</h1>
             </div>
-            <table style="width: 100%; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
-              <tr>
-                <td style="text-align: right; line-height: 2.2;">
-                  <p><b>🏢 المنشأة:</b> ${branch || '---'}</p>
-                  <p><b>👤 المفتش:</b> ${user.email}</p>
-                  <p><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB', {hour12: true})}</p>
-                </td>
-                <td style="width: 160px; text-align: center; border-right: 2px solid #ddd; vertical-align: middle;">
-                   <p style="color: #64748b; font-weight: bold; font-size: 12px; margin: 0;">نسبة الجاهزية</p>
-                   <div style="font-size: 45px; font-weight: 900; color: ${scoreColor};">${score}%</div>
-                </td>
-              </tr>
-            </table>
-            ${bodyHtml}
-            <div style="margin-top: 50px; border-top: 3px solid #004b47; padding-top: 30px; page-break-inside: avoid;">
-              <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 20px;">توقيع المشرف المسؤول:</p>
-              <img src="${signature}" style="width: 300px; max-height: 150px; border-bottom: 2px solid #004b47; display: block;" />
+            
+            <div style="background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="flex: 1; line-height: 2.2; text-align: right;">
+                <p><b>🏢 المنشأة:</b> ${branch || '---'}</p>
+                <p><b>👤 المفتش:</b> ${user.email}</p>
+                <p><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB', {hour12: true})}</p>
+              </div>
+              <div style="width: 150px; text-align: center; border-right: 2px solid #ddd;">
+                 <p style="color: #64748b; font-weight: bold; font-size: 12px;">نسبة الجاهزية</p>
+                 <div style="font-size: 45px; font-weight: 900; color: ${scoreColor};">${score}%</div>
+              </div>
+            </div>
+
+            ${reportContent}
+
+            <div style="margin-top: 50px; border-top: 3px solid #004b47; padding-top: 30px;">
+              <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 20px; text-align: right;">توقيع المشرف المسؤول:</p>
+              <div style="text-align: right;">
+                <img src="${signature}" style="width: 300px; max-height: 150px; border-bottom: 2px solid #004b47; display: inline-block;" />
+              </div>
             </div>
           </div>
         `;
 
-        // تحويل المحتوى إلى عنصر حقيقي في الصفحة (مخفي) لضمان عدم خروج الملف فارغاً
-        const worker = document.createElement('div');
-        worker.style.position = 'absolute';
-        worker.style.left = '-9999px';
-        worker.innerHTML = finalHtml;
-        document.body.appendChild(worker);
+        // الحقن الفوري في الدوم لضمان التحويل
+        const printArea = document.createElement('div');
+        printArea.innerHTML = containerHtml;
+        document.body.appendChild(printArea);
 
-        const opt = { 
-          margin: 0, 
-          filename: `BranchInspection_${branch}.pdf`, 
+        const options = {
+          margin: 0,
+          filename: `VERRA_Report_${branch}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 1.5, useCORS: true, letterRendering: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+          html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().from(worker).set(opt).save().then(() => {
-          document.body.removeChild(worker);
-        });
+        // استخدام مؤقت لضمان تحميل الصور والتوقيع
+        setTimeout(() => {
+          html2pdf().from(printArea).set(options).save().then(() => {
+            document.body.removeChild(printArea);
+          });
+        }, 800);
       };
 
       const handleFinalSubmit = async () => {
           if(!branch) return alert("يرجى اختيار الفرع");
-          if(submitting) return;
-          setSubmitting(true);
           const score = getScore();
           const reportId = Date.now();
           const timestampStr = new Date().toLocaleString('en-GB', { hour12: true });
@@ -223,10 +208,9 @@
               alert("✅ تم الإرسال والمزامنة بنجاح!");
               window.location.reload();
           } catch (error) { alert("⚠️ خطأ في الاتصال."); }
-          finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl uppercase italic">VERRA PRO...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">VERRA PRO Loading...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
@@ -243,13 +227,13 @@
             </div>
             <div className="flex gap-2">
                 <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg shadow-blue-100 transition">معاينة PDF</button>
-                <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition`}>{submitting ? '...':'إرسال التقرير'}</button>
+                <button onClick={handleFinalSubmit} className="verra-gradient text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition">إرسال التقرير</button>
             </div>
           </div>
 
           <main className="p-5 max-w-3xl mx-auto space-y-8 mt-4">
             <div className="card p-7 border-r-[15px] border-[#004b47] shadow-xl">
-                <p className="text-[10px] font-black text-gray-400 uppercase mb-2">Select Branch / اختر الفرع:</p>
+                <p className="text-[10px] font-black text-gray-400 uppercase mb-2">اختر الفرع / Select Branch:</p>
                 <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950" value={branch} onChange={e=>setBranch(e.target.value)}>
                     <option value="">-- اختر من القائمة --</option>
                     {branches.map(b => <option key={b} value={b}>{b}</option>)}
@@ -273,9 +257,10 @@
                       <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn ${answers[i.id]==='na'?'active btn-na':''}`}>N/A</button>
                     </div>
                     <textarea className="notes-input shadow-inner text-right p-4 rounded-xl" placeholder="الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
+                    
                     <div className="mt-5 flex flex-wrap gap-3 items-center justify-end">
                         <label className="upload-btn active:scale-95 shadow-md">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
-                        <label className="upload-btn upload-btn-gallery active:scale-95 shadow-md">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
+                        <label className="upload-btn active:scale-95 shadow-md" style={{background:'#eff6ff', color:'#1e40af'}}>🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
                         <div className="flex flex-wrap mr-auto">
                           {(photos[i.id] || []).map((img, px) => (
                             <div key={px} className="relative m-1">
@@ -290,9 +275,9 @@
             ))}
             
             <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic tracking-widest border-b pb-2 text-center">التوقيع الرقمي / Signature</h3>
+              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic tracking-widest border-b pb-2 text-center">توقيع المشرف المسؤول</h3>
               <canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas>
-              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline decoration-red-200">مسح</button>
+              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline decoration-red-200">مسح التوقيع</button>
             </div>
           </main>
         </div>
@@ -302,12 +287,12 @@
     function Login({ auth, logo }) {
       const [email, setEmail] = useState(""); const [pass, setPass] = useState("");
       return (
-        <div className="h-screen verra-gradient flex items-center justify-center p-6">
-           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ Error"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-md text-center">
-              <img src={logo} className="h-28 mx-auto mb-8 drop-shadow-2xl" />
-              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none" placeholder="Email" value={email} onChange={v=>setEmail(v.target.value)} />
-              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none" type="password" placeholder="Password" value={pass} onChange={v=>setPass(v.target.value)} />
-              <button type="submit" className="w-full verra-gradient text-white font-black py-5 rounded-3xl shadow-xl">دخول</button>
+        <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
+           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ خطأ"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-sm text-center">
+              <img src={logo} className="h-24 mx-auto mb-6 shadow-2xl rounded-full" />
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="البريد الإلكتروني" value={email} onChange={v=>setEmail(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
+              <button type="submit" className="w-full verra-gradient text-white font-black py-4 rounded-2xl shadow-xl">تسجيل الدخول</button>
            </form>
         </div>
       );
