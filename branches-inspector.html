@@ -53,32 +53,44 @@
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
 
     const sectionsData = [
-      { title: "قسم الواجهة والصالات | Front & Lounge", items: [
+      { 
+        title: "الواجهة والصالات | Exterior & Lounges", 
+        items: [
           {id:1, q:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)\nتشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
           {id:2, q:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)\nتشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
           {id:3, q:"check bathroom hall 1 (general cleaning + tissue machine + soap machine + perfume machine)\nتشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
           {id:4, q:"Check lounge section 2 (tables + Chairs + walls and floor + air conditioning)\nتشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
           {id:5, q:"check bathroom hall 2 (general cleaning + tissue machine + soap machine + perfume machine)\nتشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"}
-      ]},
-      { title: "قسم الإدارة والتشغيل | Admin & Operation", items: [
+        ]
+      },
+      { 
+        title: "الإدارة والعمليات | Admin & Operations", 
+        items: [
           {id:6, q:"checks, the cashier department (net + phone + cashier + applications)\nتشيك قسم الكاشير ( نت + تلفون + متابعة عهدة الكاشير + تشيك على نظام فودو في الكاشير + التشيك على نظاف فيد اس + متابعة الدوامات في مواقع التطبيقات )"},
           {id:7, q:"Monitor and Google Maps.\n( متابعة قوقل ماب )"},
           {id:8, q:"Check and monitor all plants/trees in the branch, if available.\n( تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع . )"},
           {id:9, q:"Check attendance and leave تشيك ( كشف الحضور )"},
           {id:10, q:"Has a meeting been conducted with all employees today?\n( هل تم الاجتماع مع جميع الموظفين اليوم )"},
           {id:11, q:"Follow-up on branch supervisors' daily tasks\nمتابعة مهام مشرفين الفروع"}
-      ]},
-      { title: "الإنتاج والمخزون | Production & Store", items: [
+        ]
+      },
+      { 
+        title: "الإنتاج والمخزون | Production & Inventory", 
+        items: [
           {id:12, q:"Check the juices section (check the mixers + Clean the Pepsi machine + The keratin of the Pepsi machine with the gas tube + juice chiller + dates)\nتشيك قسم العصائر ( تشيك الخلاطات + نظافة مكينة البيبسي + كراتين التابعة للمكينة مع الغاز + ثلاجة العصائر + تواريخ )"},
           {id:13, q:"Check the store section (elevator + store arrangement + cleaning + stacking + date control + store under the stairs)\nتشيك قسم المستودع ( المصعد + ترتيب المستودع + نظافة + التكديس + مراقبة التواريخ + مستودع تحت الدرج مكة )"},
           {id:14, q:"Check Restaurant, back side (general cleaning + air curtains)\nتشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية + الغاز )"},
           {id:15, q:"Send orders according to schedule\nرفع الطلبات حسب الجدول"},
           {id:16, q:"check requests\nتشيك الطلبات"}
-      ]},
-      { title: "العمال والمرافق | Staff & Facilities", items: [
+        ]
+      },
+      { 
+        title: "العمال والمرافق | Staff & Facilities", 
+        items: [
           {id:17, q:"Check the employees (personal hygiene * uniform hygiene * nails * smell * health certificate * masks * gloves * harnet)\nتشيك العمال ( النظافة الشخصية * نظافة اليونفرم * اظافر * ريحة * كرت البلدية * الكمام * قلفزات * هرنت )"},
           {id:18, q:"General check (sanitary facilities + all lamps + tiles + Damaged or broken equipment + Damaged or broken tools)\nتشيك عام ( مرافق صحية + جميع اللمبات + البلاط + المكاين الخربانة او المكسرة + أدوات الخربانة او المكسرة )"}
-      ]}
+        ]
+      }
     ];
 
     function App() {
@@ -115,7 +127,7 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // --- محرك بناء الـ PDF المصلح ---
+      // --- إصلاح التوقيع والـ PDF ---
       const handlePreview = () => {
         const score = getScore();
         const signature = sigPad.current ? sigPad.current.toDataURL() : "";
@@ -125,52 +137,57 @@
           <div style="width: 800px; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right; box-sizing: border-box;">
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
               <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 10px;" />
-              <h1 style="color: #004b47; font-size: 28px; font-weight: 900; margin:0;">تقرير إشراف الفروع | Supervision Report</h1>
+              <h1 style="color: #004b47; font-size: 26px; font-weight: 900; margin:0;">تقرير إشراف الفروع الميداني</h1>
             </div>
             
-            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between;">
+            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
               <div style="flex: 1; line-height: 2.2">
                 <p><b>🏢 الفرع:</b> ${branch || '---'}</p>
-                <p><b>👤 المشرف:</b> ${user.email}</p>
-                <p><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB', {hour12: true})}</p>
+                <p><b>👤 المشرف المسؤول:</b> ${user.email}</p>
+                <p><b>📅 التاريخ والوقت:</b> ${new Date().toLocaleString('en-GB', {hour12: true})}</p>
               </div>
-              <div style="width: 150px; text-align: center; border-right: 3px solid #004b47; padding-right: 20px;">
-                <p style="color: #64748b; font-weight: bold; font-size: 12px; margin-bottom:5px;">نسبة الجاهزية</p>
+              <div style="width: 160px; text-align: center; border-right: 3px solid #004b47; padding-right: 20px;">
+                <p style="color: #64748b; font-weight: bold; font-size: 12px; margin-bottom:5px;">معدل الجاهزية</p>
                 <div style="font-size: 45px; font-weight: 900; color: ${scoreColor}">${score}%</div>
               </div>
             </div>
 
             ${sectionsData.map(sec => `
-              <div style="background: #e8f5ee; padding: 12px; font-weight: 900; border-right: 6px solid #d1ba89; color: #004b47; font-size: 18px; margin-top: 25px;">${sec.title}</div>
+              <div style="background: #e8f5ee; padding: 12px; font-weight: 900; border-right: 6px solid #d1ba89; color: #004b47; font-size: 16px; margin-top: 25px;">${sec.title}</div>
               ${sec.items.map(i => {
                 const ans = answers[i.id]; const note = notes[i.id]; const pics = photos[i.id] || [];
                 let status = "🔘 N/A"; let color = "#64748b";
-                if(ans === 'yes') { status = "✅ تم الإنجاز / Yes"; color = "#059669"; }
-                if(ans === 'no') { status = "❌ يوجد ملاحظة / No"; color = "#dc2626"; }
+                if(ans === 'yes') { status = "✅ مطابق / Yes"; color = "#059669"; }
+                if(ans === 'no') { status = "❌ ملاحظة / No"; color = "#dc2626"; }
 
                 return `
                   <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; page-break-inside: avoid;">
-                    <p style="margin: 0; font-size: 15px; font-weight: 900; color: #1e293b; white-space: pre-line;">${i.q}</p>
-                    <p style="font-size: 13px; margin: 8px 0; font-weight: bold; color: ${color};">الحالة: ${status}</p>
+                    <p style="margin: 0; font-size: 14px; font-weight: 900; color: #1e293b; white-space: pre-line;">${i.q}</p>
+                    <p style="font-size: 12px; margin: 8px 0; font-weight: bold; color: ${color};">الحالة: ${status}</p>
                     ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid #fde68a; margin: 10px 0; color: #92400e;">الملاحظة: ${note}</div>` : ''}
                     <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
-                      ${pics.map(p => `<img src="${p}" style="width: 220px; height: 160px; object-fit: cover; border-radius: 12px; border: 1px solid #e2e8f0;" />`).join('')}
+                      ${pics.map(p => `<img src="${p}" style="width: 280px; height: 200px; object-fit: cover; border-radius: 12px; border: 1px solid #e2e8f0;" />`).join('')}
                     </div>
                   </div>
                 `;
               }).join('')}
             `).join('')}
 
-            <div style="margin-top: 60px; border-top: 3px solid #004b47; padding-top: 30px; text-align: left;">
-              <p style="font-weight: 900; color: #004b47; margin-bottom:15px;">توقيع المشرف المسؤول:</p>
-              <img src="${signature}" style="width: 250px; border-bottom: 2px solid #004b47" />
+            <div style="margin-top: 60px; border-top: 3px solid #004b47; padding-top: 20px; page-break-inside: avoid;">
+              <div style="width: 100%; display: block;">
+                <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 15px;">توقيع المشرف المسؤول:</p>
+                <div style="text-align: right;">
+                    <img src="${signature}" style="width: 300px; max-height: 150px; object-fit: contain; border-bottom: 2px solid #004b47; display: block;" />
+                </div>
+              </div>
             </div>
+            <p style="margin-top: 30px; text-align: center; font-size: 10px; color: #999;">تم إنشاء هذا التقرير عبر نظام VERRA PRO السحابي</p>
           </div>
         `;
 
         const opt = { 
           margin: 0, 
-          filename: `BranchReport_${branch}.pdf`, 
+          filename: `BranchInspection_${branch}.pdf`, 
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, letterRendering: true },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
@@ -189,13 +206,13 @@
 
           try {
               let local = JSON.parse(localStorage.getItem('v2_reports')) || [];
-              local.unshift({ id: reportId, branch, score, inspector: user.email, date: timestampStr, isCrit: score < 70, type: "Branch Operation" });
+              local.unshift({ id: reportId, branch, score, inspector: user.email, date: timestampStr, isCrit: score < 70, type: "Branch Report" });
               localStorage.setItem('v2_reports', JSON.stringify(local.slice(0, 30)));
 
               await db.collection("inspections").add({ 
                   id: reportId, branch, score, inspector: user.email, date: timestampStr, timestamp: reportId, isCrit: score < 70,
                   signature: sigPad.current ? sigPad.current.toDataURL() : "",
-                  answers, notes, photos, type: "Branch Operation"
+                  answers, notes, photos, type: "Branch Report"
               });
 
               alert("✅ تم الإرسال والمزامنة بنجاح!");
@@ -204,7 +221,7 @@
           finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl">VERRA PRO...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl tracking-widest uppercase italic">Verifying System...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
@@ -216,11 +233,11 @@
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div className="text-right">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Score</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Overall Score</p>
               <p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg shadow-blue-100 transition">معاينة PDF</button>
+                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg transition shadow-blue-100">معاينة PDF</button>
                 <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition`}>{submitting ? '...':'إرسال التقرير'}</button>
             </div>
           </div>
@@ -240,7 +257,7 @@
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}>
                     <span className="text-lg">{sec.title}</span>
-                    <span className="text-xs font-bold bg-white/30 px-3 py-1 rounded-full uppercase">{expanded.has(sec.title) ? 'Hide ▲' : 'Show ▼'}</span>
+                    <span className="text-xs font-bold bg-white/30 px-3 py-1 rounded-full">{expanded.has(sec.title) ? 'Hide ▲' : 'Show ▼'}</span>
                 </div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
                   <div key={i.id} className="item-card shadow-lg border border-gray-100">
@@ -269,9 +286,9 @@
             ))}
             
             <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic tracking-widest border-b pb-2">التوقيع الرقمي / Signature</h3>
+              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic tracking-widest border-b pb-2">Signature / التوقيع الرقمي</h3>
               <canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas>
-              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline decoration-red-200">مسح</button>
+              <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline decoration-red-200 italic">مسح التوقيع</button>
             </div>
           </main>
         </div>
@@ -281,12 +298,12 @@
     function Login({ auth, logo }) {
       const [email, setEmail] = useState(""); const [pass, setPass] = useState("");
       return (
-        <div className="h-screen verra-gradient flex items-center justify-center p-6">
-           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ خطأ"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-md text-center">
-              <img src={logo} className="h-28 mx-auto mb-8 drop-shadow-2xl" />
-              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none" placeholder="Email" value={email} onChange={v=>setEmail(v.target.value)} />
-              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none" type="password" placeholder="Password" value={pass} onChange={v=>setPass(v.target.value)} />
-              <button type="submit" className="w-full verra-gradient text-white font-black py-5 rounded-3xl shadow-xl">دخول</button>
+        <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
+           <form onSubmit={(ev)=>{ev.preventDefault(); auth.signInWithEmailAndPassword(email, pass).catch(()=>alert("⚠️ Invalid"))}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-md text-center">
+              <img src={logo} className="h-28 mx-auto mb-8 shadow-2xl rounded-full" />
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none focus:border-green-600 shadow-sm" placeholder="Email" value={email} onChange={v=>setEmail(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none focus:border-green-600 shadow-sm" type="password" placeholder="Password" value={pass} onChange={v=>setPass(v.target.value)} />
+              <button type="submit" className="w-full verra-gradient text-white font-black py-5 rounded-3xl shadow-xl active:scale-95 transition">دخول</button>
            </form>
         </div>
       );
