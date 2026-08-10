@@ -31,7 +31,6 @@
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 50; }
     .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 4px; }
-    .upload-btn-gallery { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
   </style>
 </head>
@@ -127,73 +126,79 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // --- إصلاح التوقيع والـ PDF بالكامل ---
+      // --- وظيفة الـ PDF الجديدة والمضمونة (تم إصلاح مشكلة الصفحة الفارغة) ---
       const handlePreview = () => {
         const score = getScore();
         const signature = sigPad.current ? sigPad.current.toDataURL() : "";
         const scoreColor = score >= 70 ? '#059669' : '#dc2626';
 
-        const pdfHtml = `
-          <div style="width: 700px; padding: 30px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right; box-sizing: border-box; border: 1px solid #eee;">
-            <div style="text-align: center; border-bottom: 4px solid #004b47; padding-bottom: 20px; margin-bottom: 20px;">
-              <img src="${LOGO_URL}" style="height: 90px;" />
-              <h1 style="color: #004b47; font-size: 24px; margin: 5px 0; font-weight: 900;">تقرير إشراف الفروع الميداني</h1>
+        // بناء المحتوى بشكل جدول لتجنب مشاكل العرض
+        let bodyHtml = sectionsData.map(sec => `
+          <div style="background: #e8f5ee; padding: 10px; margin-top: 25px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: bold; font-size: 16px;">${sec.title}</div>
+          ${sec.items.map(i => {
+            const ans = answers[i.id];
+            const note = notes[i.id] || '';
+            const pics = photos[i.id] || [];
+            let stText = "🔘 N/A"; let stCol = "#64748b";
+            if(ans==='yes'){stText="✅ مطابق"; stCol="#059669";}
+            if(ans==='no'){stText="❌ يوجد ملاحظة"; stCol="#dc2626";}
+            return `
+              <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
+                <p style="margin: 0; font-size: 14px; font-weight: bold; color: #1e293b;">${i.q.replace(/\n/g, '<br>')}</p>
+                <p style="font-size: 12px; margin: 8px 0; font-weight: bold; color: ${stCol};">الحالة: ${stText}</p>
+                ${note ? `<div style="background: #fffbeb; padding: 8px; border-radius: 5px; font-size: 11px; color: #92400e; margin-top: 5px;">الملاحظة: ${note}</div>` : ''}
+                <div style="margin-top: 10px;">
+                  ${pics.map(p => `<img src="${p}" style="width: 280px; height: 180px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; display: inline-block; margin: 5px;" />`).join('')}
+                </div>
+              </div>`;
+          }).join('')}
+        `).join('');
+
+        const finalHtml = `
+          <div id="pdf-container" style="width: 750px; padding: 40px; background: white; direction: rtl; font-family: 'Cairo', sans-serif; text-align: right;">
+            <div style="text-align: center; border-bottom: 4px solid #004b47; padding-bottom: 20px; margin-bottom: 30px;">
+              <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 10px;" />
+              <h1 style="color: #004b47; font-size: 26px; font-weight: 900; margin: 0;">تقرير إشراف الفروع الميداني</h1>
             </div>
-            
-            <table style="width: 100%; margin-bottom: 20px; background: #f8fafc; padding: 20px; border-radius: 10px;">
+            <table style="width: 100%; background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
               <tr>
-                <td style="text-align: right; line-height: 1.8;">
-                  <p><b>🏢 الفرع:</b> ${branch || '---'}</p>
-                  <p><b>👤 المشرف المسؤول:</b> ${user.email}</p>
-                  <p><b>📅 التاريخ والوقت:</b> ${new Date().toLocaleString('en-GB', {hour12: true})}</p>
+                <td style="text-align: right; line-height: 2.2;">
+                  <p><b>🏢 المنشأة:</b> ${branch || '---'}</p>
+                  <p><b>👤 المفتش:</b> ${user.email}</p>
+                  <p><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB', {hour12: true})}</p>
                 </td>
-                <td style="width: 150px; text-align: center; border-right: 2px solid #ddd;">
-                  <p style="color: #64748b; font-weight: bold; font-size: 11px;">معدل الجاهزية</p>
-                  <div style="font-size: 38px; font-weight: 900; color: ${scoreColor}">${score}%</div>
+                <td style="width: 160px; text-align: center; border-right: 2px solid #ddd; vertical-align: middle;">
+                   <p style="color: #64748b; font-weight: bold; font-size: 12px; margin: 0;">نسبة الجاهزية</p>
+                   <div style="font-size: 45px; font-weight: 900; color: ${scoreColor};">${score}%</div>
                 </td>
               </tr>
             </table>
-
-            ${sectionsData.map(sec => `
-              <div style="background: #e8f5ee; padding: 8px; font-weight: 900; border-right: 5px solid #d1ba89; color: #004b47; font-size: 14px; margin-top: 20px;">${sec.title}</div>
-              ${sec.items.map(i => {
-                const ans = answers[i.id]; const note = notes[i.id]; const pics = photos[i.id] || [];
-                let status = "🔘 N/A"; let color = "#64748b";
-                if(ans === 'yes') { status = "✅ مطابق"; color = "#059669"; }
-                if(ans === 'no') { status = "❌ يوجد ملاحظة"; color = "#dc2626"; }
-
-                return `
-                  <div style="padding: 12px; border-bottom: 1px solid #f1f5f9; page-break-inside: avoid;">
-                    <p style="margin: 0; font-size: 13px; font-weight: 900; color: #1e293b; white-space: pre-line;">${i.q}</p>
-                    <p style="font-size: 11px; margin: 5px 0; font-weight: bold; color: ${color};">الحالة: ${status}</p>
-                    ${note ? `<div style="background: #fffbeb; padding: 8px; border-radius: 5px; font-size: 11px; border: 1px solid #fde68a; margin: 5px 0;">الملاحظة: ${note}</div>` : ''}
-                    <div style="display: block; margin-top: 10px;">
-                      ${pics.map(p => `<img src="${p}" style="width: 250px; height: 180px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 5px;" />`).join('')}
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            `).join('')}
-
-            <div style="margin-top: 40px; border-top: 2px solid #004b47; padding-top: 20px; page-break-inside: avoid;">
-                <p style="font-weight: 900; color: #004b47; font-size: 14px; margin-bottom: 10px;">توقيع المشرف المسؤول:</p>
-                <div style="text-align: right; width: 100%;">
-                    <img src="${signature}" style="width: 250px; height: auto; max-height: 120px; display: block;" />
-                </div>
+            ${bodyHtml}
+            <div style="margin-top: 50px; border-top: 3px solid #004b47; padding-top: 30px; page-break-inside: avoid;">
+              <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 20px;">توقيع المشرف المسؤول:</p>
+              <img src="${signature}" style="width: 300px; max-height: 150px; border-bottom: 2px solid #004b47; display: block;" />
             </div>
-            <p style="margin-top: 20px; text-align: center; font-size: 9px; color: #999;">تم إنشاء هذا التقرير آلياً عبر نظام VERRA PRO</p>
           </div>
         `;
 
+        // تحويل المحتوى إلى عنصر حقيقي في الصفحة (مخفي) لضمان عدم خروج الملف فارغاً
+        const worker = document.createElement('div');
+        worker.style.position = 'absolute';
+        worker.style.left = '-9999px';
+        worker.innerHTML = finalHtml;
+        document.body.appendChild(worker);
+
         const opt = { 
-          margin: 10, 
-          filename: `BranchReport_${branch}.pdf`, 
+          margin: 0, 
+          filename: `BranchInspection_${branch}.pdf`, 
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+          html2canvas: { scale: 1.5, useCORS: true, letterRendering: true },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
         };
 
-        html2pdf().from(pdfHtml).set(opt).save();
+        html2pdf().from(worker).set(opt).save().then(() => {
+          document.body.removeChild(worker);
+        });
       };
 
       const handleFinalSubmit = async () => {
@@ -215,20 +220,20 @@
                   answers, notes, photos, type: "Branch Report"
               });
 
-              alert("✅ تم إرسال ومزامنة التقرير بنجاح!");
+              alert("✅ تم الإرسال والمزامنة بنجاح!");
               window.location.reload();
           } catch (error) { alert("⚠️ خطأ في الاتصال."); }
           finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">VERRA PRO Loading...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl uppercase italic">VERRA PRO...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
         <div className="pb-40 text-right">
           <div className="verra-gradient p-12 text-center shadow-xl rounded-b-[4rem]">
             <img src={LOGO_URL} className="h-32 mx-auto mb-4 drop-shadow-2xl" />
-            <h1 className="text-white font-black text-xl italic">بوابة مشرف الفروع</h1>
+            <h1 className="text-white font-black text-xl italic uppercase tracking-tighter">بوابة مشرف الفروع</h1>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
@@ -237,14 +242,14 @@
               <p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg transition shadow-blue-100">معاينة PDF</button>
+                <button onClick={handlePreview} className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-xs active:scale-95 shadow-lg shadow-blue-100 transition">معاينة PDF</button>
                 <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-3 rounded-2xl font-black shadow-lg text-xs active:scale-95 transition`}>{submitting ? '...':'إرسال التقرير'}</button>
             </div>
           </div>
 
           <main className="p-5 max-w-3xl mx-auto space-y-8 mt-4">
             <div className="card p-7 border-r-[15px] border-[#004b47] shadow-xl">
-                <p className="text-[10px] font-black text-gray-400 uppercase mb-2">اختر الفرع / Select Branch:</p>
+                <p className="text-[10px] font-black text-gray-400 uppercase mb-2">Select Branch / اختر الفرع:</p>
                 <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950" value={branch} onChange={e=>setBranch(e.target.value)}>
                     <option value="">-- اختر من القائمة --</option>
                     {branches.map(b => <option key={b} value={b}>{b}</option>)}
@@ -267,8 +272,7 @@
                       <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn ${answers[i.id]==='no'?'active btn-no':''}`}>لا / No</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn ${answers[i.id]==='na'?'active btn-na':''}`}>N/A</button>
                     </div>
-                    <textarea className="notes-input shadow-inner text-right p-4 rounded-xl" placeholder="Write observation / الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
-                    
+                    <textarea className="notes-input shadow-inner text-right p-4 rounded-xl" placeholder="الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
                     <div className="mt-5 flex flex-wrap gap-3 items-center justify-end">
                         <label className="upload-btn active:scale-95 shadow-md">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
                         <label className="upload-btn upload-btn-gallery active:scale-95 shadow-md">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
@@ -286,7 +290,7 @@
             ))}
             
             <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic tracking-widest border-b pb-2">التوقيع الرقمي / Signature</h3>
+              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic tracking-widest border-b pb-2 text-center">التوقيع الرقمي / Signature</h3>
               <canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas>
               <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline decoration-red-200">مسح</button>
             </div>
