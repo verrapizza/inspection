@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VERRA PRO - الإدارة المركزية</title>
+    <title>VERRA PRO - الإدارة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -27,7 +27,7 @@
 
     <div id="lockScreen" class="fixed inset-0 bg-white z-[500] flex flex-col items-center justify-center font-bold text-[#004b47]">
         <div class="w-12 h-12 border-4 border-t-green-500 border-gray-200 rounded-full animate-spin mb-4"></div>
-        جاري مزامنة النظام...
+        CONECTING TO VERRA SYSTEM...
     </div>
 
     <div id="dashboardPage" class="page">
@@ -40,8 +40,8 @@
                 <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-widest">الامتثال</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
                 <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg text-right"><p class="text-gray-400 text-[10px] font-bold mb-1">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
             </div>
-            <div class="verra-card p-7 mb-4 border-r-[12px] border-[#004b47] shadow-xl italic" onclick="window.location.href='inspection.html'"><h3 class="font-black text-gray-800 text-lg">🛡️ تفتيش الجودة</h3></div>
-            <div class="verra-card p-7 mb-4 border-r-[12px] border-blue-600 shadow-xl italic" onclick="window.location.href='branches-inspector.html'"><h3 class="font-black text-gray-800 text-lg">🏢 إشراف الفروع</h3></div>
+            <div class="verra-card p-7 mb-4 border-r-[12px] border-[#004b47] shadow-xl italic" onclick="window.location.href='quality-inspection.html'"><h3 class="font-black text-gray-800 text-lg">🛡️ مراقبة الجودة</h3></div>
+            <div class="verra-card p-7 mb-4 border-r-[12px] border-blue-600 shadow-xl italic" onclick="window.location.href='branches-inspector.html'"><h3 class="font-black text-gray-800 text-lg">🏢 متابعة الفروع</h3></div>
             <div class="verra-card p-7 mb-10 border-r-[12px] border-[#d1ba89] shadow-xl italic" onclick="navigateTo('usersPage')"><h3 class="font-black text-gray-800 text-lg">👤 إدارة المستخدمين</h3><p id="pendingBadge" class="text-[9px] text-red-500 font-bold hidden mt-1">توجد طلبات جديدة ⚠️</p></div>
         </main>
     </div>
@@ -230,13 +230,13 @@
             const opt = { margin: 0, filename: `Verra_Report_${r.branch}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, scrollY: 0, letterRendering: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
             
             html2pdf().from(html).set(opt).save().then(() => { 
-                document.getElementById('btnText').innerText = "📄 تحميل PDF التقرير الكامل"; 
+                document.getElementById('btnText').innerText = "📄 تحميل PDF التقرير"; 
             });
         }
 
         function renderUsers() {
             let pendingHtml = cloudPending.map(u => `<div class="user-row" style="border-right-color:#ef4444; background:#fff1f2;"><div class="flex flex-col text-right"><span class="font-bold text-xs">${u.email}</span><span class="text-[8px] text-red-500 uppercase tracking-widest italic font-bold">طلب انضمام جديد ⚠️</span></div><button onclick="approveUser('${u.id}', '${u.email}')" class="bg-green-600 text-white font-bold text-[10px] px-4 py-2 rounded-xl">موافقة</button></div>`).join('');
-            let activeHtml = cloudUsers.map(u => `<div class="user-row"><span class="font-bold text-xs text-gray-700 text-right">${u.email}</span><button onclick="if(confirm('سحب الصلاحية؟')) db.collection('authorized_users').doc('${u.id}').delete()" class="text-red-500 font-bold text-[10px] bg-red-50 px-3 py-1 rounded-lg">سحب</button></div>`).join('');
+            let activeHtml = cloudUsers.map(u => `<div class="user-row"><span class="font-bold text-xs text-gray-700 text-right">${u.email}</span><button onclick="if(confirm('إلغاء الصلاحية؟')) db.collection('authorized_users').doc('${u.id}').delete()" class="text-red-500 font-bold text-[10px] bg-red-50 px-3 py-1 rounded-lg">إلغاء</button></div>`).join('');
             document.getElementById('usersList').innerHTML = `<div class="mb-10 text-right"><h4 class="text-[10px] font-bold text-red-500 mb-3 uppercase tracking-widest text-right">قيد الانتظار</h4>${pendingHtml || '<p class="text-[9px] text-gray-400 text-right">لا توجد طلبات.</p>'}</div><hr class="mb-10 text-right"><div class="text-right"><h4 class="text-[10px] font-bold text-green-600 mb-3 uppercase tracking-widest text-right">المشرفين النشطين</h4>${activeHtml}</div>`;
         }
 
