@@ -17,16 +17,18 @@
         .user-row { background: white; padding: 18px; border-radius: 25px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-right: 8px solid #d1ba89; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: none; align-items: flex-end; }
         .modal.active { display: flex; }
-        .modal-content { background: white; width: 100%; height: 92vh; border-radius: 45px 45px 0 0; padding: 25px; overflow-y: auto; position: relative; }
+        .modal-content { background: white; width: 100%; height: 92vh; border-radius: 40px 40px 0 0; padding: 25px; overflow-y: auto; position: relative; }
         .role-selector { font-size: 11px; padding: 5px; border-radius: 10px; border: 1px solid #ddd; font-weight: bold; background: #f9fafb; margin-top: 8px; width: 100%; }
         .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
+        .delete-btn { color: #ef4444; padding: 8px; border-radius: 12px; background: #fff1f2; border: 1px solid #ffe4e6; }
     </style>
 </head>
 <body class="pb-32 text-right">
 
+    <!-- شاشة التحميل -->
     <div id="lockScreen" class="fixed inset-0 bg-white z-[500] flex flex-col items-center justify-center font-bold text-[#004b47]">
         <div class="w-12 h-12 border-4 border-t-green-500 border-gray-200 rounded-full animate-spin mb-4"></div>
-        جاري مزامنة صلاحيات VERRA...
+        جاري الاتصال بالسحابة...
     </div>
 
     <!-- الصفحة الرئيسية -->
@@ -34,49 +36,54 @@
         <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative">
             <div class="flex justify-between items-center relative z-10">
                 <div>
-                    <h1 class="text-3xl font-black italic uppercase tracking-tighter">Verra <span class="text-[#d1ba89]">Pro</span></h1>
-                    <p class="text-[10px] opacity-70 font-bold uppercase italic">Admin Control Center</p>
+                    <h1 class="text-3xl font-black italic uppercase tracking-tighter text-right">Verra <span class="text-[#d1ba89]">Pro</span></h1>
+                    <p class="text-[10px] opacity-70 font-bold uppercase italic text-right">Central Hub</p>
                 </div>
-                <button onclick="auth.signOut()" class="bg-red-500/20 text-red-200 px-4 py-2 rounded-xl text-[10px] font-bold border border-red-500/30">خروج ↪</button>
+                <button onclick="handleLogout()" class="bg-red-500/20 text-red-200 px-4 py-2 rounded-xl text-[10px] font-bold border border-red-500/30">خروج ↪</button>
             </div>
         </header>
-        <main class="px-6 -mt-16 relative z-10">
-            <div class="grid grid-cols-2 gap-4 mb-8 text-center">
-                <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase">الامتثال</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
-                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold mb-1">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
+
+        <main class="px-6 -mt-16 relative z-10 text-right">
+            <div class="grid grid-cols-2 gap-4 mb-8 text-center text-right">
+                <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg text-right"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase text-right">الامتثال</p><h2 id="totalScore" class="text-3xl font-black text-green-700 text-right text-right">--</h2></div>
+                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg text-right text-right"><p class="text-gray-400 text-[10px] font-bold mb-1 text-right text-right">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700 text-right text-right">0</h2></div>
             </div>
             <div class="verra-card p-7 mb-4 border-r-[12px] border-[#004b47] shadow-xl italic" onclick="window.location.href='quality-inspection.html'"><h3 class="font-black text-gray-800 text-lg">🛡️ مراقبة الجودة</h3></div>
-            <div class="verra-card p-7 mb-4 border-r-[12px] border-blue-600 shadow-xl italic" onclick="window.location.href='branches-inspector.html'"><h3 class="font-black text-gray-800 text-lg">🏢 متابعة الفروع</h3></div>
+            <div class="verra-card p-7 mb-4 border-r-[12px] border-blue-600 shadow-xl italic" onclick="window.location.href='branches-inspector.html'"><h3 class="font-black text-gray-800 text-lg text-right">🏢 متابعة الفروع</h3></div>
             <div class="verra-card p-7 mb-10 border-r-[12px] border-[#d1ba89] shadow-xl italic" onclick="navigateTo('usersPage')">
-                <h3 class="font-black text-gray-800 text-lg">👤 إدارة المشرفين</h3>
-                <p id="pendingBadge" class="text-[9px] text-red-500 font-bold hidden mt-1">توجد طلبات جديدة ⚠️</p>
+                <h3 class="font-black text-gray-800 text-lg text-right text-right">👤 إدارة المستخدمين</h3>
+                <p id="pendingBadge" class="text-[9px] text-red-500 font-bold hidden mt-1 text-right text-right">طلبات جديدة ⚠️</p>
             </div>
         </main>
     </div>
 
     <!-- صفحة المستخدمين المصلحة -->
-    <div id="usersPage" class="page hidden px-6 pt-10">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-black text-[#004b47]">إدارة الصلاحيات</h2>
-            <button onclick="startSync()" class="bg-blue-50 text-blue-600 p-2 rounded-lg text-[10px] font-bold border border-blue-100">تحديث 🔄</button>
-            <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full border shadow-sm text-xs font-bold text-gray-400">إغلاق</button>
+    <div id="usersPage" class="page hidden px-6 pt-10 text-right">
+        <div class="flex justify-between items-center mb-8 text-right">
+            <h2 class="text-2xl font-black text-[#004b47] text-right">إدارة الصلاحيات</h2>
+            <div class="flex gap-2">
+                <button onclick="manualRefresh()" class="bg-blue-600 text-white p-2.5 rounded-xl text-[10px] font-bold shadow-md active:scale-90">تحديث 🔄</button>
+                <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full border shadow-sm text-xs font-bold text-gray-400">X</button>
+            </div>
         </div>
         <div id="usersList" class="space-y-8 pb-24 text-right">
-            <!-- سيتم عرض الطلبات والمشرفين هنا -->
+            <!-- القائمة -->
         </div>
     </div>
 
-    <!-- سجل التقارير (يبقى كما هو) -->
+    <!-- سجل التقارير -->
     <div id="reportsPage" class="page hidden px-6 pt-10 text-right">
-        <div class="flex justify-between items-center mb-10"><h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89]">سجل التقارير</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full shadow-sm border text-xs font-bold">رجوع</button></div>
-        <div id="reportsList" class="space-y-4 pb-24"></div>
+        <div class="flex justify-between items-center mb-10 text-right"><h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8 text-right">سجل التقارير</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full shadow-sm border text-xs font-bold text-right">رجوع</button></div>
+        <div id="reportsList" class="space-y-4 pb-24 text-right"></div>
     </div>
 
-    <!-- التنقل السفلي -->
-    <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl border-t border-white/10">
-        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1">MAIN</span></button>
-        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1">LOGS</span></button>
-        <button onclick="navigateTo('usersPage')" id="nav-users" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">👤</span><span class="text-[9px] font-black mt-1">USERS</span></button>
+    <!-- المودال -->
+    <div id="reportDetailModal" class="modal text-right"><div class="modal-content text-right text-right text-right"><div class="modal-header text-right"><button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black flex items-center justify-center">X</button><h3 class="text-2xl font-black text-green-950 italic text-right">تفاصيل التقرير</h3></div><div id="detailBody" class="space-y-5 text-right"></div><div class="mt-10 pb-10 border-t pt-8 text-right"><button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3 text-right">📄 تحميل PDF</button></div></div></div>
+
+    <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl border-t border-white/10 text-right text-right">
+        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1 uppercase text-center text-center">MAIN</span></button>
+        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">📊</span><span class="text-[9px] font-black mt-1 uppercase text-center">LOGS</span></button>
+        <button onclick="navigateTo('usersPage')" id="nav-users" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">👤</span><span class="text-[9px] font-black mt-1 uppercase text-center">USERS</span></button>
     </nav>
 
     <script>
@@ -88,24 +95,29 @@
         let cloudReports = []; let cloudUsers = []; let cloudPending = [];
 
         auth.onAuthStateChanged(user => {
-            if (user && user.email === "ch3f.ramzi@gmail.com") {
-                document.getElementById('lockScreen').classList.add('hidden');
-                startSync();
-            } else { window.location.href = "branches-inspector.html"; }
+            if (user && user.email === "ch3f.ramzi@gmail.com") { document.getElementById('lockScreen').classList.add('hidden'); startSync(); } 
+            else { window.location.href = "branches-inspector.html"; }
         });
 
+        function handleLogout() { if(confirm("خروج؟")) auth.signOut(); }
+        function fixNums(s) { return s ? s.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : "0"; }
+
+        // دالة التحديث اليدوي المصلحة
+        function manualRefresh() {
+            alert("جاري إعادة مزامنة البيانات من السحابة...");
+            startSync();
+        }
+
         function startSync() {
-            // مزامنة التقارير
+            // المزامنة والتحميل اللحظي
             db.collection("inspections").onSnapshot(snap => {
                 cloudReports = snap.docs.map(doc => ({ docId: doc.id, ...doc.data() })).sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
                 updateUI();
             });
-            // مزامنة المعتمدين
             db.collection("authorized_users").onSnapshot(snap => {
                 cloudUsers = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderUsers();
             });
-            // مزامنة الطلبات المعلقة
             db.collection("pending_authorizations").onSnapshot(snap => {
                 cloudPending = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 document.getElementById('pendingBadge').style.display = cloudPending.length > 0 ? 'block' : 'none';
@@ -117,7 +129,7 @@
             let pendingHtml = cloudPending.map(u => `
                 <div class="user-row" style="border-right-color:#ef4444; background:#fff1f2;">
                     <div class="flex flex-col text-right">
-                        <span class="font-bold text-xs text-gray-800">${u.email}</span>
+                        <span class="font-bold text-xs">${u.email}</span>
                         <select id="role_${u.id}" class="role-selector text-right">
                             <option value="supervisor">متابعة الفروع</option>
                             <option value="quality">مراقبة الجودة</option>
@@ -125,8 +137,8 @@
                         </select>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="rejectUser('${u.id}')" class="bg-red-50 text-red-600 font-bold text-[10px] px-3 py-2 rounded-xl border border-red-100">رفض</button>
-                        <button onclick="approveUser('${u.id}', '${u.email}')" class="bg-green-600 text-white font-bold text-[10px] px-4 py-2 rounded-xl">موافقة</button>
+                        <button onclick="rejectUser('${u.id}')" class="bg-red-50 text-red-600 font-bold text-[10px] px-4 py-2 rounded-xl border border-red-100">رفض</button>
+                        <button onclick="approveUser('${u.id}', '${u.email}')" class="bg-green-600 text-white font-bold text-[10px] px-4 py-2 rounded-xl shadow-sm">موافقة</button>
                     </div>
                 </div>`).join('');
 
@@ -134,34 +146,48 @@
                 <div class="user-row">
                     <div class="flex flex-col text-right">
                         <span class="font-bold text-xs text-gray-700">${u.email}</span>
-                        <span class="text-[8px] text-blue-500 font-bold uppercase tracking-widest italic">${u.role === 'assistant' ? 'مساعد مشرف' : u.role === 'quality' ? 'مشرف جودة' : 'مشرف فروع'}</span>
+                        <span class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">${u.role === 'assistant' ? 'مساعد مشرف' : u.role === 'quality' ? 'مشرف جودة' : 'مشرف فروع'}</span>
                     </div>
                     <button onclick="if(confirm('سحب؟')) db.collection('authorized_users').doc('${u.id}').delete()" class="text-red-500 font-bold text-[10px] bg-red-50 px-3 py-1 rounded-lg">سحب</button>
                 </div>`).join('');
 
             document.getElementById('usersList').innerHTML = `
-                <div class="mb-10 text-right"><h4 class="text-[11px] font-bold text-red-500 mb-3 uppercase tracking-widest">طلبات قيد الانتظار (${cloudPending.length})</h4>${pendingHtml || '<p class="text-[9px] text-gray-400">لا توجد طلبات جديدة.</p>'}</div>
-                <hr class="border-gray-100 mb-10"><div class="text-right"><h4 class="text-[11px] font-bold text-green-600 mb-3 uppercase tracking-widest">المشرفين النشطين (${cloudUsers.length})</h4>${activeHtml}</div>`;
+                <div class="mb-10 text-right"><h4 class="text-[11px] font-bold text-red-500 mb-3 uppercase tracking-widest text-right">بانتظار التفعيل (${cloudPending.length})</h4>${pendingHtml || '<p class="text-[9px] text-gray-400 text-right">لا توجد طلبات.</p>'}</div>
+                <hr class="mb-10 border-gray-100"><div class="text-right text-right"><h4 class="text-[11px] font-bold text-green-600 mb-3 uppercase tracking-widest text-right">المشرفين النشطين (${cloudUsers.length})</h4>${activeHtml}</div>`;
         }
 
         function approveUser(docId, email) {
             const role = document.getElementById('role_' + docId).value;
-            if(confirm(`تفعيل حساب ${email}؟`)) {
-                db.collection("authorized_users").add({ email: email.toLowerCase().trim(), role: role })
-                .then(() => db.collection("pending_authorizations").doc(docId).delete());
-            }
+            db.collection("authorized_users").add({ email: email.toLowerCase().trim(), role: role })
+            .then(() => db.collection("pending_authorizations").doc(docId).delete());
         }
 
-        function rejectUser(docId) {
-            if(confirm("رفض الطلب وحذفه؟")) db.collection("pending_authorizations").doc(docId).delete();
-        }
+        function rejectUser(docId) { if(confirm("رفض؟")) db.collection("pending_authorizations").doc(docId).delete(); }
 
         function updateUI() {
             document.getElementById('reportCount').innerText = cloudReports.length;
             if(cloudReports.length > 0) {
                 let avg = Math.round(cloudReports.reduce((s, r) => s + (parseFloat(r.score) || 0), 0) / cloudReports.length);
-                document.getElementById('totalScore').innerText = avg + "%";
+                document.getElementById('totalScore').innerText = fixNums(avg) + "%";
             }
+            if(!document.getElementById('reportsPage').classList.contains('hidden')) renderReportsList();
+        }
+
+        function renderReportsList() {
+            document.getElementById('reportsList').innerHTML = cloudReports.map((r, i) => `
+                <div onclick="viewDetail(${i})" class="verra-card p-6 border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-500'} mb-4 active:scale-95 transition-transform shadow-md text-right text-right">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-black text-gray-800 text-lg">${r.branch || 'تقرير'}</h4>
+                        <button onclick="event.stopPropagation(); if(confirm('حذف؟')) db.collection('inspections').doc('${r.docId}').delete()" class="delete-btn">🗑️</button>
+                    </div>
+                    <p class="text-[11px] text-gray-400 font-bold mt-1 text-right">📅 ${fixNums(r.date)} | المشرف: ${r.inspector ? r.inspector.split('@')[0] : '---'}</p>
+                </div>`).join('');
+        }
+
+        function viewDetail(idx) {
+            const r = cloudReports[idx];
+            document.getElementById('detailBody').innerHTML = `<div class="verra-card p-6 border border-gray-100 text-center mb-4 text-right"><h2 class="text-2xl font-black text-[#004b47] mb-2 uppercase">${r.branch || '---'}</h2><div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4 text-right"><div><p class="text-gray-400 mb-1">📅 التاريخ</p><p>${fixNums(r.date)}</p></div><div><p class="text-gray-400 mb-1">👤 المفتش</p><p>${r.inspector || '---'}</p></div></div><div class="flex justify-between px-10"><span class="font-bold text-gray-500 italic">الامتثال العام:</span><span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'}">${fixNums(r.score)}%</span></div></div>`;
+            document.getElementById('reportDetailModal').classList.add('active');
         }
 
         function navigateTo(id) {
@@ -171,8 +197,7 @@
             const btnId = 'nav-' + id.replace('Page','');
             if(document.getElementById(btnId)) document.getElementById(btnId).classList.replace('text-white/40', 'text-[#d1ba89]');
         }
-
-        startSync();
+        function closeModal() { document.getElementById('reportDetailModal').classList.remove('active'); }
     </script>
 </body>
 </html>
