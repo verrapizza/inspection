@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VERRA PRO - مساعد المشرف</title>
+  <title>نظام VERRA PRO - مساعد المشرف</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -57,47 +57,47 @@
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
     const ADMIN_EMAIL = "ch3f.ramzi@gmail.com";
 
-    // بنود المساعدين الـ 22 (عربي + إنجليزي)
+    // البنود كاملة مقسمة عربياً وإنجليزياً بوضوح
     const sectionsData = [
       { 
         title: "الواجهة والصالات | Front & Lounges", 
         items: [
-          {id:1, q:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)\nتشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
-          {id:2, q:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)\nتشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
-          {id:3, q:"check bathroom hall 1 (general cleaning + tissue machine + soap machine + perfume machine)\nتشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
-          {id:9, q:"Check lounge section 2 (tables + Chairs + walls and floor + air conditioning)\nتشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
-          {id:10, q:"check bathroom hall 2 (general cleaning + tissue machine + soap machine + perfume machine)\nتشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
-          {id:11, q:"Check and monitor all plants/trees in the branch, if available.\nتشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع ."}
+          {id:1, en:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)", ar:"تشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
+          {id:2, en:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
+          {id:3, en:"check bathroom hall 1 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
+          {id:9, en:"Check lounge section 2 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
+          {id:10, en:"check bathroom hall 2 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
+          {id:11, en:"Check and monitor all plants/trees in the branch, if available.", ar:"تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع ."}
         ]
       },
       { 
         title: "المطبخ والإنتاج | Kitchen & Production", 
         items: [
-          {id:4, q:"Check the pizza section (hygiene + dates + chillers control)\nتشيك قسم البيتزا ( نظافة + تواريخ + مراقبة الثلاجات )"},
-          {id:12, q:"Check the kitchen department A (cleanliness of the floor and walls + air conditioning + Kitchen Hoods + dates + kitchen utensils and machines)\nتشيك قسم المطبخ أ ( نظافة الأرضية والجدران + التكييف + الشفاطات + التواريخ + الأدوات والمعدات )"},
-          {id:13, q:"Check the kitchen department B (check fridges and freezer temperature + food arrangement + kitchen tools arrangement and place it in Dedicated places)\nتشيك قسم المطبخ ب ( فحص حرارة الثلاجات والمجمدات + ترتيب الأغذية + ترتيب الأدوات في أماكنها المخصصة )"},
-          {id:14, q:"Check the laundry section (general cleanliness + laundry equipment + oil filters + dishes tools arrangement + check dishwasher)\nتشيك قسم الغسيل ( النظافة العامة + معدات الغسيل + فلاتر الزيت + ترتيب أدوات الصحون + فحص غسالة الأطباق )"},
-          {id:15, q:"Check Restaurant, back side (general cleaning + air curtains)\nتشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية )"}
+          {id:4, en:"Check the pizza section (hygiene + dates + chillers control)", ar:"تشيك قسم البيتزا ( نظافة + تواريخ + مراقبة الثلاجات )"},
+          {id:12, en:"Check the kitchen department A (floor + walls + conditioning + Hoods + dates)", ar:"تشيك قسم المطبخ أ ( نظافة الأرضية والجدران + التكييف + الشفاطات + التواريخ + الأدوات والمعدات )"},
+          {id:13, en:"Check the kitchen department B (fridges/freezer temperature + food arrangement)", ar:"تشيك قسم المطبخ ب ( فحص حرارة الثلاجات والمجمدات + ترتيب الأغذية + ترتيب الأدوات )"},
+          {id:14, en:"Check laundry section (cleaning + equipment + oil filters + dishwasher)", ar:"تشيك قسم الغسيل ( النظافة العامة + معدات الغسيل + فلاتر الزيت + ترتيب الأدوات + فحص غسالة الأطباق )"},
+          {id:15, en:"Check Restaurant, back side (general cleaning + air curtains)", ar:"تشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية )"}
         ]
       },
       { 
         title: "الإدارة والتشغيل | Management & Operations", 
         items: [
-          {id:5, q:"checks, the cashier department (net + phone + cashier + applications)\nتشيك قسم الكاشير ( نت + تلفون + كاشير + تطبيقات )"},
-          {id:6, q:"Monitor the Dashboard and Google Maps.\nمتابعة لوحة التحكم وقوقل ماب"},
-          {id:7, q:"Check the juices section (check mixers + Pepsi machine + gas tube + juice chiller + dates)\nتشيك قسم العصائر ( الخلاطات + مكينة البيبسي + الغاز + ثلاجة العصائر + تواريخ )"},
-          {id:8, q:"Check the store section (elevator + store arrangement + cleaning + stacking + date control)\nتشيك قسم المستودع ( المصعد + الترتيب + النظافة + التكديس + مراقبة التواريخ )"},
-          {id:17, q:"Send orders according to schedule\nرفع الطلبات حسب الجدول"},
-          {id:18, q:"check requests\nتشيك الطلبات"},
-          {id:20, q:"Check attendance and leave + Follow up the financial covenant with the cashier.\nتشيك كشف الحضور والانصراف + متابعة العهدة المالية مع الكاشير"},
-          {id:21, q:"Has a meeting been conducted with all employees today?\nهل تم الاجتماع مع جميع الموظفين اليوم؟"}
+          {id:5, en:"checks, the cashier department (net + phone + cashier + applications)", ar:"تشيك قسم الكاشير ( نت + تلفون + كاشير + تطبيقات )"},
+          {id:6, en:"Monitor the Dashboard and Google Maps.", ar:"متابعة لوحة التحكم وقوقل ماب"},
+          {id:7, en:"Check the juices section (mixers + Pepsi machine + gas tube + chiller + dates)", ar:"تشيك قسم العصائر ( الخلاطات + مكينة البيبسي + الغاز + ثلاجة العصائر + تواريخ )"},
+          {id:8, en:"Check store section (elevator + arrangement + cleaning + stacking + dates)", ar:"تشيك قسم المستودع ( المصعد + الترتيب + النظافة + التكديس + مراقبة التواريخ )"},
+          {id:17, en:"Send orders according to schedule", ar:"رفع الطلبات حسب الجدول"},
+          {id:18, en:"check requests", ar:"تشيك الطلبات"},
+          {id:20, en:"Check attendance and leave + Follow up financial covenant", ar:"تشيك كشف الحضور والانصراف + متابعة العهدة المالية"},
+          {id:21, en:"Has a meeting been conducted with all employees today?", ar:"هل تم الاجتماع مع جميع الموظفين اليوم؟"}
         ]
       },
       { 
         title: "الصيانة والإغلاق | Maintenance & Closing", 
         items: [
-          {id:19, q:"General check (sanitary facilities + all lamps + tiles + Damaged or broken equipment/tools)\nتشيك عام ( مرافق صحية + اللمبات + البلاط + المعدات أو الأدوات الخربانة )"},
-          {id:22, q:"Check the end-of-shift tasks (all air conditioners + all restaurant lights + restaurant signboard).\nتشيك مهام نهاية الوردية ( جميع التكييفات + جميع لمبات المطعم + لوحة المطعم )"}
+          {id:19, en:"General check (sanitary facilities + lamps + tiles + Damaged equipment/tools)", ar:"تشيك عام ( مرافق صحية + اللمبات + البلاط + المعدات أو الأدوات الخربانة )"},
+          {id:22, en:"Check end-of-shift tasks (air conditioners + lights + signboard)", ar:"تشيك مهام نهاية الوردية ( جميع التكييفات + جميع لمبات المطعم + لوحة المطعم )"}
         ]
       }
     ];
@@ -105,7 +105,6 @@
     function App() {
       const [user, setUser] = useState(null);
       const [loading, setLoading] = useState(true);
-      const [submitting, setSubmitting] = useState(false);
       const [branch, setBranch] = useState("");
       const [branches, setBranches] = useState([]);
       const [answers, setAnswers] = useState({});
@@ -119,12 +118,11 @@
         const unsubscribe = auth.onAuthStateChanged(async u => {
             if (u) {
                 const authCheck = await db.collection("authorized_users").where("email", "==", u.email.toLowerCase()).get();
-                // حارس البوابة: السماح فقط للـ assistant و admin
                 if (u.email === ADMIN_EMAIL || (!authCheck.empty && authCheck.docs[0].data().role === 'assistant')) {
                     setUser(u);
                     db.collection("branches").orderBy("name").onSnapshot(snap => setBranches(snap.docs.map(d => d.data().name)));
                 } else {
-                    alert("⚠️ هذه الصفحة مخصصة لمساعدي المشرفين فقط.");
+                    alert("⚠️ صفحة المساعدين فقط.");
                     auth.signOut();
                 }
             } else { setUser(null); }
@@ -135,27 +133,10 @@
 
       useEffect(() => { if (user && canvasRef.current) sigPad.current = new SignaturePad(canvasRef.current); }, [user]);
 
-      const compressImage = (base64Str) => {
-        return new Promise((resolve) => {
-          const img = new Image(); img.src = base64Str;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 500; const scaleSize = MAX_WIDTH / img.width;
-            canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/jpeg', 0.4));
-          };
-        });
-      };
-
-      const handlePhotoAction = async (id, e) => {
+      const handlePhotoAction = (id, e) => {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
-        reader.onload = async (ev) => {
-          const compressed = await compressImage(ev.target.result);
-          setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), compressed].slice(0, 3)}));
-        };
+        reader.onload = (ev) => setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), ev.target.result].slice(0, 3)}));
         reader.readAsDataURL(file);
       };
 
@@ -166,8 +147,9 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
+      // --- محرك المعاينة المصلح لمتصفحات الجوال (منع التداخل) ---
       const handlePreview = () => {
-        if (!branch) return alert("اختر المنشأة");
+        if (!branch) return alert("اختر المنشأة أولاً");
         const score = getScore();
         const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
         const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
@@ -175,49 +157,82 @@
         let reportContent = sectionsData.map(sec => {
           let items = sec.items.map(i => {
             const ans = answers[i.id]; const note = notes[i.id] || ""; const pics = photos[i.id] || [];
-            let status = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'N/A';
-            return `<div style="padding:12px; border-bottom:1px solid #eee; page-break-inside:avoid;"><p style="margin: 0; font-size: 13px; font-weight: bold; color: #1e293b;">${i.q.replace(/\n/g, '<br>')}</p><p style="font-size: 11px; margin: 5px 0;">الحالة: ${status}</p>${note ? `<div style="background:#fff9e6; padding:6px; font-size:10px;">${note}</div>`:""}<div style="margin-top:10px; display:flex; gap:5px;">${pics.map(p=>`<img src="${p}" style="width:140px; height:100px; object-fit:cover; border-radius:6px; border:1px solid #eee;"/>`).join('')}</div></div>`;
+            let statusText = "N/A"; let color = "#64748b";
+            if (ans === 'yes') { statusText = "مطابق ✅"; color = "#059669"; }
+            if (ans === 'no') { statusText = "مخالفة ❌"; color = "#dc2626"; }
+            
+            return `
+              <div style="padding: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid; text-align: right;">
+                <div style="direction: ltr; text-align: left; font-size: 11px; color: #666; margin-bottom: 3px;">${i.en}</div>
+                <div style="direction: rtl; text-align: right; font-size: 14px; font-weight: bold; color: #1e293b; line-height: 1.4;">${i.ar}</div>
+                <div style="margin-top: 8px;">
+                    <p style="font-size: 12px; font-weight: bold; color: ${color};">الحالة: ${statusText}</p>
+                    ${note ? `<div style="background: #fff9e6; padding: 8px; border-radius: 5px; font-size: 10px; margin-top: 5px; border: 1px solid #fde68a;">ملاحظة: ${note}</div>` : ""}
+                    <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
+                        ${pics.map(p => `<img src="${p}" style="width: 140px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;" />`).join('')}
+                    </div>
+                </div>
+              </div>`;
           }).join("");
-          return `<div style="background: #e8f5ee; padding: 10px; margin-top: 20px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: 900; font-size: 15px;">${sec.title}</div>${items}`;
+          return `<div style="background: #e8f5ee; padding: 10px; margin-top: 25px; border-right: 6px solid #d1ba89; color: #004b47; font-weight: 900; font-size: 15px;">${sec.title}</div>${items}`;
         }).join("");
 
-        const fullTemplate = `<div style="width:750px; margin:0 auto; padding:40px; background:white; direction:rtl; font-family:sans-serif; text-align:right;"><div style="text-align:center; border-bottom:5px solid #004b47; padding-bottom:15px;"><img src="${LOGO_URL}" style="height:100px;"/><h1 style="color:#004b47; font-size:26px; font-weight:900;">تقرير مساعد مشرف الفرع اليومي</h1></div><div style="background:#f8fafc; padding:20px; border-radius:12px; margin:30px 0; display:flex; justify-content:space-between; align-items:center;"><div><p><b>🏢 المنشأة:</b> ${branch}</p><p><b>👤 المساعد:</b> ${user.email}</p></div><div style="width:150px; text-align:center; border-right:3px solid #004b47;"><p style="font-size:11px;">الالتزام</p><div style="font-size:40px; font-weight:900; color:${score>=70?'green':'red'}">${score}%</div></div></div>${reportContent}<div style="margin-top:50px; border-top:4px solid #004b47; padding-top:30px;"><p style="font-weight:900;">التوقيع:</p><img src="${signatureImg}" style="width:350px; height:120px; object-fit:contain; display:block;"/></div></div>`;
+        const fullTemplate = `
+          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: sans-serif; text-align: right; box-sizing: border-box;">
+            <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 15px; margin-bottom: 30px;">
+                <img src="${LOGO_URL}" style="height: 100px;" />
+                <h1 style="color: #004b47; font-size: 26px; font-weight: 900; margin: 10px 0;">تقرير مساعد مشرف الفرع اليومي</h1>
+            </div>
+            <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="flex: 1; line-height: 2.2">
+                    <p><b>🏢 المنشأة:</b> ${branch}</p>
+                    <p><b>👤 المساعد:</b> ${user.email}</p>
+                    <p><b>📅 التاريخ:</b> ${timestamp}</p>
+                </div>
+                <div style="width: 150px; text-align: center; border-right: 3px solid #004b47; padding-right: 15px;">
+                    <p style="color: #64748b; font-size: 11px;">معدل الالتزام</p>
+                    <div style="font-size: 40px; font-weight: 900; color: ${score >= 70 ? '#059669' : '#dc2626'}">${score}%</div>
+                </div>
+            </div>
+            ${reportContent}
+            <div style="margin-top: 50px; border-top: 4px solid #004b47; padding-top: 30px; page-break-inside: avoid;">
+                <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 20px;">توقيع المساعد المعتمد:</p>
+                <div style="text-align: right; width: 350px; height: 120px; border-bottom: 2px solid #004b47;">
+                  ${signatureImg ? `<img src="${signatureImg}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />` : ""}
+                </div>
+            </div>
+          </div>`;
+
+        alert("جاري تجهيز المعاينة...");
         html2pdf().from(fullTemplate).set({ margin:0, filename:`Checklist_${branch}.pdf`, image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2, useCORS:true, scrollY:0}, jsPDF:{unit:'mm', format:'a4'} }).save();
       };
 
       const handleFinalSubmit = async () => {
-          if(!branch) return alert("اختر المنشأة");
-          if(submitting) return;
-          setSubmitting(true);
+          if(!branch) return alert("اختر المنشأة أولاً");
           const score = getScore();
           const reportId = Date.now();
           const timestampStr = new Date().toLocaleString('en-GB', { hour12: true });
-
           try {
               let local = JSON.parse(localStorage.getItem('v2_reports')) || [];
-              local.unshift({ id: reportId, branch, score, inspector: user.email, date: timestampStr, isCrit: score < 70, type: "Assistant Checklist" });
-              localStorage.setItem('v2_reports', JSON.stringify(local.slice(0, 20)));
-
+              local.unshift({ id: reportId, branch, score, inspector: user.email, date: timestampStr, isCrit: score < 70 });
+              localStorage.setItem('v2_reports', JSON.stringify(local.slice(0, 30)));
               await db.collection("inspections").add({ 
                   id: reportId, branch, score, inspector: user.email, date: timestampStr, timestamp: reportId, isCrit: score < 70,
                   signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos, type: "Assistant Checklist" 
               });
-
-              alert("✅ تم إرسال التشيك ليست بنجاح!");
-              window.location.reload();
+              alert("✅ تم الإرسال والمزامنة بنجاح!"); window.location.reload();
           } catch (e) { alert("⚠️ خطأ في السحابة."); }
-          finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl uppercase">VERRA Loading...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">VERRA PRO Loading...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} db={db} adminEmail={ADMIN_EMAIL} />;
 
       return (
         <div className="pb-40 text-right">
           <div className="verra-gradient p-12 text-center shadow-xl rounded-b-[4rem] relative">
             <img src={LOGO_URL} className="h-32 mx-auto mb-4 drop-shadow-2xl" />
-            <div className="flex flex-col items-center gap-3 text-white">
-                <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] font-bold border border-white/10 uppercase tracking-tighter text-center">👤 {user.email}</span>
+            <div className="flex flex-col items-center gap-3">
+                <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] text-white font-bold border border-white/10 uppercase tracking-tighter">👤 {user.email}</span>
                 <div className="flex gap-2">
                     {user.email === ADMIN_EMAIL && <button onClick={() => window.location.href='index.html'} className="nav-btn home-btn">🏠 الرئيسية</button>}
                     <button onClick={() => auth.signOut()} className="nav-btn logout-btn">تسجيل الخروج ↪</button>
@@ -226,16 +241,16 @@
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
-            <div className="text-right"><p className="text-[10px] font-bold text-gray-400">SCORE</p><p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p></div>
+            <div className="text-right"><p className="text-[10px] font-bold text-gray-400 leading-none">Overall Score</p><p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p></div>
             <div className="flex gap-2">
                 <button onClick={handlePreview} className="nav-btn preview-btn px-5 py-2.5 rounded-xl shadow transition">معاينة</button>
-                <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-2.5 rounded-xl font-black shadow-lg text-xs active:scale-95 transition`}>{submitting ? '...' : 'إرسال'}</button>
+                <button onClick={handleFinalSubmit} className="verra-gradient text-white px-5 py-2.5 rounded-xl font-black shadow-lg text-xs transition">إرسال</button>
             </div>
           </div>
 
           <main className="p-5 max-w-3xl mx-auto space-y-8 mt-4 text-right">
-            <div className="card p-7 border-r-[15px] border-[#004b47] shadow-xl">
-                <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950 text-right" value={branch} onChange={e=>setBranch(e.target.value)}>
+            <div className="card p-7 border-r-[15px] border-green-800 shadow-xl">
+                <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950 text-right text-right" value={branch} onChange={e=>setBranch(e.target.value)}>
                     <option value="">-- اختر الفرع --</option>
                     {branches.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
@@ -243,29 +258,29 @@
 
             {sectionsData.map(sec => (
               <div key={sec.title}>
-                <div className="section-title flex justify-between items-center px-6 py-4 shadow-sm" onClick={() => {
+                <div className="section-title flex justify-between items-center px-6 py-4 shadow-sm text-right" onClick={() => {
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}><span>{sec.title}</span><span className="text-xs font-bold uppercase">{expanded.has(sec.title) ? 'Hide ▲' : 'Show ▼'}</span></div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
-                  <div key={i.id} className="item-card shadow-lg border border-gray-100">
-                    <p className="text-md font-bold text-green-950 mb-5 leading-relaxed text-right white-space-pre-line">{i.q}</p>
+                  <div key={i.id} className="item-card shadow-lg border">
+                    <p className="text-[11px] font-bold text-gray-400 mb-1 text-left" style={{direction:'ltr'}}>{i.en}</p>
+                    <p className="text-md font-bold text-green-950 mb-5 leading-relaxed text-right">{i.ar}</p>
                     <div className="flex gap-2 justify-end mb-6">
                       <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn ${answers[i.id]==='yes'?'active btn-yes':''}`}>نعم</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn ${answers[i.id]==='no'?'active btn-no':''}`}>لا</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn ${answers[i.id]==='na'?'active btn-na':''}`}>N/A</button>
                     </div>
-                    <textarea className="notes-input shadow-inner text-right p-4 rounded-xl" placeholder="الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
+                    <textarea className="notes-input shadow-inner text-right" placeholder="الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
                     <div className="mt-5 flex flex-wrap gap-3 items-center justify-end">
                         <label className="upload-btn active:scale-95 shadow-md">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
                         <label className="upload-btn active:scale-95 shadow-md" style={{background:'#eff6ff', color:'#1e40af'}}>🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
-                        <div className="flex flex-wrap mr-auto">{(photos[i.id] || []).map((img, px) => (<div key={px} className="relative m-1"><img src={img} className="photo-thumb" /><div className="del-img" onClick={()=>setPhotos({...photos, [i.id]: photos[i.id].filter((_,x)=>x!==px)})}>×</div></div>))}</div>
+                        <div className="flex flex-wrap mr-auto">{(photos[i.id] || []).map((img, px) => (<div key={px} className="relative m-1"><img src={img} className="photo-thumb" /><div className="del-img" onClick={()=>setPhotos({...photos, [i.id]: []})}>×</div></div>))}</div>
                     </div>
                   </div>
                 ))}
               </div>
             ))}
-            
-            <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner"><h3 className="font-black text-green-900 mb-6 uppercase text-sm italic border-b pb-2 text-center underline decoration-green-300 underline-offset-8">توقيع المساعد المعتمد</h3><canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas><button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline">مسح</button></div>
+            <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner"><h3 className="font-black text-green-900 mb-6 uppercase text-sm italic border-b pb-2 text-center underline decoration-green-300 underline-offset-8">توقيع المساعد المعتمد</h3><canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas><button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline">مسح التوقيع</button></div>
           </main>
         </div>
       );
@@ -299,11 +314,11 @@
       return (
         <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
            <form onSubmit={handleAuth} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-sm text-center">
-              <img src={logo} className="h-24 mx-auto mb-6 shadow-2xl rounded-full" />
+              <div className="bg-white rounded-full p-1 shadow-lg w-28 h-28 mx-auto mb-6 flex items-center justify-center text-right"><img src={logo} className="h-20 object-contain text-right" /></div>
               <h1 className="text-2xl font-black text-green-950 mb-10 italic">{isRegistering ? "انضمام مساعد جديد" : "Login Hub (Assistants)"}</h1>
               <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none font-bold" placeholder="البريد الإلكتروني" value={email} onChange={v=>setEmail(v.target.value)} />
               <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none font-bold" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
-              <button type="submit" disabled={btnLoading} className="w-full bg-[#004b47] text-white font-bold py-4 rounded-2xl shadow-xl active:scale-95 transition mb-6">{btnLoading ? "جاري..." : (isRegistering ? "إرسال طلب" : "دخول")}</button>
+              <button type="submit" disabled={btnLoading} className="w-full bg-[#004b47] text-white font-bold py-4 rounded-2xl shadow-xl active:scale-95 transition text-xl mb-6">{btnLoading ? "جاري..." : (isRegistering ? "إرسال طلب" : "دخول")}</button>
               <p onClick={() => setIsRegistering(!isRegistering)} className="text-xs font-bold text-gray-400 cursor-pointer underline decoration-[#d1ba89]">{isRegistering ? "لديك حساب؟ سجل دخولك" : "مساعد جديد؟ اطلب انضمام من هنا"}</p>
            </form>
         </div>
