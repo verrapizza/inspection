@@ -13,18 +13,17 @@
     <style>
         body { font-family: 'Cairo', sans-serif; background: #f1f5f9; -webkit-tap-highlight-color: transparent; }
         .hidden { display: none; }
-        .verra-card { background: white; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; }
+        .verra-card { background: white; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; }
+        .verra-card:active { scale: 0.97; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: none; align-items: flex-end; }
         .modal.active { display: flex; }
-        .modal-content { background: white; width: 100%; height: 92vh; border-radius: 40px 40px 0 0; padding: 40px 25px 25px; overflow-y: auto; position: relative; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; position: sticky; top: -10px; background: white; z-index: 20; }
+        .modal-content { background: white; width: 100%; height: 92vh; border-radius: 40px 40px 0 0; padding: 30px 20px; overflow-y: auto; position: relative; }
         .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
-        .user-row { background: white; padding: 15px; border-radius: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-right: 6px solid #d1ba89; }
     </style>
 </head>
 <body class="pb-32 text-right">
 
-    <!-- شاشة التحميل -->
+    <!-- شاشة القفل والتحميل -->
     <div id="lockScreen" class="fixed inset-0 bg-white z-[500] flex flex-col items-center justify-center font-bold text-[#004b47]">
         <div class="w-12 h-12 border-4 border-t-green-500 border-gray-200 rounded-full animate-spin mb-4"></div>
         جاري الاتصال بنظام VERRA PRO...
@@ -36,7 +35,7 @@
             <div class="flex justify-between items-center relative z-10">
                 <div>
                     <h1 class="text-3xl font-black italic uppercase tracking-tighter">Verra <span class="text-[#d1ba89]">Pro</span></h1>
-                    <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase text-right">لوحة التحكم المركزية</p>
+                    <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase">Admin Central Hub</p>
                 </div>
                 <button onclick="auth.signOut()" class="bg-red-500/20 text-red-200 px-4 py-2 rounded-xl text-[10px] font-bold border border-red-500/30">خروج ↪</button>
             </div>
@@ -44,7 +43,7 @@
 
         <main class="px-6 -mt-16 relative z-10">
             <div class="grid grid-cols-2 gap-4 mb-8 text-center">
-                <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase text-right">الامتثال العام</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
+                <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase">الامتثال العام</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
                 <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg text-right"><p class="text-gray-400 text-[10px] font-bold mb-1">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
             </div>
             <div class="verra-card p-7 mb-4 border-r-[12px] border-[#004b47] shadow-xl" onclick="window.location.href='quality-inspection.html'"><h3 class="font-black text-gray-800 text-lg">🛡️ مراقبة الجودة</h3></div>
@@ -54,27 +53,20 @@
         </main>
     </div>
 
-    <!-- سجل التقارير المطور -->
+    <!-- صفحة سجل التقارير الاحترافية -->
     <div id="reportsPage" class="page hidden px-4 pt-6">
-        <div class="flex justify-between items-center mb-6 text-right">
+        <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-black text-[#004b47] flex items-center gap-2">
-                <span class="bg-[#d1ba89] text-white p-2 rounded-lg text-sm">📋</span>
-                سجل التقارير
+                <span class="bg-[#d1ba89] text-white p-2 rounded-lg text-sm">📋</span> سجل التقارير
             </h2>
             <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm border">رجوع</button>
         </div>
 
-        <div class="bg-white p-4 rounded-[25px] shadow-sm mb-6 border border-gray-100 space-y-3">
-            <input type="text" id="reportSearch" oninput="renderReportsList()" placeholder="🔍 ابحث عن فرع أو مفتش..." class="w-full p-3 rounded-xl bg-gray-50 border-none text-sm focus:ring-2 focus:ring-[#d1ba89] outline-none text-right">
-            <div class="flex gap-2">
-                <select id="branchFilter" onchange="renderReportsList()" class="flex-1 p-2 rounded-xl bg-gray-50 border-none text-[10px] font-bold">
-                    <option value="">كل الفروع</option>
-                </select>
-                <select id="statusFilter" onchange="renderReportsList()" class="flex-1 p-2 rounded-xl bg-gray-50 border-none text-[10px] font-bold">
-                    <option value="">كل النتائج</option>
-                    <option value="pass">ناجح (70%+)</option>
-                    <option value="fail">راسب (أقل من 70%)</option>
-                </select>
+        <div class="bg-white p-4 rounded-[25px] shadow-sm mb-6 space-y-3 border border-gray-100">
+            <input type="text" id="reportSearch" oninput="renderReportsList()" placeholder="🔍 ابحث عن فرع أو مفتش..." class="w-full p-3 rounded-xl bg-gray-50 border-none text-sm outline-none">
+            <div class="flex gap-2 text-[10px] font-bold">
+                <select id="branchFilter" onchange="renderReportsList()" class="flex-1 p-2 rounded-xl bg-gray-50 border-none outline-none"><option value="">كل الفروع</option></select>
+                <select id="statusFilter" onchange="renderReportsList()" class="flex-1 p-2 rounded-xl bg-gray-50 border-none outline-none"><option value="">كل النتائج</option><option value="pass">ناجح</option><option value="fail">راسب</option></select>
             </div>
         </div>
 
@@ -87,16 +79,13 @@
         <div id="reportsList" class="space-y-4 pb-32"></div>
     </div>
 
-    <!-- إدارة المستخدمين -->
-    <div id="usersPage" class="page hidden px-6 pt-10 text-right">
-        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47]">إدارة الصلاحيات</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full border shadow-sm text-right text-xs">X</button></div>
-        <div id="usersList" class="space-y-6 pb-24 text-right"></div>
-    </div>
-
-    <!-- نافذة المعاينة والتحميل -->
+    <!-- نافذة تفاصيل التقرير والتحميل -->
     <div id="reportDetailModal" class="modal">
         <div class="modal-content text-right">
-            <div class="modal-header text-right"><button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black flex items-center justify-center">X</button><h3 class="text-2xl font-black text-green-950 italic">تفاصيل التقرير</h3></div>
+            <div class="flex justify-between items-center mb-6 border-bottom pb-4">
+                <button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black">X</button>
+                <h3 class="text-2xl font-black text-green-950 italic">تفاصيل التقرير</h3>
+            </div>
             <div id="detailBody" class="space-y-5"></div>
             <div class="mt-10 pb-10 border-t pt-8">
                 <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3">
@@ -106,10 +95,17 @@
         </div>
     </div>
 
+    <!-- إدارة المستخدمين -->
+    <div id="usersPage" class="page hidden px-6 pt-10 text-right">
+        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47]">الصلاحيات</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full border shadow-sm text-xs">X</button></div>
+        <div id="usersList" class="space-y-6 pb-24 text-right"></div>
+    </div>
+
+    <!-- الملاحة السفلية -->
     <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl border-t border-white/10 text-right">
         <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1 uppercase">Main</span></button>
         <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1 uppercase">Logs</span></button>
-        <button onclick="navigateTo('usersPage')" id="nav-users" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">👤</span><span class="text-[9px] font-black mt-1 uppercase">Users</span></button>
+        <button onclick="navigateTo('usersPage')" id="nav-users" class="flex flex-col items-center text-white/40"><span class="text-2xl">👤</span><span class="text-[9px] font-black mt-1 uppercase text-right">Users</span></button>
     </nav>
 
     <script>
@@ -120,60 +116,42 @@
         const db = firebase.firestore();
         let cloudReports = [];
 
-        // 1. تشيك ليست المساعدين (22 بند)
+        // بنود تشيك ليست المساعدين كاملة ومترجمة بدقة
         const sectionsAssistant = [
             { title: "الواجهة والصالات - Front & Lounges", items: [
-                {id:1, en:"Restaurant front (entrance + floor + thermometer)", ar:"واجهة المطعم (المدخل + الأرضية + جهاز الحرارة)"},
-                {id:2, en:"Lounge section 1 (tables + Chairs + Walls)", ar:"قسم الصالة 1 (الطاولات + الكراسي + الجدران)"},
-                {id:3, en:"Bathroom 1 (Cleaning + Tissues + Soap)", ar:"حمام صالة 1 (نظافة + مناديل + صابون)"},
-                {id:9, en:"Lounge section 2 (tables + Chairs + Walls)", ar:"قسم الصالة 2 (الطاولات + الكراسي + الجدران)"},
-                {id:10, en:"Bathroom 2 (Cleaning + Tissues + Soap)", ar:"حمام صالة 2 (نظافة + مناديل + صابون)"},
-                {id:11, en:"Plants/Trees Monitoring", ar:"متابعة الأشجار والنباتات بالفرع"}
+                {id:1, en:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)", ar:"تشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
+                {id:2, en:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
+                {id:3, en:"check bathroom hall 1 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
+                {id:9, en:"Check lounge section 2 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
+                {id:10, en:"check bathroom hall 2 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
+                {id:11, en:"Check and monitor all plants/trees in the branch, if available.", ar:"تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع ."}
             ]},
-            { title: "المطبخ والإنتاج - Kitchen & Production", items: [
-                {id:4, en:"Pizza section (hygiene + dates)", ar:"قسم البيتزا (النظافة + التواريخ)"},
-                {id:12, en:"Kitchen A (cleanliness + AC + Hoods)", ar:"مطبخ أ (النظافة + التكييف + الشفاطات)"},
-                {id:13, en:"Kitchen B (fridges + food arrangement)", ar:"مطبخ ب (الثلاجات + ترتيب المواد)"},
-                {id:14, en:"Laundry section (filters + dishwasher)", ar:"قسم الغسيل (الفلاتر + غسالة الأطباق)"},
-                {id:15, en:"Restaurant back side (cleaning)", ar:"القسم الخلفي (النظافة العامة)"}
+            { title: "قسم المطبخ والإنتاج - Kitchen & Production", items: [
+                {id:4, en:"Check the pizza section (hygiene + dates + chillers control)", ar:"تشيك قسم البيتزا ( نظافة + تواريخ + مراقبة الثلاجات )"},
+                {id:12, en:"Check the kitchen department A (floor + walls + conditioning + Hoods + dates)", ar:"تشيك قسم المطبخ أ ( نظافة الأرضية والجدران + التكييف + الشفاطات + التواريخ + الأدوات والمعدات )"},
+                {id:13, en:"Check the kitchen department B (fridges/freezer temperature + food arrangement)", ar:"تشيك قسم المطبخ ب ( فحص حرارة الثلاجات والمجمدات + ترتيب الأغذية + ترتيب الأدوات )"},
+                {id:14, en:"Check the laundry section (cleaning + equipment + oil filters + dishwasher)", ar:"تشيك قسم الغسيل ( النظافة العامة + معدات الغسيل + فلاتر الزيت + ترتيب الأدوات + فحص غسالة الأطباق )"},
+                {id:15, en:"Check Restaurant, back side (general cleaning + air curtains)", ar:"تشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية )"}
             ]},
-            { title: "الإدارة والتشغيل - Operations", items: [
-                {id:5, en:"Cashier (Net + Phone + Apps)", ar:"الكاشير (الإنترنت + الهاتف + التطبيقات)"},
-                {id:6, en:"Dashboard & Google Maps", ar:"لوحة التحكم وجوجل ماب"},
-                {id:7, en:"Juices section (Mixers + Pepsi machine)", ar:"قسم العصائر (الخلاطات + مكينة البيبسي)"},
-                {id:8, en:"Store section (arrangement + cleaning)", ar:"المستودع (الترتيب + النظافة + أسفل الدرج)"},
-                {id:16, en:"Employees (uniform + hygiene + PPE)", ar:"الموظفون (الزي + النظافة + الكمامات)"},
-                {id:17, en:"Orders schedule sending", ar:"إرسال الطلبات حسب الجدول"},
-                {id:18, en:"Check requests", ar:"تشيك الطلبات"},
-                {id:20, en:"Attendance & Financial covenant", ar:"الحضور + العهدة المالية"}
+            { title: "الإدارة والتشغيل - Administration & Operations", items: [
+                {id:5, en:"checks, the cashier department (net + phone + cashier + applications)", ar:"تشيك قسم الكاشير ( نت + تلفون + كاشير + تطبيقات )"},
+                {id:6, en:"Monitor the Dashboard and Google Maps.", ar:"متابعة لوحة التحكم وقوقل ماب"},
+                {id:7, en:"Check the juices section (mixers + Pepsi machine + gas tube + chiller + dates)", ar:"تشيك قسم العصائر ( الخلاطات + مكينة البيبسي + الغاز + ثلاجة العصائر + تواريخ )"},
+                {id:8, en:"Check store section (elevator + arrangement + cleaning + stacking + dates)", ar:"تشيك قسم المستودع ( المصعد + الترتيب + النظافة + التكديس + مراقبة التواريخ )"},
+                {id:17, en:"Send orders according to schedule", ar:"رفع الطلبات حسب الجدول"},
+                {id:18, en:"check requests", ar:"تشيك الطلبات"},
+                {id:20, en:"Check attendance and leave + Follow up financial covenant", ar:"تشيك كشف الحضور والانصراف + متابعة العهدة المالية"},
+                {id:21, en:"Has a meeting been conducted with all employees today?", ar:"هل تم الاجتماع مع جميع الموظفين اليوم؟"}
             ]},
-            { title: "المهام الختامية - Closing", items: [
-                {id:21, en:"Daily meeting with staff", ar:"الاجتماع اليومي مع الموظفين"},
-                {id:19, en:"General facility check (lamps/tiles)", ar:"تشيك عام للمرافق (اللمبات + البلاط)"},
-                {id:22, en:"End of shift (AC + Signage + Lights)", ar:"إغلاق الوردية (التكييف + اللوحة + الإضاءة)"}
+            { title: "الصيانة والمهام الختامية - Closing Tasks", items: [
+                {id:19, en:"General check (sanitary facilities + lamps + tiles + Damaged equipment/tools)", ar:"تشيك عام ( مرافق صحية + اللمبات + البلاط + المعدات أو الأدوات الخربانة )"},
+                {id:22, en:"Check the end-of-shift tasks (air conditioners + lights + signboard)", ar:"تشيك مهام نهاية الوردية ( جميع التكييفات + جميع لمبات المطعم + لوحة المطعم )"}
             ]}
         ];
 
-        // 2. متابعة الفروع (بقية البنود التشغيلية)
-        const sectionsBranches = [
-            { title: "معايير الخدمة والتشغيل - Service Standards", items: [
-                {id:101, en:"Uniform and Grooming Standards", ar:"معايير الزي الموحد والمظهر العام"},
-                {id:102, en:"Speed of Service & Customer Greeting", ar:"سرعة الخدمة واستقبال العملاء"},
-                {id:103, en:"Product Quality & Presentation", ar:"جودة تقديم المنتج وشكله النهائي"},
-                {id:104, en:"Branch General Atmosphere (Smell/Sound)", ar:"الأجواء العامة للفرع (الرائحة والصوت)"}
-            ]}
-        ];
-
-        // 3. مراقبة الجودة (بنود سلامة الغذاء)
-        const sectionsQuality = [
-            { title: "سلامة الغذاء والجودة - Food Safety", items: [
-                {id:201, en:"Food Temperature Logs Check", ar:"فحص سجلات درجات حرارة الطعام"},
-                {id:202, en:"FIFO & Expiry Dates Control", ar:"نظام الداخل أولاً يخرج أولاً والتواريخ"},
-                {id:203, en:"Cross-Contamination Prevention", ar:"منع التلوث التبادلي (فصل الأدوات)"},
-                {id:204, en:"Chemicals Storage Safety", ar:"سلامة تخزين المواد الكيميائية"},
-                {id:205, en:"Storage Cleanliness & Organization", ar:"نظافة وترتيب مناطق التخزين"}
-            ]}
-        ];
+        // القوائم الأخرى
+        const sectionsBranches = [{ title: "متابعة الفروع", items: [{id:1, en:"Branch Operation", ar:"متابعة عمليات الفرع"}] }];
+        const sectionsQuality = [{ title: "مراقبة الجودة", items: [{id:1, q:"Food Safety", ar:"سلامة الأغذية"}] }];
 
         auth.onAuthStateChanged(user => {
             if (user && user.email === "ch3f.ramzi@gmail.com") { document.getElementById('lockScreen').classList.add('hidden'); startSync(); } 
@@ -205,9 +183,7 @@
             const bFilter = document.getElementById('branchFilter');
             if(bFilter && bFilter.options.length <= 1) {
                 branches.forEach(b => {
-                    let opt = document.createElement('option');
-                    opt.value = b; opt.innerText = b;
-                    bFilter.appendChild(opt);
+                    let opt = document.createElement('option'); opt.value = b; opt.innerText = b; bFilter.appendChild(opt);
                 });
             }
             if(!document.getElementById('reportsPage').classList.contains('hidden')) renderReportsList();
@@ -228,16 +204,14 @@
             document.getElementById('reportsList').innerHTML = filtered.map((r) => {
                 const isPass = r.score >= 70;
                 return `
-                <div onclick="viewDetail(${cloudReports.indexOf(r)})" class="bg-white rounded-[25px] overflow-hidden shadow-sm border border-gray-100 relative mb-4 active:scale-95 transition-all">
+                <div onclick="viewDetail(${cloudReports.indexOf(r)})" class="bg-white rounded-[25px] shadow-sm border border-gray-100 relative mb-4 transition-all overflow-hidden">
                     <div class="absolute left-0 top-0 bottom-0 w-2 ${isPass ? 'bg-green-500' : 'bg-red-500'}"></div>
                     <div class="p-5 flex justify-between items-center text-right">
                         <div class="flex-1">
                             <h4 class="font-black text-gray-800 text-sm mb-1">${r.branch}</h4>
                             <div class="text-[10px] text-gray-400 font-bold uppercase">📅 ${fixNums(r.date)} | 👤 ${r.inspector ? r.inspector.split('@')[0] : 'Admin'}</div>
                         </div>
-                        <div class="text-right flex flex-col items-end">
-                            <div class="${isPass ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'} px-3 py-1 rounded-full text-xs font-black">${fixNums(r.score)}%</div>
-                        </div>
+                        <div class="${isPass ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'} px-3 py-1 rounded-full text-xs font-black">${fixNums(r.score)}%</div>
                     </div>
                 </div>`;
             }).join('') || '<div class="text-center py-10 text-gray-400 text-xs font-bold">لا توجد تقارير</div>';
@@ -245,16 +219,16 @@
 
         function viewDetail(idx) {
             const r = cloudReports[idx];
-            document.getElementById('detailBody').innerHTML = `<div class="verra-card p-6 border border-gray-100 text-center mb-4"><h2 class="text-2xl font-black text-[#004b47] mb-2">${r.branch}</h2><div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4 text-right"><div><p class="text-gray-400 mb-1">📅 التاريخ</p><p>${fixNums(r.date)}</p></div><div><p class="text-gray-400 mb-1">👤 المفتش</p><p>${r.inspector || 'Admin'}</p></div></div><div class="flex justify-between px-10 text-right"><span class="font-bold text-gray-500 italic">الامتثال:</span><span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'}">${fixNums(r.score)}%</span></div></div>`;
+            document.getElementById('detailBody').innerHTML = `<div class="bg-gray-50 p-6 rounded-3xl text-center mb-4 border border-gray-100 shadow-sm text-right"><h2 class="text-2xl font-black text-[#004b47] mb-2 uppercase">${r.branch}</h2><div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4 text-right"><div><p class="text-gray-400 mb-1">📅 التاريخ</p><p>${fixNums(r.date)}</p></div><div><p class="text-gray-400 mb-1">👤 المفتش</p><p>${r.inspector || 'Admin'}</p></div></div><div class="flex justify-between px-10 text-right"><span class="font-bold text-gray-500 italic">نسبة الامتثال:</span><span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'}">${fixNums(r.score)}%</span></div></div>`;
             document.getElementById('downloadBtn').onclick = () => generateFullPDF(r);
             document.getElementById('reportDetailModal').classList.add('active');
         }
 
+        // دالة الـ PDF المطورة والمصلحة بالكامل
         function generateFullPDF(r) {
             document.getElementById('btnText').innerText = "جاري بناء الملف... ⏳";
             
-            // اختيار القائمة الصحيحة بناءً على نوع التقرير
-            let targetSections = sectionsAssistant; // القائمة الافتراضية
+            let targetSections = sectionsAssistant;
             if (r.type === "Branch Report") targetSections = sectionsBranches;
             if (r.type === "Quality Inspection") targetSections = sectionsQuality;
 
@@ -267,26 +241,36 @@
 
                     return `
                         <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; width: 100%; display: block; clear: both; margin-bottom: 15px;">
-                            <div style="font-family: 'Cairo', sans-serif; font-weight: 400; font-size: 11px; color: #64748b; direction: ltr; text-align: left; margin-bottom: 4px;">${i.en || i.q || ""}</div>
-                            <div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right; margin-bottom: 8px;">${i.ar || i.q || ""}</div>
+                            <div style="font-family: 'Cairo', sans-serif; font-weight: 400; font-size: 11px; color: #64748b; direction: ltr; text-align: left; margin-bottom: 4px;">${i.en || ""}</div>
+                            <div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right; line-height: 1.6; margin-bottom: 8px;">${i.ar || i.q}</div>
                             <div style="margin-top: 8px;"><span style="font-size: 12px; color: ${statusColor}; font-weight: bold; background: ${statusColor}15; padding: 3px 10px; border-radius: 6px;">الحالة: ${statusText}</span></div>
-                            ${pics.length > 0 ? `<div style="margin-top: 15px;">${pics.map(p => `<img src="${p}" style="width: 140px; height: 140px; object-fit: cover; border-radius: 12px; margin-left: 10px; margin-bottom: 10px; border: 1px solid #eee; display: inline-block;" />`).join('')}</div>` : ''}
+                            ${pics.length > 0 ? `
+                            <div style="margin-top: 15px; display: block; width: 100%;">
+                                ${pics.map(p => `<img src="${p}" style="width: 140px; height: 140px; object-fit: cover; border-radius: 12px; margin-left: 10px; margin-bottom: 10px; border: 1px solid #eee; display: inline-block;" />`).join('')}
+                            </div>` : ''}
                         </div>`;
                 }).join('');
                 return `<div style="page-break-inside: avoid;"><div style="background: #f0fdf4; padding: 12px 15px; border-right: 8px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 30px; text-align: right; font-size: 17px;">${sec.title}</div>${itemsHtml}</div>`;
             }).join('');
 
             const html = `
-            <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; font-family: 'Cairo', sans-serif; direction: rtl; text-align: right;">
+            <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; font-family: 'Cairo', sans-serif; direction: rtl; box-sizing: border-box; text-align: right;">
+                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
                 <table style="width: 100%; margin-bottom: 25px;">
-                    <tr><td style="text-align: center;"><img src="${LOGO_URL}" style="height: 90px; margin-bottom: 12px;" />
-                    <div style="color: #004b47; font-size: 30px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 10px;">تقرير التدقيق الرسمي لـ "فيرا برو"</div></td></tr>
+                    <tr>
+                        <td style="text-align: center;">
+                            <img src="${LOGO_URL}" style="height: 90px; margin-bottom: 12px;" />
+                            <div style="color: #004b47; font-size: 30px; font-weight: 900; border-bottom: 4px solid #d1ba89; display: inline-block; padding-bottom: 8px; margin-top: 5px;">
+                                تقرير التدقيق الرسمي لـ "فيرا برو"
+                            </div>
+                        </td>
+                    </tr>
                 </table>
                 <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 35px; display: table; width: 100%;">
-                    <div style="display: table-cell; width: 70%; line-height: 2.2; vertical-align: middle;">
-                        <p style="margin: 0; font-size: 14px;"><b>🏢 الفرع المستهدف:</b> ${r.branch}</p>
-                        <p style="margin: 0; font-size: 14px;"><b>👤 المسؤول المفتش:</b> ${r.inspector || 'Admin'}</p>
-                        <p style="margin: 0; font-size: 14px;"><b>📅 تاريخ ووقت التقرير:</b> ${fixNums(r.date)}</p>
+                    <div style="display: table-cell; width: 70%; line-height: 2.2; vertical-align: middle; text-align: right;">
+                        <p style="margin: 0;"><b>🏢 الفرع المستهدف:</b> ${r.branch}</p>
+                        <p style="margin: 0;"><b>👤 المسؤول المفتش:</b> ${r.inspector || 'Admin'}</p>
+                        <p style="margin: 0;"><b>📅 تاريخ ووقت التقرير:</b> ${fixNums(r.date)}</p>
                     </div>
                     <div style="display: table-cell; width: 30%; text-align: center; border-right: 3px solid #004b47; vertical-align: middle;">
                         <p style="font-size: 13px; font-weight: 900; color: #64748b; margin: 0;">نسبة الامتثال</p>
@@ -300,7 +284,7 @@
                 </div>
             </div>`;
 
-            const opt = { margin: [10, 10], filename: `Report_${r.branch}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            const opt = { margin: [10, 10], filename: `Report_${r.branch}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, letterRendering: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
             html2pdf().from(html).set(opt).save().then(() => { document.getElementById('btnText').innerText = "📄 تحميل PDF التقرير الكامل"; });
         }
 
