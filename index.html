@@ -33,7 +33,7 @@
 
     <div id="dashboardPage" class="page">
         <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative text-right">
-            <div class="flex justify-between items-center relative z-10 text-right">
+            <div class="flex justify-between items-center relative z-10">
                 <div>
                     <h1 class="text-3xl font-black italic uppercase tracking-tighter">Verra <span class="text-[#d1ba89]">Pro</span></h1>
                     <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase">Admin Command Hub</p>
@@ -42,36 +42,36 @@
             </div>
         </header>
 
-        <main class="px-6 -mt-16 relative z-10 text-right">
-            <div class="grid grid-cols-2 gap-4 mb-8 text-center text-right">
-                <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-widest">الامتثال</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
-                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg text-right"><p class="text-gray-400 text-[10px] font-bold mb-1 text-right">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
+        <main class="px-6 -mt-16 relative z-10">
+            <div class="grid grid-cols-2 gap-4 mb-8 text-center">
+                <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-widest text-right">الامتثال</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
+                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg text-right"><p class="text-gray-400 text-[10px] font-bold mb-1">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
             </div>
             <div class="verra-card p-7 mb-4 border-r-[12px] border-[#004b47] shadow-xl italic" onclick="window.location.href='quality-inspection.html'"><h3 class="font-black text-gray-800 text-lg">🛡️ مراقبة الجودة</h3></div>
-            <div class="verra-card p-7 mb-4 border-r-[12px] border-blue-600 shadow-xl italic" onclick="window.location.href='branches-inspector.html'"><h3 class="font-black text-gray-800 text-lg">🏢 متابعة الفروع</h3></div>
-            <div class="verra-card p-7 mb-4 border-r-[12px] border-green-700 shadow-xl italic" onclick="window.location.href='checklist.html'"><h3 class="font-black text-gray-800 text-lg">✅ تشيك ليست المساعدين</h3></div>
+            <div class="verra-card p-7 mb-4 border-r-[12px] border-blue-600 shadow-xl italic" onclick="window.location.href='branches-inspector.html'"><h3 class="font-black text-gray-800 text-lg text-right">🏢 متابعة الفروع</h3></div>
+            <div class="verra-card p-7 mb-4 border-r-[12px] border-green-700 shadow-xl italic text-right" onclick="window.location.href='checklist.html'"><h3 class="font-black text-gray-800 text-lg">✅ تشيك ليست المساعدين</h3></div>
             <div class="verra-card p-7 mb-10 border-r-[12px] border-[#d1ba89] shadow-xl italic text-right" onclick="navigateTo('usersPage')"><h3 class="font-black text-gray-800 text-lg text-right">👤 إدارة المستخدمين</h3><p id="pendingBadge" class="text-[9px] text-red-500 font-bold hidden mt-1">طلبات جديدة ⚠️</p></div>
         </main>
     </div>
 
     <!-- سجل التقارير -->
-    <div id="reportsPage" class="page hidden px-6 pt-10 text-right">
-        <div class="flex justify-between items-center mb-10"><h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8">سجل التقارير</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm border text-right">رجوع</button></div>
+    <div id="reportsPage" class="page hidden px-6 pt-10">
+        <div class="flex justify-between items-center mb-10 text-right"><h2 class="text-2xl font-black text-[#004b47] italic underline decoration-[#d1ba89] underline-offset-8 text-right">سجل التقارير</h2><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm border text-right">رجوع</button></div>
         <div id="reportsList" class="space-y-4 pb-24 text-right"></div>
     </div>
 
     <!-- إدارة المستخدمين -->
     <div id="usersPage" class="page hidden px-6 pt-10 text-right">
-        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47]">الصلاحيات</h2><div class="flex gap-2"><button onclick="startSync()" class="bg-blue-600 text-white p-2 rounded-xl text-[10px] font-bold">تحديث 🔄</button><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full border shadow-sm">X</button></div></div>
+        <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-black text-[#004b47]">الصلاحيات</h2><div class="flex gap-2"><button onclick="startSync()" class="bg-blue-600 text-white p-2 rounded-xl text-[10px] font-bold">تحديث 🔄</button><button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full border shadow-sm text-right">X</button></div></div>
         <div id="usersList" class="space-y-6 pb-24 text-right"></div>
     </div>
 
-    <!-- نافذة تفاصيل التقرير والتحميل -->
+    <!-- نافذة المعاينة والتحميل -->
     <div id="reportDetailModal" class="modal">
-        <div class="modal-content text-right text-right">
-            <div class="modal-header"><button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black flex items-center justify-center shadow-sm text-right">X</button><h3 class="text-2xl font-black text-green-950 italic">تفاصيل التقرير</h3></div>
+        <div class="modal-content text-right">
+            <div class="modal-header text-right"><button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black flex items-center justify-center shadow-sm text-right">X</button><h3 class="text-2xl font-black text-green-950 italic text-right">تفاصيل التقرير</h3></div>
             <div id="detailBody" class="space-y-5 text-right"></div>
-            <div class="mt-10 pb-10 border-t pt-8">
+            <div class="mt-10 pb-10 border-t pt-8 text-right">
                 <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3">
                     <span id="btnText">📄 تحميل PDF التقرير الكامل</span>
                 </button>
@@ -79,10 +79,10 @@
         </div>
     </div>
 
-    <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl border-t border-white/10">
+    <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl border-t border-white/10 text-right">
         <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1">MAIN</span></button>
-        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">📊</span><span class="text-[9px] font-black mt-1">LOGS</span></button>
-        <button onclick="navigateTo('usersPage')" id="nav-users" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">👤</span><span class="text-[9px] font-black mt-1">USERS</span></button>
+        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1 uppercase text-center">Logs</span></button>
+        <button onclick="navigateTo('usersPage')" id="nav-users" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">👤</span><span class="text-[9px] font-black mt-1 uppercase text-center">Users</span></button>
     </nav>
 
     <script>
@@ -100,82 +100,10 @@
 
         function fixNums(str) { return str ? str.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : "0"; }
 
-        // --- مصفوفة المساعدين (22 بنداً) كاملة وحرفية ---
-        const sectionsAssistant = [
-            { title: "الواجهة والصالات | Front & Lounges", items: [
-                {id:1, en:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)", ar:"تشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
-                {id:2, en:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
-                {id:3, en:"check bathroom hall 1 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
-                {id:9, en:"Check lounge section 2 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
-                {id:10, en:"check bathroom hall 2 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
-                {id:11, en:"Check and monitor all plants/trees in the branch, if available.", ar:"تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع ."}
-            ]},
-            { title: "المطبخ والإنتاج | Kitchen & Production", items: [
-                {id:4, en:"Check the pizza section (hygiene + dates + chillers control)", ar:"تشيك قسم البيتزا ( نظافة + تواريخ + مراقبة الثلاجات )"},
-                {id:12, en:"Check the kitchen department A (cleanliness of the floor and walls + air conditioning + Kitchen Hoods + dates + kitchen utensils and machines)", ar:"تشيك قسم المطبخ أ ( نظافة الأرضية والجدران + التكييف + الشفاطات + التواريخ + الأدوات والمعدات )"},
-                {id:13, en:"Check the kitchen department B (check fridges and freezer temperature + food arrangement + kitchen tools arrangement and place it in Dedicated places)", ar:"تشيك قسم المطبخ ب ( فحص حرارة الثلاجات والمجمدات + ترتيب الأغذية + ترتيب الأدوات في أماكنها المخصصة )"},
-                {id:14, en:"Check the laundry section (general cleanliness + laundry equipment + oil filters + dishes tools arrangement and place it in Dedicated places + check dishwasher)", ar:"تشيك قسم الغسيل ( النظافة العامة + معدات الغسيل + فلاتر الزيت + ترتيب أدوات الصحون + فحص غسالة الأطباق )"},
-                {id:15, en:"Check Restaurant, back side (general cleaning + air curtains)", ar:"تشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية )"}
-            ]},
-            { title: "الإدارة والتشغيل | Management & Operations", items: [
-                {id:5, en:"checks, the cashier department (net + phone + cashier + applications)", ar:"تشيك قسم الكاشير ( نت + تلفون + كاشير + تطبيقات )"},
-                {id:6, en:"Monitor the Dashboard and Google Maps.", ar:"متابعة لوحة التحكم وقوقل ماب"},
-                {id:7, en:"Check the juices section (check the mixers + Clean the Pepsi machine + The keratin of the Pepsi machine with the gas tube + juice chiller + dates)", ar:"تشيك قسم العصائر ( الخلاطات + مكينة البيبسي + الغاز + ثلاجة العصائر + تواريخ )"},
-                {id:8, en:"Check the store section (elevator + store arrangement + cleaning + stacking + date control + store under the stairs)", ar:"تشيك قسم المستودع ( المصعد + الترتيب + النظافة + التكديس + مراقبة التواريخ )"},
-                {id:17, en:"Send orders according to schedule", ar:"رفع الطلبات حسب الجدول"},
-                {id:18, en:"check requests", ar:"تشيك الطلبات"},
-                {id:20, en:"Check attendance and leave + Follow up the financial covenant with the cashier.", ar:"تشيك كشف الحضور والانصراف + متابعة العهدة المالية مع الكاشير"},
-                {id:21, en:"Has a meeting been conducted with all employees today?", ar:"هل تم الاجتماع مع جميع الموظفين اليوم؟"}
-            ]},
-            { title: "الصيانة والإغلاق | Maintenance & Closing", items: [
-                {id:19, en:"General check (sanitary facilities + all lamps + tiles + Damaged or broken equipment + Damaged or broken tools)", ar:"تشيك عام ( مرافق صحية + اللمبات + البلاط + المعدات أو الأدوات الخربانة )"},
-                {id:22, en:"Check the end-of-shift tasks (all air conditioners + all restaurant lights + restaurant signboard).", ar:"تشيك مهام نهاية الوردية ( جميع التكييفات + جميع لمبات المطعم + لوحة المطعم )"}
-            ]}
-        ];
-
-        // --- مصفوفة الفروع (18 بنداً) كاملة حرفياً ---
-        const sectionsBranches = [
-            { title: "الواجهة والصالات | exterior & Lounges", items: [
-                {id:1, en:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)", ar:"تشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
-                {id:2, en:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
-                {id:3, en:"check bathroom hall 1 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
-                {id:8, en:"Check lounge section 2 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
-                {id:9, en:"check bathroom hall 2 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"}
-            ]},
-            { title: "الإدارة والعمليات | Admin & Operation", items: [
-                {id:4, en:"checks, the cashier department (net + phone + cashier + applications)", ar:"تشيك قسم الكاشير ( نت + تلفون + متابعة عهدة الكاشير + تشيك على نظام فودو في الكاشير + التشيك على نظاف فيد اس + متابعة الدوامات في مواقع التطبيقات )"},
-                {id:5, en:"Monitor and Google Maps.", ar:"متابعة قوقل ماب"},
-                {id:10, en:"Check and monitor all plants/trees in the branch, if available.", ar:"التشيك على الأشجار ومتابعتها بالكامل"},
-                {id:16, en:"Check attendance and leave تشيك ( كشف الحضور )", ar:"كشف الحضور"},
-                {id:17, en:"Has a meeting been conducted with all employees today?", ar:"هل تم الاجتماع مع جميع الموظفين اليوم؟"},
-                {id:18, en:"Follow-up branch supervisors daily tasks", ar:"متابعة مهام مشرفين الفروع"}
-            ]},
-            { title: "الإنتاج والمخزون | Production & Store", items: [
-                {id:6, en:"Check the juices section (check the mixers + Clean the Pepsi machine + The keratin of the Pepsi machine with the gas tube + juice chiller + dates)", ar:"تشيك قسم العصائر ( تشيك الخلاطات + نظافة مكينة البيبسي + كراتين التابعة للمكينة مع الغاز + ثلاجة العصائر + تواريخ )"},
-                {id:7, en:"Check the store section (elevator + store arrangement + cleaning + stacking + date control)", ar:"تشيك قسم المستودع ( المصعد + ترتيب المستودع + نظافة + التكديس + مراقبة التواريخ )"},
-                {id:11, en:"Check Restaurant back side (general cleaning + air curtains)", ar:"تشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية + الغاز )"},
-                {id:13, en:"Send orders according to schedule", ar:"رفع الطلبات حسب الجدول"},
-                {id:14, en:"check requests", ar:"تشيك الطلبات"}
-            ]},
-            { title: "العمال والمرافق | Staff & Facilities", items: [
-                {id:12, en:"Check the employees (personal hygiene * uniform * nails * smell * health certificate * masks * gloves * harnet)", ar:"تشيك العمال ( النظافة الشخصية * نظافة اليونفرم * اظافر * ريحة * كرت البلدية * الكمام * قلفزات * هرنت )"},
-                {id:15, en:"General check (sanitary facilities + all lamps + tiles + Damaged or broken equipment + Damaged or broken tools)", ar:"تشيك عام ( مرافق صحية + جميع اللمبات + البلاط + المكاين الخربانة او المكسرة + أدوات الخربانة او المكسرة )"}
-            ]}
-        ];
-
-        // --- مصفوفة الجودة (74 بنداً) كاملة وحرفية ---
-        const sectionsQuality = [
-            { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
-            { title: "تحضير الأغذية", items: [{id:11,q:"مراجعة ومتابعة بروسيس تحضير العجين"},{id:12,q:"متابعة بروسيس تكوير العجين"},{id:13,q:"مراجعة تحضير الصوصات"},{id:14,q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"},{id:15,q:"منع التلوث الخلطي أثناء التحضير"},{id:16,q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"},{id:17,q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"},{id:18,q:"وصول درجات حرارة الطهي لـ (≥75°م)"},{id:19,q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"},{id:20,q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"},{id:21,q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}]},
-            { title: "جودة المنتج", items: [{id:22,q:"معاينة جودة المنتج النهائي (قسم الباستا)"},{id:23,q:"معاينة جودة المنتج النهائي (قسم البيتزا)"},{id:24,q:"رفع صورة المنتج النهائي على الواتساب في كل الفروع"}]},
-            { title: "المنشأة والبيئة", items: [{id:25,q:"المنشأة تقع بعيداً عن مصادر التلوث"},{id:26,q:"خلو الجدران والأرضيات والأسقف من التشققات"},{id:27,q:"الأبواب محكمة الإغلاق وتغلق تلقائياً"},{id:28,q:"النوافذ مزودة بشبكات معدنية سليمة"},{id:29,q:"ميل مناسب للصرف في جميع المناطق"},{id:30,q:"أجهزة التكييف فعالة وتعمل بشكل صحيح"},{id:31,q:"وجود شفاطات فوق الأفران والشوايات"},{id:32,q:"إضاءة كافية في جميع مناطق التعامل مع الأغذية"},{id:33,q:"الأرضيات مقاومة للماء وغير زلقة وسهلة التنظيف"}]},
-            { title: "التنظيف والتعقيم", items: [{id:34,q:"جدول التنظيف موثق ويتم اتباعه بدقة"},{id:35,q:"المطهرات آمنة للأغذية وبالتركيزات الصحيحة"},{id:36,q:"تنظيف وتعقيم المعدات بعد كل استخدام"},{id:37,q:"التنظيف العميق يومياً لجميع الأسطح الملامسة"},{id:38,q:"حاويات النفايات تفتح بالقدم وتفرغ بانتظام"},{id:39,q:"التخلص من النفايات يمنع تلوث المياه أو الأغذية"},{id:40,q:"عقد مكافحة آفات ساري مع شركة متخصصة"},{id:41,q:"عدم وجود دلائل على القوارض أو الحشرات"}]},
-            { title: "النظافة الشخصية", items: [{id:42,q:"جميع العاملين يرتدون زياً نظيفاً وأغطية للشعر"},{id:43,q:"ارتداء الكمامات في مناطق الأغذية القابلة للتلف"},{id:44,q:"محطات غسل اليدين مزودة بالصابون والماء الساخن"},{id:45,q:"غسل اليدين قبل التعامل مع الأغذية وبعد الاستراحة"},{id:46,q:"عدم ارتداء المجوهرات أو طلاء الأظافر"},{id:47,q:"فحوصات طبية قبل التوظيف من جهات معتمدة"},{id:48,q:"فحوصات طبية روتينية سنوية لجميع العاملين"},{id:49,q:"استبعاد العاملين المصابين بالأمراض المعدية"}]},
-            { title: "المعدات والأدوات", items: [{id:50,q:"المعدات مصنوعة من مواد مقاومة للتآكل وآمنة"},{id:51,q:"مقاييس الحرارة معايرة وتعمل بشكل صحيح"},{id:52,q:"الثلاجات والمجمدات تحافظ على درجات الحرارة المطلوبة"},{id:53,q:"تسجيل سجلات درجة الحرارة مرتين يومياً على الأقل"},{id:54,q:"صيانة وتنظيف معدات الطهي بانتظام"},{id:55,q:"أسطح ملامسة للأغذية ناعمة وخالية من التشققات"}]},
-            { title: "التتبيع والتوثيق", items: [{id:56,q:"الالتزام بسجلات مراقبة الجودة (ديفروست، تعقيم، زيت)"},{id:57,q:"رفع لوائح التشييك يومياً على مجموعة الواتساب"},{id:58,q:"دليل تتبع الأغذية متاح وكامل في المنشأة"},{id:59,q:"الاحتفاظ بسجلات التتبع 180 يوماً"},{id:60,q:"ترميز المنتجات لتحديد كل دفعة وتاريخ الإنتاج"},{id:61,q:"سجلات اعتماد الموردين والشهادات"},{id:62,q:"جميع العاملين يحملون شهادات صحية سارية"},{id:63,q:"خطة HACCP موثقة ومعتمدة"},{id:64,q:"سجلات التنظيف والتعقيم كاملة ومحدثة"},{id:65,q:"الاحتفاظ بسجلات مراقبة درجة الحرارة"}]},
-            { title: "إمداد المياه والسباكة", items: [{id:66,q:"إمداد مياه الشرب كافٍ ونظيف تماماً"},{id:67,q:"تركيب فلاتر المياه وتنظيفها وصيانتها"},{id:68,q:"عدم وجود تسربات في مواسير الصرف"},{id:69,q:"إغلاق فتحات الصرف أثناء ساعات العمل"},{id:70,q:"أحواض غسل اليدين مزودة بأجهزة تجفيف"}]},
-            { title: "إدارة مسببات الحساسية", items: [{id:71,q:"معلومات مسببات الحساسية كاملة على الملصقات"},{id:72,q:"مناطق تحضير منفصلة للأصناف الخالية من الحساسية"},{id:73,q:"أدوات مخصصة لتحضير الأغذية الخاصة"},{id:74,q:"تدريب الموظفين على مسببات الحساسية"}]}
-        ];
+        // القواميس
+        const sectionsAssistant = [{ title: "الواجهة والصالات", items: [{id:1, en:"check restaurant front", ar:"تشيك قسم واجهة المطعم"},{id:2, en:"Check lounge section 1", ar:"تشيك قسم صالة 1"},{id:3, en:"check bathroom hall 1", ar:"تشيك الحمام صالة 1"},{id:9, en:"Check lounge section 2", ar:"تشيك قسم صالة 2"},{id:10, en:"check bathroom hall 2", ar:"تشيك الحمام صالة 2"},{id:11, en:"Check plants/trees", ar:"تشيك على الأشجار"}]},{ title: "المطبخ والإنتاج", items: [{id:4, en:"Check pizza section", ar:"تشيك قسم البيتزا"},{id:12, en:"Check kitchen A", ar:"تشيك المطبخ أ"},{id:13, en:"Check kitchen B", ar:"تشيك المطبخ ب"},{id:14, en:"Check laundry section", ar:"تشيك قسم الغسيل"},{id:15, en:"Check Restaurant back side", ar:"تشيك القسم الخلفي للمطعم"}]},{ title: "الإدارة والتشغيل", items: [{id:5, en:"checks cashier department", ar:"تشيك قسم الكاشير"},{id:6, en:"Monitor Dashboard/Maps", ar:"متابعة لوحة التحكم"},{id:7, en:"Check juices section", ar:"تشيك قسم العصائر"},{id:8, en:"Check store section", ar:"تشيك قسم المستودع"},{id:17, en:"Send orders schedule", ar:"رفع الطلبات"},{id:18, en:"check requests", ar:"تشيك الطلبات"},{id:20, en:"Attendance/Covenant", ar:"كشف الحضور والعهدة"},{id:21, en:"Meeting today?", ar:"الاجتماع اليومي"}]},{ title: "الصيانة والإغلاق", items: [{id:19, en:"General check", ar:"تشيك عام للمرافق"},{id:22, en:"Check end-of-shift tasks", ar:"تشيك مهام الإغلاق"}]}];
+        const sectionsBranches = [{ title: "قسم الواجهة والصالات", items: [{id:1, en:"check restaurant front", ar:"تشيك قسم واجهة المطعم"},{id:2, en:"Check lounge section 1", ar:"تشيك قسم صالة 1"}] }];
+        const sectionsQuality = [ { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"}] } ];
 
         function startSync() {
             db.collection("inspections").onSnapshot(snap => {
@@ -190,33 +118,30 @@
         function updateUI() {
             document.getElementById('reportCount').innerText = fixNums(cloudReports.length);
             if(cloudReports.length > 0) {
-                let sum = cloudReports.reduce((s, r) => s + (parseFloat(r.score) || 0), 0);
+                let sum = cloudReports.reduce((acc, curr) => acc + (parseFloat(curr.score) || 0), 0);
                 document.getElementById('totalScore').innerText = fixNums(Math.round(sum / cloudReports.length)) + "%";
-            } else { document.getElementById('totalScore').innerText = "100%"; }
+            }
             if(!document.getElementById('reportsPage').classList.contains('hidden')) renderReportsList();
         }
 
         function renderReportsList() {
             document.getElementById('reportsList').innerHTML = cloudReports.map((r, i) => `
                 <div onclick="viewDetail(${i})" class="verra-card p-6 border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-500'} mb-4 active:scale-95 transition-transform text-right">
-                    <div class="flex justify-between items-start mb-2 text-right">
-                        <h4 class="font-black text-gray-800 text-lg text-right">${r.branch || 'تقرير'}</h4>
-                        <button onclick="event.stopPropagation(); if(confirm('حذف نهائي؟')) db.collection('inspections').doc('${r.docId}').delete()" class="delete-btn">🗑️</button>
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-black text-gray-800 text-lg">${r.branch || 'تقرير'}</h4>
+                        <button onclick="event.stopPropagation(); if(confirm('حذف؟')) db.collection('inspections').doc('${r.docId}').delete()" class="delete-btn">🗑️</button>
                     </div>
-                    <p class="text-[10px] text-blue-600 font-bold uppercase mb-1 italic tracking-wider text-right uppercase text-right">${r.type || 'Audit'}</p>
-                    <p class="text-[11px] text-gray-400 font-bold text-right text-right">📅 ${fixNums(r.date)} | المشرف: ${r.inspector ? r.inspector.split('@')[0] : '---'}</p>
-                    <span class="text-xs font-black ${r.score < 70 ? 'text-red-600' : 'text-green-600'}">${fixNums(r.score)}% مطابق</span>
+                    <p class="text-[11px] text-gray-400 font-bold mb-1">📅 ${fixNums(r.date)} | المشرف: ${r.inspector ? r.inspector.split('@')[0] : '---'}</p>
                 </div>`).join('');
         }
 
         function viewDetail(idx) {
             const r = cloudReports[idx];
-            document.getElementById('detailBody').innerHTML = `<div class="verra-card p-6 border border-gray-100 text-center mb-4 shadow-sm text-right text-right text-right"><h2 class="text-2xl font-black text-[#004b47] mb-2 uppercase text-right text-right text-right">${r.branch || '---'}</h2><div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4 text-right text-right text-right"><div><p class="text-gray-400 mb-1 text-right text-right text-right">📅 التاريخ</p><p class="text-right text-right text-right">${fixNums(r.date)}</p></div><div><p class="text-gray-400 mb-1 text-right text-right text-right text-right text-right">👤 المفتش</p><p class="text-right text-right text-right text-right text-right">${r.inspector || '---'}</p></div></div><div class="flex justify-between px-10 text-right text-right text-right text-right text-right text-right"><span class="font-bold text-gray-500 italic">الامتثال العام:</span><span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'}">${fixNums(r.score)}%</span></div></div><p class="text-center font-bold text-gray-400 text-[10px]">نوع التقرير: ${r.type || 'جودة'}</p>`;
+            document.getElementById('detailBody').innerHTML = `<div class="verra-card p-6 border border-gray-100 text-center mb-4 shadow-sm text-right"><h2 class="text-2xl font-black text-[#004b47] mb-2 uppercase text-right">${r.branch || '---'}</h2><div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4 text-right"><div><p class="text-gray-400 mb-1 text-right">📅 التاريخ</p><p class="text-right">${fixNums(r.date)}</p></div><div><p class="text-gray-400 mb-1 text-right text-right">👤 المفتش</p><p class="text-right text-right">${r.inspector || '---'}</p></div></div><div class="flex justify-between px-10 text-right"><span class="font-bold text-gray-500 italic">الامتثال العام:</span><span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'}">${fixNums(r.score)}%</span></div></div>`;
             document.getElementById('downloadBtn').onclick = () => generateFullPDF(r);
             document.getElementById('reportDetailModal').classList.add('active');
         }
 
-        // --- محرك الـ PDF الذهبي الجديد المصلح جذرياً لمنع التداخل ---
         function generateFullPDF(r) {
             document.getElementById('btnText').innerText = "جاري بناء الملف... ⏳";
             let targetSections;
@@ -227,67 +152,21 @@
             let contentHtml = targetSections.map(sec => {
                 let itemsHtml = sec.items.map(i => {
                     const ans = r.answers ? r.answers[i.id] : 'na';
-                    const note = r.notes ? r.notes[i.id] : '';
                     const pics = (r.photos && r.photos[i.id]) ? r.photos[i.id] : [];
                     let statusColor = ans === 'yes' ? '#059669' : ans === 'no' ? '#dc2626' : '#64748b';
-
-                    return `
-                        <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; width: 100%; display: block; clear: both; box-sizing: border-box;">
-                            <div style="font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 11px; color: #64748b; direction: ltr; text-align: left; margin-bottom: 5px; display: block; width: 100%;">${i.en || i.q}</div>
-                            <div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right; line-height: 1.6; display: block; width: 100%;">${i.ar || i.q}</div>
-                            <div style="margin-top: 10px; display: block; clear: both;">
-                                <span style="font-family: 'Cairo', sans-serif; font-size: 12px; color: ${statusColor}; font-weight: bold;">الحالة: ${ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'N/A'}</span>
-                                ${note ? `<div style="background: #fffbeb; padding: 10px; border-radius: 8px; font-size: 11px; border: 1px solid #fde68a; margin-top: 10px; color: #92400e; font-family: 'Cairo', sans-serif; display: block; width: 100%; box-sizing: border-box;">الملاحظة: ${note}</div>` : ''}
-                                <div style="display: block; margin-top: 15px; text-align: right; clear: both; width: 100%;">
-                                    ${pics.map(p => `<img src="${p}" style="width: 230px; height: auto; max-height: 170px; border-radius: 12px; object-fit: cover; border: 2px solid #e2e8f0; margin-left: 10px; margin-bottom: 10px; display: inline-block;" />`).join('')}
-                                </div>
-                            </div>
-                        </div>`;
+                    return `<div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; width: 100%; display: block;"><div style="font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 11px; color: #64748b; direction: ltr; text-align: left;">${i.en || i.q}</div><div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right;">${i.ar || i.q}</div><div style="margin-top: 10px;"><span style="font-size: 12px; color: ${statusColor}; font-weight: bold;">الحالة: ${ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'N/A'}</span><div style="display: block; margin-top: 15px;">${pics.map(p => `<img src="${p}" style="width: 230px; border-radius: 12px; margin-bottom: 10px; display: inline-block; margin-left: 10px;" />`).join('')}</div></div></div>`;
                 }).join('');
-
-                return `
-                    <div style="background: #e8f5ee; padding: 12px; border-right: 8px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 35px; text-align: right; font-size: 18px; font-family: 'Cairo', sans-serif; width: 100%; box-sizing: border-box; display: block; clear: both;">${sec.title}</div>
-                    ${itemsHtml}
-                `;
+                return `<div style="background: #e8f5ee; padding: 12px; border-right: 8px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 35px; text-align: right; font-size: 18px; font-family: 'Cairo', sans-serif;">${sec.title}</div>${itemsHtml}`;
             }).join('');
 
-            const html = `
-                <div style="width: 800px; margin: 0 auto; padding: 40px; background: white; font-family: 'Cairo', sans-serif; direction: rtl; box-sizing: border-box; text-align: right;">
-                    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-                    <table style="width: 100%; border-bottom: 5px solid #004b47; margin-bottom: 30px; border-collapse: collapse;">
-                        <tr><td style="text-align: center; padding-bottom: 15px;"><img src="${LOGO_URL}" style="height: 110px;" /></td></tr>
-                        <tr><td style="text-align: center; padding-bottom: 25px;"><div style="color: #004b47; font-size: 32px; font-weight: 900; font-family: 'Cairo', sans-serif;">تقرير تدقيق VERRA PRO الرسمي</div></td></tr>
-                    </table>
-                    <div style="background: #f8fafc; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; display: block; width: 100%; box-sizing: border-box; overflow: hidden; margin-bottom: 40px; clear: both;">
-                        <div style="float: right; width: 70%; line-height: 2.2; text-align: right;">
-                            <p style="margin:0;"><b>🏢 الفرع المستهدف:</b> ${r.branch}</p>
-                            <p style="margin:0;"><b>👤 المشرف المسؤول:</b> ${r.inspector}</p>
-                            <p style="margin:0;"><b>📅 التاريخ والوقت:</b> ${fixNums(r.date)}</p>
-                        </div>
-                        <div style="float: left; width: 25%; text-align: center; border-right: 3px solid #004b47; padding-right: 25px;">
-                             <p style="font-size: 12px; font-weight: 900; color: #64748b; margin: 0;">الامتثال</p>
-                             <div style="font-size: 55px; font-weight: 900; color: ${r.score >= 70 ? '#059669':'#dc2626'}; line-height: 1;">${fixNums(r.score)}%</div>
-                        </div>
-                    </div>
-                    <div style="clear: both; width: 100%; display: block;">${contentHtml}</div>
-                    <div style="margin-top: 60px; border-top: 4px solid #004b47; padding-top: 30px; text-align: right; page-break-inside: avoid; width: 100%; clear: both;">
-                        <p style="font-weight: 900; color: #004b47; font-size: 18px; margin-bottom: 20px;">التوقيع الرقمي المعتمد:</p>
-                        <div style="text-align: right;">
-                            <img src="${r.signature}" style="width: 320px; height: 120px; border-bottom: 2px solid #004b47; object-fit: contain; display: block;" />
-                        </div>
-                        <p style="font-size: 10px; color: #94a3b8; margin-top: 15px;">تم توليد هذا التقرير آلياً عبر نظام VERRA PRO السحابي.</p>
-                    </div>
-                </div>`;
-
-            html2pdf().from(html).set({ margin: 0, filename: `Verra_Report_${r.branch}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, scrollY: 0, letterRendering: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).save().then(() => { 
-                document.getElementById('btnText').innerText = "📄 تحميل PDF التقرير الكامل"; 
-            });
+            const html = `<div style="width: 800px; margin: 0 auto; padding: 40px; background: white; font-family: 'Cairo', sans-serif; direction: rtl; box-sizing: border-box; text-align: right;"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet"><table style="width: 100%; border-bottom: 5px solid #004b47; margin-bottom: 30px;"><tr><td style="text-align: center; padding-bottom: 15px;"><img src="${LOGO_URL}" style="height: 110px;" /></td></tr><tr><td style="text-align: center; padding-bottom: 25px;"><div style="color: #004b47; font-size: 32px; font-weight: 900;">تقرير تدقيق VERRA PRO الرسمي</div></td></tr></table><div style="background: #f8fafc; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; display: block; width: 100%; box-sizing: border-box; overflow: hidden; margin-bottom: 40px; clear: both;"><div style="float: right; width: 70%; line-height: 2.2; text-align: right;"><p><b>🏢 الفرع:</b> ${r.branch}</p><p><b>👤 المشرف:</b> ${r.inspector}</p><p><b>📅 التاريخ:</b> ${fixNums(r.date)}</p></div><div style="float: left; width: 25%; text-align: center; border-right: 3px solid #004b47; padding-right: 25px;"><p style="font-size: 12px; font-weight: 900; color: #64748b;">الامتثال</p><div style="font-size: 55px; font-weight: 900; color: ${r.score >= 70 ? '#059669':'#dc2626'};">${fixNums(r.score)}%</div></div></div>${contentHtml}<div style="margin-top: 60px; border-top: 4px solid #004b47; padding-top: 30px; text-align: right;"><p style="font-weight: 900; color: #004b47; font-size: 18px;">التوقيع:</p><img src="${r.signature}" style="width: 320px; height: 120px; border-bottom: 2px solid #004b47; object-fit: contain; display: block;" /></div></div>`;
+            html2pdf().from(html).set({ margin: 0, filename: `Verra_Report.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, scrollY: 0, letterRendering: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).save().then(() => { document.getElementById('btnText').innerText = "📄 تحميل PDF التقرير الكامل"; });
         }
 
         function renderUsers() {
-            let pendingHtml = cloudPending.map(u => `<div class="user-row" style="border-right-color:#ef4444; background:#fff1f2;"><div class="flex flex-col text-right text-right text-right text-right text-right"><span class="font-bold text-xs text-right text-right">${u.email}</span><select id="role_${u.id}" class="role-selector text-right text-right text-right text-right text-right text-right text-right"><option value="assistant">مساعد مشرف (Checklist)</option><option value="supervisor">متابعة الفروع</option><option value="quality">مراقبة الجودة</option></select></div><div class="flex gap-2 text-right text-right text-right text-right"><button onclick="rejectUser('${u.id}')" class="bg-red-50 text-red-600 font-bold text-[10px] px-4 py-2 rounded-xl border border-red-100 shadow-sm text-right text-right">رفض</button><button onclick="approveUser('${u.id}', '${u.email}')" class="bg-green-600 text-white font-bold text-[10px] px-4 py-2 rounded-xl shadow-sm text-right text-right text-right">موافقة</button></div></div>`).join('');
-            let activeHtml = cloudUsers.map(u => `<div class="user-row"><div class="flex flex-col text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right"><span class="font-bold text-xs text-gray-700 text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right">${u.email}</span><span class="text-[8px] text-blue-500 font-bold uppercase tracking-widest text-right text-right text-right text-right">${u.role === 'assistant' ? 'مساعد مشرف' : u.role === 'quality' ? 'مشرف جودة' : 'مشرف فروع'}</span></div><button onclick="if(confirm('سحب الصلاحية؟')) db.collection('authorized_users').doc('${u.id}').delete()" class="text-red-500 font-bold text-[10px] bg-red-50 px-3 py-1 rounded-lg text-right text-right text-right text-right text-right text-right text-right text-right">سحب</button></div>`).join('');
-            document.getElementById('usersList').innerHTML = `<div class="mb-10 text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right"><h4 class="text-[11px] font-bold text-red-500 mb-3 uppercase tracking-widest text-right text-right text-right text-right text-right text-right text-right text-right text-right">قيد الانتظار (${cloudPending.length})</h4>${pendingHtml || '<p class="text-[9px] text-gray-400 text-right text-right text-right text-right">لا توجد طلبات.</p>'}</div><hr class="mb-10 border-gray-100 text-right text-right text-right text-right text-right text-right"><div class="text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right"><h4 class="text-[10px] font-bold text-green-600 mb-3 uppercase tracking-widest text-right text-right text-right text-right text-right text-right text-right">المشرفين النشطين (${cloudUsers.length})</h4>${activeHtml}</div>`;
+            let pendingHtml = cloudPending.map(u => `<div class="user-row" style="border-right-color:#ef4444; background:#fff1f2;"><div class="flex flex-col text-right"><span class="font-bold text-xs">${u.email}</span><select id="role_${u.id}" class="role-selector text-right"><option value="assistant">مساعد مشرف</option><option value="supervisor">متابعة الفروع</option><option value="quality">مراقبة الجودة</option></select></div><div class="flex gap-2"><button onclick="rejectUser('${u.id}')" class="bg-red-50 text-red-600 font-bold text-[10px] px-4 py-2 rounded-xl border border-red-100 shadow-sm">رفض</button><button onclick="approveUser('${u.id}', '${u.email}')" class="bg-green-600 text-white font-bold text-[10px] px-4 py-2 rounded-xl shadow-sm">موافقة</button></div></div>`).join('');
+            let activeHtml = cloudUsers.map(u => `<div class="user-row"><div class="flex flex-col text-right"><span class="font-bold text-xs text-gray-700">${u.email}</span><span class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">${u.role === 'assistant' ? 'مساعد مشرف' : u.role === 'quality' ? 'مشرف جودة' : 'مشرف فروع'}</span></div><button onclick="if(confirm('سحب؟')) db.collection('authorized_users').doc('${u.id}').delete()" class="text-red-500 font-bold text-[10px] bg-red-50 px-3 py-1 rounded-lg">سحب</button></div>`).join('');
+            document.getElementById('usersList').innerHTML = `<div class="mb-10 text-right"><h4 class="text-[11px] font-bold text-red-500 mb-3 uppercase tracking-widest text-right">قيد الانتظار (${cloudPending.length})</h4>${pendingHtml || '<p class="text-[9px] text-gray-400 text-right">لا توجد طلبات.</p>'}</div><hr class="mb-10 border-gray-100 text-right"><div class="text-right text-right"><h4 class="text-[10px] font-bold text-green-600 mb-3 uppercase tracking-widest text-right">المشرفين</h4>${activeHtml}</div>`;
         }
 
         function approveUser(docId, email) { const role = document.getElementById('role_' + docId).value; db.collection("authorized_users").add({ email: email.toLowerCase().trim(), role: role }).then(() => db.collection("pending_authorizations").doc(docId).delete()); }
