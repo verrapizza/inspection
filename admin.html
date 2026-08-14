@@ -26,16 +26,16 @@
 </head>
 <body class="pb-32">
 
-    <!-- شاشة التحقق -->
+    <!-- شاشة التحميل -->
     <div id="lockScreen" class="fixed inset-0 bg-white z-[500] flex flex-col items-center justify-center font-bold text-[#004b47]">
         <div class="w-12 h-12 border-4 border-t-green-500 border-gray-200 rounded-full animate-spin mb-4"></div>
-        <div id="lockStatus">جاري التحقق من صلاحيات الإدارة...</div>
+        <div id="lockStatus">جاري التحقق من الصلاحيات...</div>
     </div>
 
     <!-- الصفحة الرئيسية -->
     <div id="dashboardPage" class="page">
-        <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative">
-            <div class="flex justify-between items-center relative z-10 text-right">
+        <header class="bg-[#004b47] p-10 pb-28 rounded-b-[60px] text-white shadow-2xl relative text-right">
+            <div class="flex justify-between items-center relative z-10">
                 <div class="text-right">
                     <h1 class="text-3xl font-black italic uppercase tracking-tighter">Verra <span class="text-[#d1ba89]">Pro</span></h1>
                     <p class="text-[10px] opacity-70 font-bold tracking-widest uppercase">Admin Central Hub</p>
@@ -47,22 +47,22 @@
         <main class="px-6 -mt-16 relative z-10">
             <div class="grid grid-cols-2 gap-4 mb-8 text-center">
                 <div class="verra-card p-6 border-b-4 border-green-600 shadow-lg text-right"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase">الامتثال العام</p><h2 id="totalScore" class="text-3xl font-black text-green-700">--</h2></div>
-                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg text-right text-right"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700 text-right">0</h2></div>
+                <div onclick="navigateTo('reportsPage')" class="verra-card p-6 border-b-4 border-blue-600 shadow-lg text-right text-right"><p class="text-gray-400 text-[10px] font-bold mb-1 uppercase">التقارير</p><h2 id="reportCount" class="text-3xl font-black text-blue-700">0</h2></div>
             </div>
             <div class="verra-card p-7 mb-4 border-r-[12px] border-[#004b47] shadow-xl text-right" onclick="window.location.href='quality-inspection.html'"><h3 class="font-black text-gray-800 text-lg">🛡️ مراقبة الجودة</h3></div>
-            <div class="verra-card p-7 mb-4 border-r-[12px] border-blue-600 shadow-xl text-right" onclick="window.location.href='branches-inspector.html'"><h3 class="font-black text-gray-800 text-lg">🏢 متابعة الفروع</h3></div>
-            <div class="verra-card p-7 mb-4 border-r-[12px] border-green-700 shadow-xl text-right" onclick="window.location.href='checklist.html'"><h3 class="font-black text-gray-800 text-lg text-right">✅ تشيك ليست المساعدين</h3></div>
-            <div class="verra-card p-7 mb-10 border-r-[12px] border-[#d1ba89] shadow-xl text-right" onclick="navigateTo('usersPage')"><h3 class="font-black text-gray-800 text-lg text-right text-right">👤 إدارة المستخدمين</h3><p id="pendingBadge" class="text-[9px] text-red-500 font-bold hidden mt-1 text-right">طلب جديد ⚠️</p></div>
+            <div class="verra-card p-7 mb-4 border-r-[12px] border-blue-600 shadow-xl text-right" onclick="window.location.href='branches-inspector.html'"><h3 class="font-black text-gray-800 text-lg text-right">🏢 متابعة الفروع</h3></div>
+            <div class="verra-card p-7 mb-4 border-r-[12px] border-green-700 shadow-xl text-right" onclick="window.location.href='checklist.html'"><h3 class="font-black text-gray-800 text-lg">✅ تشيك ليست المساعدين</h3></div>
+            <div class="verra-card p-7 mb-10 border-r-[12px] border-[#d1ba89] shadow-xl text-right text-right" onclick="navigateTo('usersPage')"><h3 class="font-black text-gray-800 text-lg text-right">👤 إدارة المستخدمين</h3><p id="pendingBadge" class="text-[9px] text-red-500 font-bold hidden mt-1 text-right">طلب جديد ⚠️</p></div>
         </main>
     </div>
 
-    <!-- سجل التقارير -->
+    <!-- سجل التقارير المطور (مع التبويبات والحذف) -->
     <div id="reportsPage" class="page hidden px-4 pt-6">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-black text-[#004b47] flex items-center gap-2 text-right">
+        <div class="flex justify-between items-center mb-6 text-right">
+            <h2 class="text-2xl font-black text-[#004b47] flex items-center gap-2">
                 <span class="bg-[#d1ba89] text-white p-2 rounded-lg text-sm">📋</span> سجل التقارير
             </h2>
-            <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm border text-right">رجوع</button>
+            <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm border">رجوع</button>
         </div>
 
         <div class="flex bg-gray-200/50 p-1 rounded-2xl mb-6">
@@ -72,67 +72,67 @@
             <button onclick="setReportTab('checklist')" id="tab-checklist" class="tab-btn">المساعدين</button>
         </div>
 
-        <div class="bg-white p-4 rounded-[25px] shadow-sm mb-6 space-y-3 border border-gray-100 text-right">
-            <input type="text" id="reportSearch" oninput="renderReportsList()" placeholder="🔍 ابحث عن فرع أو مفتش..." class="w-full p-3 rounded-xl bg-gray-50 text-sm outline-none text-right">
+        <div class="bg-white p-4 rounded-[25px] shadow-sm mb-6 border border-gray-100">
+            <input type="text" id="reportSearch" oninput="renderReportsList()" placeholder="🔍 ابحث عن فرع أو مفتش..." class="w-full p-3 rounded-xl bg-gray-50 text-sm">
         </div>
 
         <div id="logsSummary" class="flex justify-around mb-6 text-center bg-[#004b47] text-white p-4 rounded-[25px] shadow-lg">
             <div><p class="text-[9px] opacity-60 uppercase text-right">التقارير</p><p id="sumCount" class="text-lg font-black">0</p></div>
-            <div class="border-x border-white/10 px-4"><p class="text-[9px] opacity-60 uppercase text-right text-right">المتوسط</p><p id="sumAvg" class="text-lg font-black text-right text-right">0%</p></div>
+            <div class="border-x border-white/10 px-4"><p class="text-[9px] opacity-60 uppercase text-right">المتوسط</p><p id="sumAvg" class="text-lg font-black text-right">0%</p></div>
             <div><p class="text-[9px] opacity-60 uppercase text-right">تنبيهات</p><p id="sumAlerts" class="text-lg font-black text-red-400 text-right">0</p></div>
         </div>
 
-        <div id="reportsList" class="space-y-4 pb-32 text-right"></div>
+        <div id="reportsList" class="space-y-4 pb-32"></div>
     </div>
 
-    <!-- إدارة المستخدمين -->
+    <!-- إدارة المستخدمين (مع الفرز حسب الرتبة) -->
     <div id="usersPage" class="page hidden px-4 pt-6">
-        <div class="flex justify-between items-center mb-6 text-right text-right">
-            <h2 class="text-2xl font-black text-[#004b47] flex items-center gap-2 text-right text-right text-right text-right">
-                <span class="bg-[#d1ba89] text-white p-2 rounded-lg text-sm text-right text-right text-right text-right">👥</span> إدارة الصلاحيات
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-black text-[#004b47] flex items-center gap-2">
+                <span class="bg-[#d1ba89] text-white p-2 rounded-lg text-sm text-right">👥</span> إدارة الصلاحيات
             </h2>
-            <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm border">رجوع</button>
+            <button onclick="navigateTo('dashboardPage')" class="bg-white p-3 rounded-full text-xs font-black shadow-sm border text-right">رجوع</button>
         </div>
 
-        <div class="bg-white p-5 rounded-[30px] shadow-md border-t-4 border-[#d1ba89] mb-8 text-right text-right">
+        <div class="bg-white p-5 rounded-[30px] shadow-md border-t-4 border-[#d1ba89] mb-8">
             <h4 class="font-black text-[#004b47] text-sm mb-4 text-right">➕ إضافة عضو جديد</h4>
-            <div class="space-y-3 text-right text-right text-right text-right">
+            <div class="space-y-3 text-right">
                 <input type="email" id="newUserEmail" placeholder="البريد الإلكتروني" class="w-full p-3 rounded-xl bg-gray-50 text-sm border text-right">
-                <select id="newUserRole" class="w-full p-3 rounded-xl bg-gray-50 text-sm border font-bold text-right text-right">
+                <select id="newUserRole" class="w-full p-3 rounded-xl bg-gray-50 text-sm border font-bold text-right">
                     <option value="">-- تحديد الصلاحية --</option>
                     <option value="admin">🏢 الإدارة العامة</option>
                     <option value="quality">🛡️ مشرف جودة</option>
                     <option value="supervisor">🏢 مشرف فروع</option>
                     <option value="assistant">📋 مساعد مشرف فروع</option>
                 </select>
-                <button onclick="addNewUserManual()" class="w-full verra-gradient text-white p-3 rounded-xl font-black shadow-lg text-right">إضافة وتفعيل</button>
+                <button onclick="addNewUserManual()" class="w-full verra-gradient text-white p-3 rounded-xl font-black shadow-lg">إضافة وتفعيل</button>
             </div>
         </div>
 
         <div class="bg-white p-3 rounded-2xl shadow-sm mb-6 border border-gray-100 text-right">
-            <input type="text" id="userSearch" oninput="renderUsers()" placeholder="🔍 ابحث عن موظف..." class="w-full p-2 bg-transparent text-sm text-right text-right text-right">
+            <input type="text" id="userSearch" oninput="renderUsers()" placeholder="🔍 ابحث عن موظف..." class="w-full p-2 bg-transparent text-sm text-right">
         </div>
 
-        <div id="pendingSection" class="mb-8 hidden text-right text-right text-right text-right">
-            <h4 class="text-xs font-black text-red-500 mb-4 px-2 uppercase tracking-widest text-right text-right text-right text-right">⚠️ طلبات جديدة (<span id="pendingCount">0</span>)</h4>
-            <div id="pendingList" class="space-y-4 text-right"></div>
+        <div id="pendingSection" class="mb-8 hidden text-right">
+            <h4 class="text-xs font-black text-red-500 mb-4 px-2 uppercase tracking-widest text-right">⚠️ طلبات جديدة (<span id="pendingCount">0</span>)</h4>
+            <div id="pendingList" class="space-y-4"></div>
         </div>
 
-        <div id="activeSection text-right">
-            <h4 class="text-xs font-black text-[#004b47] mb-4 px-2 uppercase tracking-widest text-right text-right">✅ الفريق المعتمد (مرتب حسب الصلاحية)</h4>
-            <div id="activeUsersList" class="space-y-3 pb-32 text-right text-right"></div>
+        <div id="activeSection">
+            <h4 class="text-xs font-black text-[#004b47] mb-4 px-2 uppercase tracking-widest text-right">✅ الفريق المعتمد</h4>
+            <div id="activeUsersList" class="space-y-3 pb-32 text-right"></div>
         </div>
     </div>
 
     <!-- نافذة المعاينة -->
     <div id="reportDetailModal" class="modal">
-        <div class="modal-content text-right text-right text-right text-right text-right">
-            <div class="flex justify-between items-center mb-6 border-b pb-4 text-right text-right text-right text-right">
-                <button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black text-right text-right text-right text-right">X</button>
-                <h3 class="text-2xl font-black text-green-950 italic text-right text-right text-right text-right">تفاصيل التقرير</h3>
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6 border-b pb-4 text-right">
+                <button onclick="closeModal()" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-black text-right">X</button>
+                <h3 class="text-2xl font-black text-green-950 italic text-right">تفاصيل التقرير</h3>
             </div>
-            <div id="detailBody" class="space-y-5 text-right text-right text-right text-right"></div>
-            <div class="mt-10 pb-10 border-t pt-8 text-right text-right text-right text-right text-right">
+            <div id="detailBody" class="space-y-5 text-right"></div>
+            <div class="mt-10 pb-10 border-t pt-8">
                 <button id="downloadBtn" class="w-full verra-gradient text-white p-5 rounded-3xl font-black shadow-xl flex justify-center items-center gap-3">
                     <span id="btnText">📄 تحميل PDF التقرير الكامل</span>
                 </button>
@@ -140,10 +140,10 @@
         </div>
     </div>
 
-    <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl border-t border-white/10 text-right text-right">
-        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl">🏠</span><span class="text-[9px] font-black mt-1 uppercase text-right">Main</span></button>
-        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl">📊</span><span class="text-[9px] font-black mt-1 uppercase text-right text-right text-right">Logs</span></button>
-        <button onclick="navigateTo('usersPage')" id="nav-users" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">👤</span><span class="text-[9px] font-black mt-1 uppercase text-right text-right text-right">Users</span></button>
+    <nav class="fixed bottom-0 w-full bg-[#004b47] text-white flex justify-around p-5 z-50 rounded-t-[45px] shadow-2xl border-t border-white/10 text-right">
+        <button onclick="navigateTo('dashboardPage')" id="nav-dashboard" class="flex flex-col items-center text-[#d1ba89]"><span class="text-2xl text-right">🏠</span><span class="text-[9px] font-black mt-1 uppercase text-right">Main</span></button>
+        <button onclick="navigateTo('reportsPage')" id="nav-reports" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">📊</span><span class="text-[9px] font-black mt-1 uppercase text-right">Logs</span></button>
+        <button onclick="navigateTo('usersPage')" id="nav-users" class="flex flex-col items-center text-white/40"><span class="text-2xl text-right">👤</span><span class="text-[9px] font-black mt-1 uppercase text-right">Users</span></button>
     </nav>
 
     <script>
@@ -154,7 +154,7 @@
         const db = firebase.firestore();
         let cloudReports = [], cloudUsers = [], cloudPending = [], currentTab = 'all';
 
-        // بنود تشيك ليست المساعدين (21 بنداً)
+        // بنود المساعدين المحدثة
         const sectionsAssistant = [
             { title: "الواجهة والصالات - Front & Lounges", items: [
                 {id:1, en:"Restaurant Front Section", ar:"تشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
@@ -164,7 +164,7 @@
                 {id:10, en:"Bathroom Hall 2", ar:"تشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
                 {id:11, en:"Plants/Trees Monitoring", ar:"تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع ."}
             ]},
-            { title: "المطبخ والإنتاج - Kitchen & Production", items: [
+            { title: "قسم المطبخ والإنتاج - Kitchen & Production", items: [
                 {id:4, en:"Pizza Section", ar:"تشيك قسم البيتزا ( نظافة + تواريخ + مراقبة الثلاجات )"},
                 {id:12, en:"Kitchen Dept A", ar:"تشيك قسم المطبخ أ ( نظافة الأرضية والجدران + التكييف + الشفاطات + التواريخ + الأدوات والمعدات )"},
                 {id:13, en:"Kitchen Dept B", ar:"تشيك قسم المطبخ ب ( فحص حرارة الثلاجات والمجمدات + ترتيب الأغذية + ترتيب الأدوات )"},
@@ -186,9 +186,6 @@
                 {id:22, en:"End-of-Shift Tasks", ar:"تشيك مهام نهاية الوردية ( جميع التكييفات + جميع لمبات المطعم + لوحة المطعم )"}
             ]}
         ];
-
-        const sectionsBranches = [{ title: "متابعة الفروع", items: [{id:1, en:"General Branch Check", ar:"تشيك عام على تشغيل الفرع"}] }];
-        const sectionsQuality = [{ title: "مراقبة الجودة", items: [{id:1, q:"Food Safety Check", ar:"تشيك سلامة الغذاء"}] }];
 
         auth.onAuthStateChanged(user => {
             if (user) {
@@ -228,6 +225,7 @@
             renderReportsList();
         }
 
+        // دالة عرض التقارير (مع إضافة زر الحذف 🗑️)
         function renderReportsList() {
             const search = document.getElementById('reportSearch').value.toLowerCase();
             const filtered = cloudReports.filter(r => {
@@ -238,78 +236,71 @@
                 else if (currentTab === 'checklist') matchesTab = (r.type === 'Assistant Checklist');
                 return matchesSearch && matchesTab;
             });
+
             if(document.getElementById('sumCount')) {
                 document.getElementById('sumCount').innerText = fixNums(filtered.length);
                 let subSum = filtered.reduce((acc, curr) => acc + (parseFloat(curr.score) || 0), 0);
                 document.getElementById('sumAvg').innerText = fixNums(filtered.length > 0 ? Math.round(subSum / filtered.length) : 0) + "%";
                 document.getElementById('sumAlerts').innerText = fixNums(filtered.filter(r => r.score < 70).length);
             }
+
             document.getElementById('reportsList').innerHTML = filtered.map((r) => {
                 const isPass = r.score >= 70;
                 let typeIcon = r.type === 'Quality Inspection' ? '🛡️' : r.type === 'Branch Report' ? '🏢' : '✅';
-                return `<div onclick="viewDetail(${cloudReports.indexOf(r)})" class="verra-card p-5 border-r-8 ${isPass ? 'border-green-500' : 'border-red-500'} mb-4 flex justify-between items-center text-right text-right"><div class="text-right text-right text-right text-right text-right"><h4 class="font-black text-gray-800 text-sm mb-1">${typeIcon} ${r.branch}</h4><div class="text-[10px] text-gray-400 font-bold">📅 ${fixNums(r.date)} | 👤 ${r.inspector ? r.inspector.split('@')[0] : 'Admin'}</div></div><div class="${isPass ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'} px-3 py-1 rounded-full text-xs font-black text-right text-right text-right text-right text-right">${fixNums(r.score)}%</div></div>`;
+                return `
+                <div onclick="viewDetail(${cloudReports.indexOf(r)})" class="verra-card p-5 border-r-8 ${isPass ? 'border-green-500' : 'border-red-500'} mb-4 flex justify-between items-center text-right">
+                    <div class="flex items-center gap-3">
+                        <button onclick="event.stopPropagation(); if(confirm('هل تريد حذف هذا التقرير نهائياً؟')) db.collection('inspections').doc('${r.docId}').delete()" class="text-red-400 hover:text-red-600 p-3 bg-red-50 rounded-full transition-colors">
+                            🗑️
+                        </button>
+                        <div class="${isPass ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'} px-3 py-1 rounded-full text-xs font-black">
+                            ${fixNums(r.score)}%
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <h4 class="font-black text-gray-800 text-sm mb-1">${typeIcon} ${r.branch}</h4>
+                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-tight">📅 ${fixNums(r.date)} | 👤 ${r.inspector ? r.inspector.split('@')[0] : 'Admin'}</div>
+                    </div>
+                </div>`;
             }).join('') || '<p class="text-center text-gray-400 py-10">لا توجد تقارير</p>';
         }
 
         function viewDetail(idx) {
             const r = cloudReports[idx];
-            document.getElementById('detailBody').innerHTML = `<div class="bg-gray-50 p-6 rounded-3xl text-center mb-4 border border-gray-100 shadow-sm text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right"><h2 class="text-2xl font-black text-[#004b47] mb-2 uppercase text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right">${r.branch}</h2><div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4 text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right"><div><p class="text-gray-400 mb-1 text-right text-right text-right text-right text-right text-right text-right text-right text-right">📅 التاريخ</p><p class="text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right">${fixNums(r.date)}</p></div><div><p class="text-gray-400 mb-1 text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right">👤 المفتش</p><p class="text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right">${r.inspector || 'Admin'}</p></div></div><div class="flex justify-between px-10 text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right"><span class="font-bold text-gray-500 italic text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right">نسبة الامتثال:</span><span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'} text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right text-right">${fixNums(r.score)}%</span></div></div>`;
+            document.getElementById('detailBody').innerHTML = `<div class="bg-gray-50 p-6 rounded-3xl text-center mb-4 border border-gray-100 shadow-sm text-right"><h2 class="text-2xl font-black text-[#004b47] mb-2 uppercase text-right text-right">${r.branch}</h2><div class="grid grid-cols-2 gap-4 text-xs font-bold py-4 border-t border-b my-4 text-right"><div><p class="text-gray-400 mb-1 text-right text-right">📅 التاريخ</p><p class="text-right text-right">${fixNums(r.date)}</p></div><div><p class="text-gray-400 mb-1 text-right text-right">👤 المفتش</p><p class="text-right text-right">${r.inspector || 'Admin'}</p></div></div><div class="flex justify-between px-10 text-right text-right"><span class="font-bold text-gray-500 italic text-right">نسبة الامتثال:</span><span class="text-3xl font-black ${r.score < 70 ? 'text-red-500' : 'text-green-600'} text-right text-right">${fixNums(r.score)}%</span></div></div>`;
             document.getElementById('downloadBtn').onclick = () => generateFullPDF(r);
             document.getElementById('reportDetailModal').classList.add('active');
         }
 
-        // دالة الـ PDF المطورة (Gallery + Arabic Title + Golden Line)
         function generateFullPDF(r) {
             document.getElementById('btnText').innerText = "جاري بناء الملف... ⏳";
             let targetSections = sectionsAssistant;
-            if (r.type === "Branch Report") targetSections = sectionsBranches;
-            if (r.type === "Quality Inspection") targetSections = sectionsQuality;
-
             let contentHtml = targetSections.map(sec => {
                 let itemsHtml = sec.items.map(i => {
                     const ans = r.answers ? r.answers[i.id] : 'na';
                     const pics = (r.photos && r.photos[i.id]) ? r.photos[i.id] : [];
                     let statusColor = ans === 'yes' ? '#059669' : ans === 'no' ? '#dc2626' : '#64748b';
                     let statusText = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'غير متوفر';
-
                     return `
-                        <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; display: block; clear: both; width: 100%;">
+                        <div style="padding: 15px; border-bottom: 2px solid #f1f5f9; text-align: right; page-break-inside: avoid; display: block; clear: both; width: 100%;">
                             <div style="font-family: 'Cairo', sans-serif; font-weight: 400; font-size: 10px; color: #64748b; direction: ltr; text-align: left; margin-bottom: 4px;">${i.en || ""}</div>
                             <div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right; line-height: 1.6; margin-bottom: 10px;">${i.ar || i.q}</div>
                             <div style="margin-bottom: 15px;"><span style="font-size: 12px; color: ${statusColor}; font-weight: bold; background: ${statusColor}10; padding: 4px 12px; border-radius: 6px; border: 1px solid ${statusColor}30;">الحالة: ${statusText}</span></div>
-                            
-                            <!-- تنسيق الصور كشبكة متوازية 3 صور -->
                             <div style="width: 100%; display: block; text-align: right; clear: both;">
-                                ${pics.map(p => `
-                                    <div style="display: inline-block; width: 30%; margin-left: 1.5%; margin-bottom: 10px; vertical-align: top;">
-                                        <img src="${p}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" />
-                                    </div>
-                                `).join('')}
+                                ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1.5%; margin-bottom: 10px; vertical-align: top;"><img src="${p}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" /></div>`).join('')}
                             </div>
                         </div>`;
                 }).join('');
-
-                return `
-                    <div style="page-break-inside: avoid; clear: both;">
-                        <div style="background: #f0fdf4; padding: 12px 20px; border-right: 10px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 30px; text-align: right; font-size: 18px;">
-                            ${sec.title}
-                        </div>
-                        ${itemsHtml}
-                    </div>`;
+                return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 12px 20px; border-right: 10px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 30px; text-align: right; font-size: 18px;">${sec.title}</div>${itemsHtml}</div>`;
             }).join('');
 
             const html = `
             <div style="width: 800px; margin: 0 auto; padding: 40px; background: white; font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; box-sizing: border-box;">
-                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
                 <div style="text-align: center; margin-bottom: 30px;">
                     <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 15px;" />
-                    <div style="clear: both;"></div>
-                    <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px; line-height: 1.2;">
-                        تقرير التدقيق الرسمي لـ فيرا برو
-                    </div>
+                    <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير التدقيق الرسمي لـ فيرا برو</div>
                 </div>
-
-                <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 40px; display: table; width: 100%; box-sizing: border-box;">
+                <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 40px; display: table; width: 100%;">
                     <div style="display: table-cell; width: 70%; line-height: 2.2; vertical-align: middle; text-align: right;">
                         <p style="margin: 0; font-size: 15px;"><b>🏢 الفرع المستهدف:</b> ${r.branch}</p>
                         <p style="margin: 0; font-size: 15px;"><b>👤 المسؤول المفتش:</b> ${r.inspector || 'Admin'}</p>
@@ -317,14 +308,10 @@
                     </div>
                     <div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;">
                         <p style="font-size: 13px; font-weight: 900; color: #64748b; margin-bottom: 5px;">نسبة الامتثال</p>
-                        <div style="font-size: 55px; font-weight: 900; color: ${r.score >= 70 ? '#059669':'#dc2626'};">
-                            ${fixNums(r.score)}%
-                        </div>
+                        <div style="font-size: 55px; font-weight: 900; color: ${r.score >= 70 ? '#059669':'#dc2626'};">${fixNums(r.score)}%</div>
                     </div>
                 </div>
-
                 ${contentHtml}
-
                 <div style="margin-top: 60px; border-top: 3px solid #eee; padding-top: 30px; page-break-inside: avoid; text-align: right;">
                     <p style="font-weight: 900; color: #004b47; font-size: 20px; margin-bottom: 20px;">توقيع المسؤول المعتمد:</p>
                     <div style="background: #fafafa; padding: 15px; border-radius: 20px; display: inline-block; border: 1px solid #f1f5f9;">
@@ -333,8 +320,7 @@
                 </div>
             </div>`;
 
-            const opt = { margin:[10,10], filename:`Report_${r.branch}.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} };
-            html2pdf().from(html).set(opt).save().then(()=> document.getElementById('btnText').innerText="📄 تحميل PDF التقرير الكامل");
+            html2pdf().from(html).set({ margin:[10,10], filename:`Report_${r.branch}.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).save().then(()=> document.getElementById('btnText').innerText="📄 تحميل PDF التقرير الكامل");
         }
 
         function renderUsers() {
