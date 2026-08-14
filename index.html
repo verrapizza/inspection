@@ -22,8 +22,6 @@
         .delete-btn { color: #ef4444; padding: 8px; border-radius: 12px; background: #fff1f2; border: 1px solid #ffe4e6; }
         .user-row { background: white; padding: 15px; border-radius: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-right: 6px solid #d1ba89; }
         select.role-selector { font-size: 10px; padding: 4px; border-radius: 8px; border: 1px solid #ddd; outline: none; font-weight: bold; background: #f9fafb; margin-top: 5px; }
-        /* تحسين مظهر الصور في PDF */
-        .pdf-img { width: 140px; height: 140px; object-fit: cover; border-radius: 10px; margin-left: 8px; margin-bottom: 8px; border: 1px solid #eee; display: inline-block; }
     </style>
 </head>
 <body class="pb-32 text-right">
@@ -102,7 +100,6 @@
 
         function fixNums(str) { return str ? str.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : "0"; }
 
-        // البنود الـ 22 الجديدة محدثة بالكامل
         const sectionsAssistant = [
             {
                 title: "الواجهة والصالات - Front & Lounges",
@@ -174,7 +171,7 @@
                 <div onclick="viewDetail(${i})" class="verra-card p-6 border-r-8 ${r.score < 70 ? 'border-red-500' : 'border-green-500'} mb-4 active:scale-95 transition-transform text-right">
                     <div class="flex justify-between items-start mb-2">
                         <h4 class="font-black text-gray-800 text-lg">${r.branch || 'تقرير'}</h4>
-                        <button onclick="event.stopPropagation(); if(confirm('حذف هذا التقرير نهائياً؟')) db.collection('inspections').doc('${r.docId}').delete()" class="delete-btn">🗑️</button>
+                        <button onclick="event.stopPropagation(); if(confirm('حذف التقرير نهائياً؟')) db.collection('inspections').doc('${r.docId}').delete()" class="delete-btn">🗑️</button>
                     </div>
                     <p class="text-[11px] text-gray-400 font-bold mb-1">📅 ${fixNums(r.date)} | المشرف: ${r.inspector ? r.inspector.split('@')[0] : '---'}</p>
                 </div>`).join('');
@@ -187,7 +184,6 @@
             document.getElementById('reportDetailModal').classList.add('active');
         }
 
-        // دالة الـ PDF المطورة والمصلحة بالكامل
         function generateFullPDF(r) {
             document.getElementById('btnText').innerText = "جاري بناء الملف... ⏳";
             let targetSections;
@@ -237,7 +233,7 @@
                     <tr>
                         <td style="text-align: center;">
                             <img src="${LOGO_URL}" style="height: 80px; margin-bottom: 10px;" />
-                            <div style="color: #004b47; font-size: 28px; font-weight: 900; border-top: 3px solid #d1ba89; display: inline-block; padding-top: 5px;">
+                            <div style="color: #004b47; font-size: 28px; font-weight: 900; border-bottom: 4px solid #d1ba89; display: inline-block; padding-bottom: 8px;">
                                 تقرير التدقيق الرسمي لـ "فيرا برو"
                             </div>
                         </td>
@@ -284,7 +280,7 @@
         }
 
         function approveUser(docId, email) { const role = document.getElementById('role_' + docId).value; db.collection("authorized_users").add({ email: email.toLowerCase().trim(), role: role }).then(() => db.collection("pending_authorizations").doc(docId).delete()); }
-        function rejectUser(docId) { if(confirm("هل أنت متأكد من رفض الطلب؟")) db.collection("pending_authorizations").doc(docId).delete(); }
+        function rejectUser(docId) { if(confirm("رفض الطلب؟")) db.collection("pending_authorizations").doc(docId).delete(); }
         function navigateTo(id) { document.querySelectorAll('.page').forEach(p => p.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-[#d1ba89]', 'text-white/40')); const btnId = 'nav-' + id.replace('Page',''); if(document.getElementById(btnId)) document.getElementById(btnId).classList.replace('text-white/40', 'text-[#d1ba89]'); if(id === 'reportsPage') renderReportsList(); }
         function closeModal() { document.getElementById('reportDetailModal').classList.remove('active'); }
         startSync();
