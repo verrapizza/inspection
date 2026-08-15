@@ -26,9 +26,11 @@
     .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
     .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
     .btn-na.active { background: #64748b !important; color: white; }
+    .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; text-align: right; }
     .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 12px; border: 2px solid white; shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
     .upload-btn { background: #f8fafc; color: #475569; padding: 10px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 6px; }
+    .preview-btn { background: #d1ba89 !important; color: #004b47 !important; font-weight: 900 !important; }
   </style>
 </head>
 <body class="text-right">
@@ -127,25 +129,31 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // --- محرك المعاينة الذكي المطور (إخفاء الأقسام غير المجاب عليها) ---
+      // --- محرك المعاينة المطور (إخفاء الفارغ + إظهار الملاحظات) ---
       const handlePreview = () => {
         if (!branch) return alert("اختر المنشأة أولاً");
         const score = getScore();
         const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
         const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
 
-        // تصفية الأقسام: تضمين القسم فقط إذا كان هناك بند واحد على الأقل مجاب عليه
         let reportContent = sectionsData.filter(sec => 
             sec.items.some(i => answers[i.id])
         ).map(sec => {
           let items = sec.items.filter(i => answers[i.id]).map(i => {
-            const ans = answers[i.id]; const pics = photos[i.id] || [];
+            const ans = answers[i.id]; 
+            const note = notes[i.id] || ""; // جلب الملاحظة
+            const pics = photos[i.id] || [];
             let statusColor = ans === 'yes' ? '#1C780B' : ans === 'no' ? '#D91414' : '#64748b';
             let statusText = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'N/A';
+            
             return `
               <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; display: block; clear: both; width: 100%;">
                 <div style="font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right; line-height: 1.6; margin-bottom: 10px;">${i.id}. ${i.q}</div>
                 <div style="margin-bottom: 15px;"><span style="font-size: 12px; color: ${statusColor}; font-weight: bold; background: ${statusColor}10; padding: 4px 12px; border-radius: 6px;">الحالة: ${statusText}</span></div>
+                
+                <!-- عرض الملاحظة إذا وجدت -->
+                ${note ? `<div style="background: #fff9e6; padding: 10px; border-radius: 8px; font-size: 11px; border: 1px solid #fde68a; margin-bottom: 15px; color: #92400e;"><b>الملاحظة:</b> ${note}</div>` : ""}
+                
                 <div style="width: 100%; display: block; text-align: right; clear: both;">
                     ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; margin-bottom: 10px; vertical-align: top;"><img src="${p}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" /></div>`).join('')}
                 </div>
@@ -197,7 +205,7 @@
             await db.collection("inspections").doc(reportId).set({
                 branch, score: getScore(), inspector: user.email,
                 date: new Date().toLocaleString('en-GB'), timestamp: Date.now(),
-                signature: sigPad.current.toDataURL(), answers,
+                signature: sigPad.current.toDataURL(), answers, notes, // رفع الملاحظات للسحابة
                 photos: part1, type: "Quality Inspection", hasExtra: true
             });
 
@@ -251,7 +259,15 @@
                       <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn ${answers[i.id]==='na'?'active btn-na':''}`}>N/A</button>
                     </div>
                     
-                    <div className="flex flex-wrap gap-2 items-center justify-end text-right">
+                    {/* إعادة خانة الملاحظات */}
+                    <textarea 
+                        className="notes-input" 
+                        placeholder="اكتب ملاحظة الجودة هنا..." 
+                        value={notes[i.id] || ""} 
+                        onChange={e => setNotes({...notes, [i.id]: e.target.value})} 
+                    />
+
+                    <div className="mt-4 flex flex-wrap gap-2 items-center justify-end text-right">
                         <div className="flex gap-1 mr-auto">
                             {(photos[i.id] || []).map((img, idx) => (
                                 <div key={idx} className="relative">
