@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VERRA PRO - مفتش الجودة الاحترافي</title>
+  <title>نظام VERRA PRO - مفتش الجودة</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
+  <!-- المكتبات الأساسية -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -37,6 +39,7 @@
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
+
     const firebaseConfig = {
       apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
       authDomain: "verra-system-828f2.firebaseapp.com",
@@ -45,9 +48,11 @@
       messagingSenderId: "961104891607",
       appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
     };
+
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+    const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
     const ADMIN_MAIN = "ch3f.ramzi@gmail.com";
 
     // البنود كاملة (74 بنداً)
@@ -70,43 +75,47 @@
       const [branch, setBranch] = useState("");
       const [branches, setBranches] = useState([]);
       const [answers, setAnswers] = useState({});
+      const [notes, setNotes] = useState({});
       const [photos, setPhotos] = useState({});
       const [uploading, setUploading] = useState(false);
+      const [expanded, setExpanded] = useState(new Set([sectionsData[0].title]));
       const canvasRef = useRef(null);
       const sigPad = useRef(null);
 
       useEffect(() => {
-        auth.onAuthStateChanged(async u => {
+        const unsubscribe = auth.onAuthStateChanged(async u => {
             if (u) {
                 const uEmail = u.email.toLowerCase().trim();
                 const authSnap = await db.collection("authorized_users").where("email", "==", uEmail).get();
                 if (uEmail === ADMIN_MAIN || !authSnap.empty) {
                     setUser(u);
-                    db.collection("branches").orderBy("name").onSnapshot(s => setBranches(s.docs.map(d => d.data().name)));
+                    db.collection("branches").orderBy("name").onSnapshot(s => setBranches(snapToArr(s)));
                 } else { auth.signOut(); }
             }
             setLoading(false);
         });
+        return () => unsubscribe();
       }, []);
+
+      const snapToArr = (s) => s.docs.map(d => d.data().name);
 
       useEffect(() => { if (user && canvasRef.current) sigPad.current = new SignaturePad(canvasRef.current); }, [user]);
 
-      // نظام الضغط الفائق (لتحمل عدد صور كبير)
-      const compressToExtreme = (file) => {
+      const compressImage = (file) => {
         return new Promise((resolve) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
-          reader.onload = (event) => {
+          reader.onload = (e) => {
             const img = new Image();
-            img.src = event.target.result;
+            img.src = e.target.result;
             img.onload = () => {
               const canvas = document.createElement('canvas');
-              const MAX_W = 280; // حجم متوازن للوضوح والتوفير
+              const MAX_W = 280; 
               const scale = MAX_W / img.width;
               canvas.width = MAX_W; canvas.height = img.height * scale;
               const ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              resolve(canvas.toDataURL('image/jpeg', 0.2));
+              resolve(canvas.toDataURL('image/jpeg', 0.15));
             };
           };
         });
@@ -114,7 +123,7 @@
 
       const handlePhotoAction = async (id, e) => {
         const file = e.target.files[0]; if (!file) return;
-        const compressed = await compressToExtreme(file);
+        const compressed = await compressImage(file);
         setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), compressed].slice(0, 3)}));
       };
 
@@ -125,7 +134,6 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // دالة الرفع المجزأة (Split Logic)
       const submitReport = async () => {
         if (!branch) return alert("اختر الفرع أولاً");
         if (uploading) return;
@@ -138,20 +146,18 @@
             const part1 = Object.fromEntries(photoEntries.slice(0, mid));
             const part2 = Object.fromEntries(photoEntries.slice(mid));
 
-            // الجزء 1 (Firestore doc 1)
             await db.collection("inspections").doc(reportId).set({
                 branch, score: getScore(), inspector: user.email,
                 date: new Date().toLocaleString('en-GB'), timestamp: Date.now(),
-                signature: sigPad.current.toDataURL(), answers,
+                signature: sigPad.current ? sigPad.current.toDataURL() : "", answers,
                 photos: part1, type: "Quality Inspection", hasExtra: true
             });
 
-            // الجزء 2 (ملحق الصور)
             await db.collection("inspection_attachments").doc(reportId).set({
                 reportId, photos: part2
             });
 
-            alert("✅ تم رفع تقرير الجودة بنظام الأداء العالي!");
+            alert("✅ تم إرسال تقرير الجودة بنجاح!");
             window.location.reload();
         } catch (e) { alert("⚠️ خطأ سحابي: " + e.message); }
         finally { setUploading(false); }
@@ -165,13 +171,13 @@
           <div className="verra-gradient p-10 text-center text-white rounded-b-[3.5rem] shadow-2xl">
             <img src={LOGO_URL} className="h-20 mx-auto mb-4" />
             <h1 className="text-2xl font-black mb-1">مراقب الجودة المعتمد</h1>
-            <p className="text-[10px] opacity-60">نظام التدقيق الرقمي عالي السعة</p>
+            <p className="text-[10px] opacity-60">نظام التدقيق الرقمي (High-Capacity)</p>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div className="text-right">
-                <p className="text-[9px] font-bold text-gray-400 uppercase">Current Score</p>
-                <p className="text-3xl font-black text-green-700 leading-none">{getScore()}%</p>
+                <p className="text-[9px] font-bold text-gray-400 uppercase leading-none">Quality Score</p>
+                <p className="text-3xl font-black text-green-700 mt-1">{getScore()}%</p>
             </div>
             <button onClick={submitReport} disabled={uploading} className="verra-gradient text-white px-8 py-3 rounded-2xl font-black shadow-lg disabled:bg-gray-400 transition-all">
                 {uploading ? "جاري الرفع..." : "إرسال التقرير"}
@@ -188,8 +194,10 @@
 
             {sectionsData.map(sec => (
               <div key={sec.title}>
-                <div className="section-title text-lg">{sec.title}</div>
-                {sec.items.map(i => (
+                <div className="section-title text-lg" onClick={() => {
+                  const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
+                }}>{sec.title} {expanded.has(sec.title) ? '▲' : '▼'}</div>
+                {expanded.has(sec.title) && sec.items.map(i => (
                   <div key={i.id} className="item-card">
                     <p className="font-bold text-gray-800 mb-5 leading-relaxed">{i.q}</p>
                     <div className="flex gap-2 mb-6 justify-end">
@@ -203,16 +211,14 @@
                             {(photos[i.id] || []).map((img, idx) => (
                                 <div key={idx} className="relative">
                                     <img src={img} className="photo-thumb" />
-                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-[8px] flex items-center justify-center" onClick={()=>setPhotos({...photos, [i.id]: []})}>×</div>
+                                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-[8px] flex items-center justify-center shadow-md" onClick={()=>setPhotos({...photos, [i.id]: photos[i.id].filter((_,x)=>x!==idx)})}>×</div>
                                 </div>
                             ))}
                         </div>
-                        {/* زر الكاميرا */}
                         <label className="upload-btn active:scale-95 bg-green-50 border-green-100">
                             📷 كاميرا
                             <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} />
                         </label>
-                        {/* زر المعرض */}
                         <label className="upload-btn active:scale-95">
                             🖼️ معرض
                             <input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} />
@@ -224,9 +230,9 @@
             ))}
 
             <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center">
-                <h3 className="font-black mb-4">توقيع المفتش</h3>
+                <h3 className="font-black mb-4">توقيع المفتش المعتمد</h3>
                 <canvas ref={canvasRef} className="w-full h-40 bg-gray-50 rounded-2xl border"></canvas>
-                <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs mt-3 underline">مسح</button>
+                <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs mt-3 underline font-bold">مسح التوقيع</button>
             </div>
           </main>
         </div>
