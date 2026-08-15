@@ -7,15 +7,12 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-  
-  <!-- المكتبات الأساسية -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -23,7 +20,7 @@
   <style>
     body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; -webkit-tap-highlight-color: transparent; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
-    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; }
+    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; cursor: pointer; }
     .item-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
     .ans-btn { width: 55px; height: 40px; border-radius: 10px; font-weight: 700; font-size: 11px; background: #f1f5f9; transition: 0.2s; border: 1px solid #e2e8f0; }
     .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
@@ -32,6 +29,7 @@
     .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 12px; border: 2px solid white; shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
     .upload-btn { background: #f8fafc; color: #475569; padding: 10px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 6px; }
+    .preview-btn { background: #d1ba89 !important; color: #004b47 !important; font-weight: 900 !important; }
   </style>
 </head>
 <body class="text-right">
@@ -39,7 +37,6 @@
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
-
     const firebaseConfig = {
       apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
       authDomain: "verra-system-828f2.firebaseapp.com",
@@ -48,14 +45,12 @@
       messagingSenderId: "961104891607",
       appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
     };
-
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
     const ADMIN_MAIN = "ch3f.ramzi@gmail.com";
 
-    // البنود كاملة (74 بنداً)
     const sectionsData = [
       { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
       { title: "تحضير الأغذية", items: [{id:11,q:"مراجعة ومتابعة بروسيس تحضير العجين"},{id:12,q:"متابعة بروسيس تكوير العجين"},{id:13,q:"مراجعة تحضير الصوصات"},{id:14,q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"},{id:15,q:"منع التلوث الخلطي أثناء التحضير"},{id:16,q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"},{id:17,q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"},{id:18,q:"وصول درجات حرارة الطهي لـ (≥75°م)"},{id:19,q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"},{id:20,q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"},{id:21,q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}]},
@@ -89,7 +84,7 @@
                 const authSnap = await db.collection("authorized_users").where("email", "==", uEmail).get();
                 if (uEmail === ADMIN_MAIN || !authSnap.empty) {
                     setUser(u);
-                    db.collection("branches").orderBy("name").onSnapshot(s => setBranches(snapToArr(s)));
+                    db.collection("branches").orderBy("name").onSnapshot(s => setBranches(s.docs.map(d => d.data().name)));
                 } else { auth.signOut(); }
             }
             setLoading(false);
@@ -97,11 +92,9 @@
         return () => unsubscribe();
       }, []);
 
-      const snapToArr = (s) => s.docs.map(d => d.data().name);
-
       useEffect(() => { if (user && canvasRef.current) sigPad.current = new SignaturePad(canvasRef.current); }, [user]);
 
-      const compressImage = (file) => {
+      const compressExtreme = (file) => {
         return new Promise((resolve) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
@@ -110,7 +103,7 @@
             img.src = e.target.result;
             img.onload = () => {
               const canvas = document.createElement('canvas');
-              const MAX_W = 280; 
+              const MAX_W = 250; 
               const scale = MAX_W / img.width;
               canvas.width = MAX_W; canvas.height = img.height * scale;
               const ctx = canvas.getContext('2d');
@@ -121,9 +114,9 @@
         });
       };
 
-      const handlePhotoAction = async (id, e) => {
+      const handlePhoto = async (id, e) => {
         const file = e.target.files[0]; if (!file) return;
-        const compressed = await compressImage(file);
+        const compressed = await compressExtreme(file);
         setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), compressed].slice(0, 3)}));
       };
 
@@ -134,8 +127,60 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
+      // إعادة تفعيل زر المعاينة (المحرك المطور)
+      const handlePreview = () => {
+        if (!branch) return alert("اختر المنشأة");
+        const score = getScore();
+        const signatureImg = sigPad.current ? sigPad.current.toDataURL() : "";
+        const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
+
+        let reportContent = sectionsData.map(sec => {
+          let items = sec.items.map(i => {
+            const ans = answers[i.id]; const pics = photos[i.id] || [];
+            let statusColor = ans === 'yes' ? '#059669' : ans === 'no' ? '#dc2626' : '#64748b';
+            let statusText = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'غير متوفر';
+
+            return `
+              <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; display: block; clear: both; width: 100%;">
+                <div style="font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; line-height: 1.6; margin-bottom: 10px;">${i.id}. ${i.q}</div>
+                <div style="margin-bottom: 15px;"><span style="font-size: 12px; color: ${statusColor}; font-weight: bold; background: ${statusColor}10; padding: 4px 12px; border-radius: 6px;">الحالة: ${statusText}</span></div>
+                <div style="width: 100%; display: block; text-align: right; clear: both;">
+                    ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; margin-bottom: 10px; vertical-align: top;"><img src="${p}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" /></div>`).join('')}
+                </div>
+              </div>`;
+          }).join("");
+          return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 12px 20px; border-right: 10px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 30px; text-align: right; font-size: 18px;">${sec.title}</div>${items}</div>`;
+        }).join("");
+
+        const html = `
+          <div style="width: 800px; margin: 0 auto; padding: 45px; background: white; direction: rtl; text-align: right; box-sizing: border-box; font-family: sans-serif;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 15px;" />
+                <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير تدقيق الجودة لـ فيرا برو</div>
+            </div>
+            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; margin-bottom: 40px; display: table; width: 100%;">
+                <div style="display: table-cell; width: 70%; line-height: 2.4; vertical-align: middle;">
+                    <p style="margin:0;"><b>🏢 المنشأة:</b> ${branch}</p>
+                    <p style="margin:0;"><b>👤 المسؤول:</b> ${user.email}</p>
+                    <p style="margin:0;"><b>📅 التاريخ:</b> ${timestamp}</p>
+                </div>
+                <div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;">
+                    <p style="font-size: 14px; font-weight: 900; color: #64748b;">الامتثال</p>
+                    <div style="font-size: 55px; font-weight: 900; color: ${score >= 70 ? '#059669':'#dc2626'};">${score}%</div>
+                </div>
+            </div>
+            ${reportContent}
+            <div style="margin-top: 60px; border-top: 3px solid #eee; padding-top: 30px; page-break-inside: avoid; text-align: right;">
+                <p style="font-weight: 900; color: #004b47; font-size: 20px; margin-bottom: 20px;">التوقيع:</p>
+                <div style="background: #fafafa; padding: 15px; border-radius: 20px; display: inline-block;"><img src="${signatureImg}" style="width: 350px; height: 130px; object-fit: contain; display: block;" /></div>
+            </div>
+          </div>`;
+
+        html2pdf().from(html).set({ margin:[10,10], filename:`Quality_${branch}.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).save();
+      };
+
       const submitReport = async () => {
-        if (!branch) return alert("اختر الفرع أولاً");
+        if (!branch) return alert("اختر المنشأة");
         if (uploading) return;
         setUploading(true);
         const reportId = Date.now().toString();
@@ -149,21 +194,17 @@
             await db.collection("inspections").doc(reportId).set({
                 branch, score: getScore(), inspector: user.email,
                 date: new Date().toLocaleString('en-GB'), timestamp: Date.now(),
-                signature: sigPad.current ? sigPad.current.toDataURL() : "", answers,
+                signature: sigPad.current.toDataURL(), answers,
                 photos: part1, type: "Quality Inspection", hasExtra: true
             });
 
-            await db.collection("inspection_attachments").doc(reportId).set({
-                reportId, photos: part2
-            });
-
-            alert("✅ تم إرسال تقرير الجودة بنجاح!");
-            window.location.reload();
+            await db.collection("inspection_attachments").doc(reportId).set({ reportId, photos: part2 });
+            alert("✅ تم رفع تقرير الجودة بنجاح!"); window.location.reload();
         } catch (e) { alert("⚠️ خطأ سحابي: " + e.message); }
         finally { setUploading(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-black animate-pulse">جاري التحميل...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-black animate-pulse">جاري التحقق...</div>;
       if (!user) return <div className="p-20 text-center font-bold">يرجى تسجيل الدخول.</div>;
 
       return (
@@ -171,17 +212,18 @@
           <div className="verra-gradient p-10 text-center text-white rounded-b-[3.5rem] shadow-2xl">
             <img src={LOGO_URL} className="h-20 mx-auto mb-4" />
             <h1 className="text-2xl font-black mb-1">مراقب الجودة المعتمد</h1>
-            <p className="text-[10px] opacity-60">نظام التدقيق الرقمي (High-Capacity)</p>
+            <p className="text-[10px] opacity-60 italic">نظام التقارير السحابية (High-Capacity)</p>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div className="text-right">
-                <p className="text-[9px] font-bold text-gray-400 uppercase leading-none">Quality Score</p>
-                <p className="text-3xl font-black text-green-700 mt-1">{getScore()}%</p>
+                <p className="text-[9px] font-bold text-gray-400 uppercase leading-none">Score</p>
+                <p className="text-3xl font-black text-green-700 leading-none mt-1">{getScore()}%</p>
             </div>
-            <button onClick={submitReport} disabled={uploading} className="verra-gradient text-white px-8 py-3 rounded-2xl font-black shadow-lg disabled:bg-gray-400 transition-all">
-                {uploading ? "جاري الرفع..." : "إرسال التقرير"}
-            </button>
+            <div className="flex gap-2">
+                <button onClick={handlePreview} className="nav-btn preview-btn px-4 py-2 rounded-xl">معاينة</button>
+                <button onClick={submitReport} disabled={uploading} className="verra-gradient text-white px-5 py-2 rounded-xl font-black shadow-lg text-xs disabled:bg-gray-400">{uploading ? "جاري..." : "إرسال"}</button>
+            </div>
           </div>
 
           <main className="p-5 max-w-2xl mx-auto space-y-6">
@@ -199,7 +241,7 @@
                 }}>{sec.title} {expanded.has(sec.title) ? '▲' : '▼'}</div>
                 {expanded.has(sec.title) && sec.items.map(i => (
                   <div key={i.id} className="item-card">
-                    <p className="font-bold text-gray-800 mb-5 leading-relaxed">{i.q}</p>
+                    <p className="font-bold text-gray-800 mb-5 leading-relaxed">{i.id}. {i.q}</p>
                     <div className="flex gap-2 mb-6 justify-end">
                       <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn ${answers[i.id]==='yes'?'active btn-yes':''}`}>نعم</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn ${answers[i.id]==='no'?'active btn-no':''}`}>لا</button>
@@ -217,11 +259,11 @@
                         </div>
                         <label className="upload-btn active:scale-95 bg-green-50 border-green-100">
                             📷 كاميرا
-                            <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} />
+                            <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhoto(i.id, e)} />
                         </label>
                         <label className="upload-btn active:scale-95">
                             🖼️ معرض
-                            <input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} />
+                            <input type="file" className="hidden" accept="image/*" onChange={e => handlePhoto(i.id, e)} />
                         </label>
                     </div>
                   </div>
@@ -229,9 +271,9 @@
               </div>
             ))}
 
-            <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center">
+            <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
                 <h3 className="font-black mb-4">توقيع المفتش المعتمد</h3>
-                <canvas ref={canvasRef} className="w-full h-40 bg-gray-50 rounded-2xl border"></canvas>
+                <canvas ref={canvasRef} className="w-full h-40 bg-gray-50 rounded-2xl border shadow-inner"></canvas>
                 <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs mt-3 underline font-bold">مسح التوقيع</button>
             </div>
           </main>
