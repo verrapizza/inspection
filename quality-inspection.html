@@ -29,7 +29,6 @@
     .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 12px; border: 2px solid white; shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
     .upload-btn { background: #f8fafc; color: #475569; padding: 10px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 6px; }
-    .preview-btn { background: #d1ba89 !important; color: #004b47 !important; font-weight: 900 !important; }
   </style>
 </head>
 <body class="text-right">
@@ -51,6 +50,7 @@
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
     const ADMIN_MAIN = "ch3f.ramzi@gmail.com";
 
+    // البنود كاملة (74 بنداً)
     const sectionsData = [
       { title: "الاستلام والتخزين", items: [{id:1,q:"فحص درجات حرارة المواد الغذائية الواردة عند التسليم"},{id:2,q:"درجة حرارة المجمدات لا تتجاوز -18°م عند الاستلام"},{id:3,q:"درجة حرارة المبردات لا تتجاوز 4°م عند الاستلام"},{id:4,q:"استخدام مقياس حرارة معاير للأغذية عالية الخطورة"},{id:5,q:"نقل الأغذية المبردة إلى التخزين خلال أقل من 20 دقيقة"},{id:6,q:"مطابقة المنتجات للمواصفات القياسية السعودية"},{id:7,q:"اللحوم الطازجة من مسالخ معتمدة ومختومة رسمياً"},{id:8,q:"التعبئة سليمة وخالية من الآفات أو التلف"},{id:9,q:"التحقق من تواريخ الصلاحية وتسجيلها عند الاستلام"},{id:10,q:"أماكن التخزين نظيفة وجافة وجيدة التهوية"}]},
       { title: "تحضير الأغذية", items: [{id:11,q:"مراجعة ومتابعة بروسيس تحضير العجين"},{id:12,q:"متابعة بروسيس تكوير العجين"},{id:13,q:"مراجعة تحضير الصوصات"},{id:14,q:"فصل مناطق تحضير الأغذية النيئة عن المطبوخة"},{id:15,q:"منع التلوث الخلطي أثناء التحضير"},{id:16,q:"إذابة الأغذية في الثلاجة أو تحت ماء بارد جارٍ"},{id:17,q:"عدم ترك الأغذية المحضرة في حرارة الغرفة > ساعتين"},{id:18,q:"وصول درجات حرارة الطهي لـ (≥75°م)"},{id:19,q:"إعادة التسخين لدرجة حرارة لا تقل عن 75°م"},{id:20,q:"استخدام لوحات تقطيع ملونة لأنواع مختلفة"},{id:21,q:"ارتداء القفازات عند لمس الأغذية الجاهزة"}]},
@@ -127,22 +127,24 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // إعادة تفعيل زر المعاينة (المحرك المطور)
+      // --- محرك المعاينة الذكي المطور (إخفاء الأقسام غير المجاب عليها) ---
       const handlePreview = () => {
-        if (!branch) return alert("اختر المنشأة");
+        if (!branch) return alert("اختر المنشأة أولاً");
         const score = getScore();
-        const signatureImg = sigPad.current ? sigPad.current.toDataURL() : "";
+        const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
         const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
 
-        let reportContent = sectionsData.map(sec => {
-          let items = sec.items.map(i => {
+        // تصفية الأقسام: تضمين القسم فقط إذا كان هناك بند واحد على الأقل مجاب عليه
+        let reportContent = sectionsData.filter(sec => 
+            sec.items.some(i => answers[i.id])
+        ).map(sec => {
+          let items = sec.items.filter(i => answers[i.id]).map(i => {
             const ans = answers[i.id]; const pics = photos[i.id] || [];
-            let statusColor = ans === 'yes' ? '#059669' : ans === 'no' ? '#dc2626' : '#64748b';
-            let statusText = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'غير متوفر';
-
+            let statusColor = ans === 'yes' ? '#1C780B' : ans === 'no' ? '#D91414' : '#64748b';
+            let statusText = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'N/A';
             return `
               <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; display: block; clear: both; width: 100%;">
-                <div style="font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; line-height: 1.6; margin-bottom: 10px;">${i.id}. ${i.q}</div>
+                <div style="font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right; line-height: 1.6; margin-bottom: 10px;">${i.id}. ${i.q}</div>
                 <div style="margin-bottom: 15px;"><span style="font-size: 12px; color: ${statusColor}; font-weight: bold; background: ${statusColor}10; padding: 4px 12px; border-radius: 6px;">الحالة: ${statusText}</span></div>
                 <div style="width: 100%; display: block; text-align: right; clear: both;">
                     ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; margin-bottom: 10px; vertical-align: top;"><img src="${p}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" /></div>`).join('')}
@@ -156,7 +158,7 @@
           <div style="width: 800px; margin: 0 auto; padding: 45px; background: white; direction: rtl; text-align: right; box-sizing: border-box; font-family: sans-serif;">
             <div style="text-align: center; margin-bottom: 30px;">
                 <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 15px;" />
-                <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير تدقيق الجودة لـ فيرا برو</div>
+                <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير تدقيق الجودة الرسمي</div>
             </div>
             <div style="background: #f8fafc; padding: 25px; border-radius: 20px; margin-bottom: 40px; display: table; width: 100%;">
                 <div style="display: table-cell; width: 70%; line-height: 2.4; vertical-align: middle;">
@@ -166,21 +168,22 @@
                 </div>
                 <div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;">
                     <p style="font-size: 14px; font-weight: 900; color: #64748b;">الامتثال</p>
-                    <div style="font-size: 55px; font-weight: 900; color: ${score >= 70 ? '#059669':'#dc2626'};">${score}%</div>
+                    <div style="font-size: 55px; font-weight: 900; color: ${score >= 50 ? '#1C780B':'#D91414'};">${score}%</div>
                 </div>
             </div>
             ${reportContent}
             <div style="margin-top: 60px; border-top: 3px solid #eee; padding-top: 30px; page-break-inside: avoid; text-align: right;">
                 <p style="font-weight: 900; color: #004b47; font-size: 20px; margin-bottom: 20px;">التوقيع:</p>
-                <div style="background: #fafafa; padding: 15px; border-radius: 20px; display: inline-block;"><img src="${signatureImg}" style="width: 350px; height: 130px; object-fit: contain; display: block;" /></div>
+                <div style="background: #fafafa; padding: 15px; border-radius: 20px; display: inline-block; border: 1px solid #f1f5f9;"><img src="${signatureImg}" style="width: 350px; height: 130px; object-fit: contain; display: block;" /></div>
             </div>
           </div>`;
 
+        alert("جاري بناء المعاينة الذكية...");
         html2pdf().from(html).set({ margin:[10,10], filename:`Quality_${branch}.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).save();
       };
 
       const submitReport = async () => {
-        if (!branch) return alert("اختر المنشأة");
+        if (!branch) return alert("اختر المنشأة أولاً");
         if (uploading) return;
         setUploading(true);
         const reportId = Date.now().toString();
@@ -199,20 +202,20 @@
             });
 
             await db.collection("inspection_attachments").doc(reportId).set({ reportId, photos: part2 });
-            alert("✅ تم رفع تقرير الجودة بنجاح!"); window.location.reload();
+            alert("✅ تم رفع التقرير بنجاح!"); window.location.reload();
         } catch (e) { alert("⚠️ خطأ سحابي: " + e.message); }
         finally { setUploading(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-black animate-pulse">جاري التحقق...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-black animate-pulse text-[#004b47]">جاري التحميل...</div>;
       if (!user) return <div className="p-20 text-center font-bold">يرجى تسجيل الدخول.</div>;
 
       return (
         <div className="pb-40 text-right">
           <div className="verra-gradient p-10 text-center text-white rounded-b-[3.5rem] shadow-2xl">
             <img src={LOGO_URL} className="h-20 mx-auto mb-4" />
-            <h1 className="text-2xl font-black mb-1">مراقب الجودة المعتمد</h1>
-            <p className="text-[10px] opacity-60 italic">نظام التقارير السحابية (High-Capacity)</p>
+            <h1 className="text-2xl font-black mb-1 text-center">مراقب الجودة المعتمد</h1>
+            <p className="text-[10px] opacity-60 italic text-center">نظام التقارير السحابية (High-Capacity)</p>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
@@ -222,13 +225,13 @@
             </div>
             <div className="flex gap-2">
                 <button onClick={handlePreview} className="nav-btn preview-btn px-4 py-2 rounded-xl">معاينة</button>
-                <button onClick={submitReport} disabled={uploading} className="verra-gradient text-white px-5 py-2 rounded-xl font-black shadow-lg text-xs disabled:bg-gray-400">{uploading ? "جاري..." : "إرسال"}</button>
+                <button onClick={submitReport} disabled={uploading} className="verra-gradient text-white px-5 py-2 rounded-xl font-black shadow-lg text-xs disabled:bg-gray-400">{uploading ? "جاري الرفع..." : "إرسال"}</button>
             </div>
           </div>
 
           <main className="p-5 max-w-2xl mx-auto space-y-6">
             <div className="item-card p-6 border-r-8 border-[#d1ba89]">
-                <select className="w-full text-xl font-black bg-transparent outline-none" value={branch} onChange={e=>setBranch(e.target.value)}>
+                <select className="w-full text-xl font-black bg-transparent outline-none text-right" value={branch} onChange={e=>setBranch(e.target.value)}>
                     <option value="">-- اختر الفرع --</option>
                     {branches.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
@@ -240,15 +243,15 @@
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}>{sec.title} {expanded.has(sec.title) ? '▲' : '▼'}</div>
                 {expanded.has(sec.title) && sec.items.map(i => (
-                  <div key={i.id} className="item-card">
-                    <p className="font-bold text-gray-800 mb-5 leading-relaxed">{i.id}. {i.q}</p>
+                  <div key={i.id} className="item-card shadow-md">
+                    <p className="font-bold text-gray-800 mb-5 leading-relaxed text-right">{i.id}. {i.q}</p>
                     <div className="flex gap-2 mb-6 justify-end">
                       <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn ${answers[i.id]==='yes'?'active btn-yes':''}`}>نعم</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn ${answers[i.id]==='no'?'active btn-no':''}`}>لا</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn ${answers[i.id]==='na'?'active btn-na':''}`}>N/A</button>
                     </div>
                     
-                    <div className="flex flex-wrap gap-2 items-center justify-end">
+                    <div className="flex flex-wrap gap-2 items-center justify-end text-right">
                         <div className="flex gap-1 mr-auto">
                             {(photos[i.id] || []).map((img, idx) => (
                                 <div key={idx} className="relative">
@@ -271,8 +274,8 @@
               </div>
             ))}
 
-            <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-                <h3 className="font-black mb-4">توقيع المفتش المعتمد</h3>
+            <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner text-right">
+                <h3 className="font-black text-green-900 mb-4 text-center">توقيع المفتش المعتمد</h3>
                 <canvas ref={canvasRef} className="w-full h-40 bg-gray-50 rounded-2xl border shadow-inner"></canvas>
                 <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs mt-3 underline font-bold">مسح التوقيع</button>
             </div>
