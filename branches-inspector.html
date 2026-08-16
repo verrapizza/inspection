@@ -25,24 +25,20 @@
     .btn-na.active { background: #64748b !important; color: white; }
     .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
     .photo-thumb { width: 75px; height: 75px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 50; cursor: pointer; }
+    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 50; }
     .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 4px; }
+    .upload-btn-gallery { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
     .nav-btn { padding: 5px 14px; border-radius: 8px; font-size: 10px; font-weight: bold; transition: 0.3s; display: inline-flex; align-items: center; gap: 5px; }
     .logout-btn { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .home-btn { background: rgba(209, 186, 137, 0.2); color: #d1ba89; border: 1px solid rgba(209, 186, 137, 0.4); }
     .preview-btn { background: #d1ba89 !important; color: #004b47 !important; font-weight: 900 !important; }
-    .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; items-center: center; justify-content: center; z-index: 9999; color: white; font-weight: bold; }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
-
-    // --- إعدادات سحابة CLOUDINARY (التي قمنا بضبطها معاً) ---
-    const CLOUDINARY_CLOUD_NAME = "irxtz6bk"; 
-    const CLOUDINARY_UPLOAD_PRESET = "verra_preset"; 
-
     const firebaseConfig = {
       apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
       authDomain: "verra-system-828f2.firebaseapp.com",
@@ -57,6 +53,7 @@
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
     const ADMIN_EMAIL = "ch3f.ramzi@gmail.com";
 
+    // البنود كما أرسلتها حرفياً بدون ترقيم تلقائي
     const sectionsData = [
       { 
         title: "الواجهة والصالات | Front & Lounge", 
@@ -100,16 +97,16 @@
 
     const buildReportHTML = (branch, email, score, answers, notes, photos, signature) => {
         return `
-          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: sans-serif; text-align: right;">
+          <div style="width: 750px; margin: 0 auto; padding: 40px; background: white; direction: rtl; font-family: sans-serif; text-align: right; box-sizing: border-box;">
             <div style="text-align: center; border-bottom: 5px solid #004b47; padding-bottom: 15px; margin-bottom: 30px;">
                 <img src="${LOGO_URL}" style="height: 100px;" />
                 <h1 style="color: #004b47; font-size: 26px; font-weight: 900; margin: 10px 0;">تقرير إشراف الفروع الرسمي</h1>
             </div>
             <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="flex: 1; line-height: 2.2">
-                    <p style="margin:0;"><b>🏢 المنشأة:</b> ${branch}</p>
+                    <p style="margin:0;"><b>🏢 المنشأة المستهدفة:</b> ${branch}</p>
                     <p style="margin:0;"><b>👤 المشرف المسؤول:</b> ${email}</p>
-                    <p style="margin:0;"><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB')}</p>
+                    <p style="margin:0;"><b>📅 التاريخ والوقت:</b> ${new Date().toLocaleString('en-GB', { hour12: true })}</p>
                 </div>
                 <div style="width: 150px; text-align: center; border-right: 3px solid #004b47; padding-right: 15px;">
                     <p style="color: #64748b; font-size: 11px;">معدل الامتثال</p>
@@ -133,8 +130,8 @@
             `).join("")}
             <div style="margin-top: 50px; border-top: 4px solid #004b47; padding-top: 30px; page-break-inside: avoid;">
                 <p style="font-weight: 900; color: #004b47; font-size: 16px; margin-bottom: 20px;">توقيع المشرف المعتمد:</p>
-                <div style="text-align: right; width: 350px; height: 120px;">
-                  ${signature ? `<img src="${signature}" style="max-height: 100%; max-width: 100%; border-bottom: 2px solid #004b47;" />` : ""}
+                <div style="text-align: right; width: 350px; height: 120px; border-bottom: 2px solid #004b47;">
+                  ${signature ? `<img src="${signature}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />` : ""}
                 </div>
             </div>
           </div>`;
@@ -143,7 +140,6 @@
     function App() {
       const [user, setUser] = useState(null);
       const [loading, setLoading] = useState(true);
-      const [uploading, setUploading] = useState(false);
       const [submitting, setSubmitting] = useState(false);
       const [branch, setBranch] = useState("");
       const [branches, setBranches] = useState([]);
@@ -178,7 +174,7 @@
           const img = new Image(); img.src = base64Str;
           img.onload = () => {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 500; const scaleSize = MAX_WIDTH / img.width;
+            const MAX_WIDTH = 400; const scaleSize = MAX_WIDTH / img.width;
             canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -189,24 +185,10 @@
 
       const handlePhotoAction = async (id, e) => {
         const file = e.target.files[0]; if (!file) return;
-        setUploading(true);
         const reader = new FileReader();
         reader.onload = async (ev) => {
-          try {
-            const compressed = await compressImage(ev.target.result);
-            const formData = new FormData();
-            formData.append("file", compressed);
-            formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
-                method: "POST",
-                body: formData
-            });
-            const data = await res.json();
-            if (data.secure_url) {
-                setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), data.secure_url]}));
-            }
-          } catch (err) { alert("خطأ في رفع الصورة للسحابة."); }
-          finally { setUploading(false); }
+          const compressed = await compressImage(ev.target.result);
+          setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), compressed].slice(0, 3)}));
         };
         reader.readAsDataURL(file);
       };
@@ -222,55 +204,63 @@
         if (!branch) return alert("اختر المنشأة");
         const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
         const html = buildReportHTML(branch, user.email, getScore(), answers, notes, photos, signatureImg);
-        html2pdf().from(html).set({ margin:0, filename:`Report_${branch}.pdf`, image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4'} }).save();
+        alert("جاري تجهيز المعاينة...");
+        html2pdf().from(html).set({ margin:0, filename:`Branches_${branch}.pdf`, image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2, useCORS:true, scrollY:0}, jsPDF:{unit:'mm', format:'a4'} }).save();
       };
 
       const handleFinalSubmit = async () => {
           if(!branch) return alert("اختر الفرع");
           if(submitting) return;
           setSubmitting(true);
+          const score = getScore();
+          const reportId = Date.now();
+          const timestampStr = new Date().toLocaleString('en-GB', { hour12: true });
+
           try {
-              const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
+              let local = JSON.parse(localStorage.getItem('v2_reports')) || [];
+              local.unshift({ id: reportId, branch, score, inspector: user.email, date: timestampStr, isCrit: score < 70, type: "Branch Report" });
+              localStorage.setItem('v2_reports', JSON.stringify(local.slice(0, 20)));
+
               await db.collection("inspections").add({ 
-                  branch, score: getScore(), inspector: user.email, 
-                  date: new Date().toLocaleString('en-GB'), timestamp: Date.now(),
-                  answers, notes, photos, signature: signatureImg, type: "Branch Report"
+                  id: reportId, branch, score, inspector: user.email, date: timestampStr, timestamp: reportId, isCrit: score < 70,
+                  signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos, type: "Branch Report"
               });
+
               alert("✅ تم الإرسال والمزامنة بنجاح!");
               window.location.reload();
           } catch (e) { alert("⚠️ خطأ في السحابة."); }
           finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">VERRA SYSTEM INITIALIZING...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse text-2xl uppercase">Verifying System...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} db={db} adminEmail={ADMIN_EMAIL} />;
 
       return (
-        <div className="pb-40 text-right">
-          {uploading && <div className="loading-overlay"><span>جاري رفع الصورة للسحابة...</span></div>}
-          
-          <div className="verra-gradient p-12 text-center shadow-xl rounded-b-[4rem]">
-            <img src={LOGO_URL} className="h-32 mx-auto mb-4 drop-shadow-2xl" />
+        <div className="pb-40 text-right text-right">
+          <div className="verra-gradient p-12 text-center shadow-xl rounded-b-[4rem] relative">
+            <img src={LOGO_URL} className="h-32 mx-auto mb-4 drop-shadow-2xl text-right" />
             <div className="flex flex-col items-center gap-3">
-                <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] text-white font-bold uppercase tracking-widest">{user.email}</span>
-                <button onClick={() => auth.signOut()} className="nav-btn logout-btn">تسجيل الخروج ↪</button>
+                <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] text-white font-bold border border-white/10 uppercase tracking-tighter">👤 {user.email}</span>
+                <div className="flex gap-2">
+                    {user.email === ADMIN_EMAIL && <button onClick={() => window.location.href='index.html'} className="nav-btn home-btn">🏠 الرئيسية</button>}
+                    <button onClick={() => auth.signOut()} className="nav-btn logout-btn">تسجيل الخروج ↪</button>
+                </div>
             </div>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
             <div className="text-right">
-              <p className="text-4xl font-black text-green-700 leading-none">{getScore()}%</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Score</p>
+              <p className="text-4xl font-black text-green-700 leading-none mt-1">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-                <button onClick={handlePreview} className="nav-btn preview-btn px-5 py-2.5 rounded-xl shadow transition text-xs">معاينة PDF</button>
-                <button onClick={handleFinalSubmit} disabled={submitting} className="verra-gradient text-white px-5 py-2.5 rounded-xl font-black shadow-lg text-xs active:scale-95 transition">
-                    {submitting ? 'جاري الإرسال...' : 'إرسال التقرير'}
-                </button>
+                <button onClick={handlePreview} className="nav-btn preview-btn px-5 py-2.5 rounded-xl shadow transition">معاينة</button>
+                <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-2.5 rounded-xl font-black shadow-lg text-xs active:scale-95 transition`}>{submitting ? '...' : 'إرسال'}</button>
             </div>
           </div>
 
           <main className="p-5 max-w-3xl mx-auto space-y-8 mt-4">
-            <div className="item-card p-7 border-r-[15px] border-green-800 shadow-xl">
+            <div className="card p-7 border-r-[15px] border-green-800 shadow-xl">
                 <select className="w-full text-2xl font-black outline-none bg-transparent text-green-950 text-right" value={branch} onChange={e=>setBranch(e.target.value)}>
                     <option value="">-- اختر المنشأة --</option>
                     {branches.map(b => <option key={b} value={b}>{b}</option>)}
@@ -296,6 +286,8 @@
                     <textarea className="notes-input shadow-inner text-right p-4 rounded-xl" placeholder="الملاحظة..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
                     
                     <div className="mt-5 flex flex-wrap gap-3 items-center justify-end">
+                        <label className="upload-btn active:scale-95 shadow-md">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
+                        <label className="upload-btn active:scale-95 shadow-md" style={{background:'#eff6ff', color:'#1e40af'}}>🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
                         <div className="flex flex-wrap mr-auto">
                           {(photos[i.id] || []).map((img, px) => (
                             <div key={px} className="relative m-1">
@@ -303,17 +295,15 @@
                             </div>
                           ))}
                         </div>
-                        <label className="upload-btn active:scale-95 shadow-md">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
-                        <label className="upload-btn active:scale-95 shadow-md" style={{background:'#eff6ff', color:'#1e40af'}}>🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
                     </div>
                   </div>
                 ))}
               </div>
             ))}
             
-            <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-black text-green-900 mb-6 uppercase text-sm border-b pb-2">توقيع المفتش المعتمد</h3>
-              <canvas ref={canvasRef} className="w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas>
+            <div className="card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
+              <h3 className="font-black text-green-900 mb-6 uppercase text-sm italic border-b pb-2 text-center underline decoration-green-300 underline-offset-8 text-center">توقيع المفتش المعتمد</h3>
+              <canvas ref={canvasRef} className="sig-canvas w-full h-48 border border-gray-100 rounded-3xl bg-gray-50 shadow-inner"></canvas>
               <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline">مسح التوقيع</button>
             </div>
           </main>
@@ -323,29 +313,41 @@
 
     function Login({ auth, logo, db, adminEmail }) {
       const [email, setEmail] = useState(""); const [pass, setPass] = useState("");
+      const [isRegistering, setIsRegistering] = useState(false);
       const [btnLoading, setBtnLoading] = useState(false);
 
       const handleAuth = async (ev) => {
           ev.preventDefault(); setBtnLoading(true);
           try {
-              const userCredential = await auth.signInWithEmailAndPassword(email.toLowerCase().trim(), pass);
-              const user = userCredential.user;
-              const authCheck = await db.collection("authorized_users").where("email", "==", user.email.toLowerCase()).get();
-              if (user.email === adminEmail || !authCheck.empty) {} else { throw { code: 'auth/not-authorized' }; }
+              if (isRegistering) {
+                  await auth.createUserWithEmailAndPassword(email.toLowerCase().trim(), pass);
+                  await db.collection("pending_authorizations").add({ email: email.toLowerCase().trim(), requested_at: new Date().toLocaleString('en-GB') });
+                  alert("✅ تم إرسال الطلب. انتظر موافقة الآدمن.");
+                  auth.signOut(); setIsRegistering(false);
+              } else {
+                  const userCredential = await auth.signInWithEmailAndPassword(email.toLowerCase().trim(), pass);
+                  const user = userCredential.user;
+                  const authCheck = await db.collection("authorized_users").where("email", "==", user.email.toLowerCase()).get();
+                  if (user.email === adminEmail || !authCheck.empty) {} else { throw { code: 'auth/not-authorized' }; }
+              }
           } catch (err) {
               auth.signOut();
-              if (err.code === 'auth/not-authorized') alert("⏳ بانتظار تفعيل الآدمن.");
-              else alert("⚠️ خطأ في تسجيل الدخول.");
+              if (err.code === 'auth/user-not-found') alert("⚠️ الحساب غير مسجل.");
+              else if (err.code === 'auth/wrong-password') alert("⚠️ كلمة المرور خاطئة.");
+              else if (err.code === 'auth/not-authorized') alert("⏳ بانتظار تفعيل الآدمن.");
+              else alert("⚠️ خطأ: " + err.message);
           } finally { setBtnLoading(false); }
       };
 
       return (
         <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
            <form onSubmit={handleAuth} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-sm text-center">
-              <img src={logo} className="h-24 mx-auto mb-10" />
+              <div className="bg-white rounded-full p-1 shadow-lg w-28 h-28 mx-auto mb-6 flex items-center justify-center"><img src={logo} className="h-20 object-contain" /></div>
+              <h1 className="text-2xl font-black text-green-900 mb-10 italic uppercase">{isRegistering ? "Request Access" : "Login Hub"}</h1>
               <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none font-bold" placeholder="البريد الإلكتروني" value={email} onChange={v=>setEmail(v.target.value)} />
               <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none font-bold" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
-              <button type="submit" disabled={btnLoading} className="w-full bg-[#004b47] text-white font-bold py-5 rounded-3xl shadow-xl active:scale-95 transition text-xl mb-6">{btnLoading ? "جاري..." : "دخول"}</button>
+              <button type="submit" disabled={btnLoading} className="w-full bg-[#004b47] text-white font-bold py-5 rounded-3xl shadow-xl active:scale-95 transition text-xl mb-6">{btnLoading ? "جاري التحقق..." : (isRegistering ? "إرسال طلب" : "دخول")}</button>
+              <p onClick={() => setIsRegistering(!isRegistering)} className="text-xs font-bold text-gray-400 cursor-pointer underline decoration-[#d1ba89]">{isRegistering ? "لديك حساب؟ ادخل من هنا" : "ليس لديك حساب؟ اطلب انضمام"}</p>
            </form>
         </div>
       );
