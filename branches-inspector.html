@@ -8,41 +8,37 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   
-  <!-- المكتبات الأساسية -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; -webkit-tap-highlight-color: transparent; text-align: right; }
+    body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; text-align: right; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
-    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 14px; border-radius: 12px; font-weight: 900; color: #004b47; margin: 25px 0 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 14px; border-radius: 12px; font-weight: 900; color: #004b47; margin: 25px 0 12px; }
     .item-card { background: white; border-radius: 25px; padding: 22px; margin-bottom: 15px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-    .ans-btn { width: 65px; height: 45px; border-radius: 12px; font-weight: 700; font-size: 11px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.2s; font-family: 'Cairo', sans-serif; }
-    .btn-yes.active { background: #1C780B !important; color: white; box-shadow: 0 4px 10px rgba(28, 120, 11, 0.3); }
-    .btn-no.active { background: #D91414 !important; color: white; box-shadow: 0 4px 10px rgba(217, 20, 20, 0.3); }
+    .ans-btn { width: 65px; height: 45px; border-radius: 12px; font-weight: 700; font-size: 11px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.2s; font-family: 'Cairo'; }
+    .btn-yes.active { background: #1C780B !important; color: white; }
+    .btn-no.active { background: #D91414 !important; color: white; }
     .btn-na.active { background: #64748b !important; color: white; }
-    .notes-input { width: 100%; margin-top: 12px; padding: 12px; border-radius: 15px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; font-family: 'Cairo', sans-serif; text-align: right; }
-    .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; border: 2px solid white; shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 20px; }
-    .nav-btn { font-family: 'Cairo', sans-serif; padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: bold; transition: 0.3s; }
-    .logout-btn { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
-    .home-btn { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .notes-input { width: 100%; margin-top: 10px; padding: 12px; border-radius: 15px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; text-align: right; font-family: 'Cairo'; }
+    .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; border: 2px solid white; }
+    .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); border-bottom: 2px solid #004b47; padding: 12px 20px; }
+    .nav-btn { font-family: 'Cairo'; padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: bold; }
     .notes-overlay { position: fixed; inset: 0; background: #f1f5f9; z-index: 200; overflow-y: auto; text-align: right; }
-    .upload-btn { background: #f1f5f9; color: #475569; padding: 10px 14px; border-radius: 14px; font-size: 11px; font-weight: bold; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+    .upload-btn { background: #f1f5f9; color: #475569; padding: 10px 16px; border-radius: 14px; font-size: 11px; font-weight: bold; border: 1px solid #e2e8f0; cursor: pointer; }
   </style>
 </head>
 <body class="text-right">
   <div id="root">
     <div style="height: 100vh; display: flex; align-items: center; justify-content: center; font-family: Cairo; font-weight: bold; color: #004b47;">
-       جاري تشغيل نظام فيرا برو...
+       جاري تحميل نظام VERRA PRO...
     </div>
   </div>
 
@@ -65,7 +61,6 @@
     const ADMIN_MAIN = "ch3f.ramzi@gmail.com";
     const branchesList = ["VERRA-Mekkah", "VERRA-Batterjie", "VERRA-Obhur", "VERRA-Kaust"];
 
-    // بنود مشرف الفروع الأصلية (18 بنداً)
     const sectionsData = [
       { 
         title: "الواجهة والصالات | Front & Lounge", 
@@ -81,10 +76,10 @@
         title: "قسم الإدارة والتشغيل | Admin & Operation", 
         items: [
           {id:4, en:"checks, the cashier department (net + phone + cashier + applications)", ar:"تشيك قسم الكاشير ( نت + تلفون + متابعة عهدة الكاشير + تشيك على نظام فودو في الكاشير + التشيك على نظاف فيد اس + متابعة الدوامات في مواقع التطبيقات )"},
-          {id:5, en:"Monitor and Google Maps.", ar:"متابعة قوقل ماب"},
-          {id:10, en:"Check and monitor all plants/trees in the branch, if available.", ar:"تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع ."},
-          {id:16, en:"Check attendance and leave", ar:"تشيك كشف الحضور والانصراف"},
-          {id:17, en:"Has a meeting been conducted with all employees today?", ar:"هل تم الاجتماع مع جميع الموظفين اليوم؟"},
+          {id:5, en:"Monitor and Google Maps.", ar:"( متابعة قوقل ماب )"},
+          {id:10, en:"Check and monitor all plants/trees in the branch, if available.", ar:"( تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع . )"},
+          {id:16, en:"Check attendance and leave", ar:"تشيك ( كشف الحضور )"},
+          {id:17, en:"Has a meeting been conducted with all employees today?", ar:"( هل تم الاجتماع مع جميع الموظفين اليوم )"},
           {id:18, en:"Follow-up on branch supervisors' daily tasks", ar:"متابعة مهام مشرفين الفروع"}
         ]
       },
@@ -132,7 +127,7 @@
                       const role = uEmail === ADMIN_MAIN ? 'admin' : authSnap.docs[0].data().role;
                       setUserRole(role);
                       if (role === 'admin' || role === 'supervisor') {
-                          db.collection("branches").orderBy("name").onSnapshot(snap => setBranches(snap.docs.map(d => d.data().name)));
+                          db.collection("branches").orderBy("name").onSnapshot(s => setBranches(s.docs.map(d => d.data().name)));
                           setUser(u);
                       } else { window.location.href = "index.html"; }
                   } else { auth.signOut(); }
@@ -144,13 +139,11 @@
 
       useEffect(() => { if (user && canvasRef.current && view === "main") sigPad.current = new SignaturePad(canvasRef.current); }, [user, view]);
 
-      const compressImage = (file) => {
+      const compress = (file) => {
         return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = (e) => {
-            const img = new Image();
-            img.src = e.target.result;
+          const r = new FileReader(); r.readAsDataURL(file);
+          r.onload = (e) => {
+            const img = new Image(); img.src = e.target.result;
             img.onload = () => {
               const canvas = document.createElement('canvas');
               const MAX_W = 280; const scale = MAX_W / img.width;
@@ -163,108 +156,70 @@
         });
       };
 
-      const handlePhotoAction = async (id, e, isExtra = false, bKey = "", nIdx = 0) => {
+      const handlePhotoAction = async (id, e) => {
         const file = e.target.files[0]; if (!file) return;
-        const compressed = await compressImage(file);
-        if (isExtra) {
-            setExtraNotes(prev => {
-                const bData = { ...(prev[bKey] || {}) };
-                const nData = { ...(bData[nIdx] || { text: "", imgs: [] }) };
-                nData.imgs = [...(nData.imgs || []), compressed].slice(0, 3);
-                bData[nIdx] = nData;
-                return { ...prev, [bKey]: bData };
-            });
-        } else {
-            setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), compressed].slice(0, 3)}));
-        }
+        const compressed = await compress(file);
+        setPhotos(prev => ({...prev, [id]: [...(prev[id] || []), compressed].slice(0, 3)}));
       };
 
-      // --- محرك الـ PDF الموحد للتقرير اليومي (Cairo + Golden Line + 3 Photos) ---
       const handlePreview = () => {
         if (!branch) return alert("اختر المنشأة أولاً");
         const score = getScore();
         const sig = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
-        const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
-
+        
         let reportContent = sectionsData.filter(sec => sec.items.some(i => answers[i.id])).map(sec => {
           let items = sec.items.filter(i => answers[i.id]).map(i => {
             const ans = answers[i.id]; const note = notes[i.id] || ""; const pics = photos[i.id] || [];
             let sColor = ans === 'yes' ? '#1C780B' : ans === 'no' ? '#D91414' : '#64748b';
             return `
-              <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; width: 100%;">
-                <div style="font-size: 11px; color: #64748b; direction: ltr; text-align: left; margin-bottom: 4px;">${i.en || ""}</div>
-                <div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right; line-height: 1.6; margin-bottom: 10px;">${i.ar}</div>
-                <div style="margin-bottom: 10px;"><span style="font-size: 12px; color: ${sColor}; font-weight: bold; background: ${sColor}10; padding: 4px 12px; border-radius: 6px;">الحالة: ${ans === 'yes' ? 'مطابق ✅' : 'مخالفة ❌'}</span></div>
-                ${note ? `<div style="background:#fff9e6; padding:8px; border-radius:8px; font-size:11px; margin-bottom:10px; color:#92400e; font-family: 'Cairo';"><b>الملاحظة:</b> ${note}</div>` : ""}
-                <div style="width: 100%; display: block; text-align: right; clear: both;">
-                    ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; margin-bottom: 10px; vertical-align: top;"><img src="${p}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" /></div>`).join('')}
+              <div style="padding: 15px; border-bottom: 1px solid #eee; text-align: right; page-break-inside: avoid;">
+                <div style="font-size: 10px; color: #666; direction: ltr; text-align: left;">${i.en || ""}</div>
+                <div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b;">${i.ar}</div>
+                <div style="margin: 8px 0;"><span style="font-size: 12px; color: ${sColor}; font-weight: bold;">الحالة: ${ans==='yes'?'مطابق ✅':'مخالفة ❌'}</span></div>
+                ${note ? `<div style="background:#fff9e6; padding:8px; border-radius:8px; font-size:11px; margin-bottom:10px; font-family: 'Cairo';"><b>الملاحظة:</b> ${note}</div>` : ""}
+                <div style="width: 100%; display: block;">
+                    ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; vertical-align: top;"><img src="${p}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 12px; border: 1px solid #eee;" /></div>`).join('')}
                 </div>
               </div>`;
           }).join("");
-          return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 12px 20px; border-right: 10px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 30px; text-align: right; font-size: 18px; font-family: 'Cairo', sans-serif;">${sec.title}</div>${items}</div>`;
+          return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 12px; border-right: 8px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 25px; font-family:'Cairo';">${sec.title}</div>${items}</div>`;
         }).join("");
 
         const html = `
           <div style="width: 800px; margin: 0 auto; padding: 45px; background: white; direction: rtl; text-align: right; box-sizing: border-box; font-family: 'Cairo', sans-serif;">
             <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
             <div style="text-align: center; margin-bottom: 30px;">
-                <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 15px;" />
-                <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 6px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير إشراف الفروع الرسمي</div>
+                <img src="${LOGO_URL}" style="height: 100px;" />
+                <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير إشراف الفروع الرسمي</div>
             </div>
-            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 40px; display: table; width: 100%;">
-                <div style="display: table-cell; width: 70%; line-height: 2.2; vertical-align: middle; text-align: right;"><b>🏢 المنشأة:</b> ${branch}<br><b>👤 المسؤول:</b> ${user.email}<br><b>📅 التاريخ:</b> ${timestamp}</div>
-                <div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;">
-                    <p style="font-size: 14px; font-weight: 900; color: #64748b;">الامتثال</p>
-                    <div style="font-size: 55px; font-weight: 900; color: ${score >= 70 ? '#1C780B':'#D91414'}">${score}%</div>
-                </div>
+            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; margin-bottom: 40px; display: table; width: 100%;">
+                <div style="display: table-cell; width: 70%; line-height: 2.2;"><b>🏢 المنشأة:</b> ${branch}<br><b>👤 المسؤول:</b> ${user.email}<br><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB')}</div>
+                <div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;"><div style="font-size: 55px; font-weight: 900; color: ${score >= 70 ? '#1C780B':'#D91414'}">${score}%</div></div>
             </div>
             ${reportContent}
             <div style="margin-top: 60px; border-top: 3px solid #eee; padding-top: 30px; page-break-inside: avoid; text-align: right;">
-                <p style="font-weight: 900; color: #004b47; font-size: 20px; margin-bottom: 20px;">التوقيع:</p>
-                <div style="background: #fafafa; padding: 15px; border-radius: 20px; display: inline-block; border: 1px solid #f1f5f9;"><img src="${sig}" style="width: 350px; height: 130px; object-fit: contain; display: block;" /></div>
+                <p style="font-weight: 900; font-size: 20px;">التوقيع:</p><img src="${sig}" style="width: 320px; height: 110px; object-fit: contain;" />
             </div>
           </div>`;
-        html2pdf().from(html).set({ margin:10, filename:`Report_${branch}.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:1.5, useCORS:true, letterRendering:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).save();
+        html2pdf().from(html).set({ margin:10, filename:`Report_${branch}.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:1.5, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).save();
       };
 
-      // --- محرك الـ PDF لسجل الملاحظات العامة ---
       const generateNotesPDF = () => {
-          const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
+          const timestamp = new Date().toLocaleString('en-GB');
           let content = branchesList.map(b => {
               let bContent = [1, 2, 3].map(i => {
-                  const data = extraNotes[b]?.[i] || { text: "", imgs: [] };
-                  if (!data.text && (!data.imgs || data.imgs.length === 0)) return "";
-                  return `
-                    <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; page-break-inside: avoid; width: 100%; display: block; clear: both;">
-                        <b style="font-size: 14px; color: #004b47; display: block; margin-bottom: 8px;">الملاحظة ${i}:</b>
-                        <p style="font-size: 13px; margin: 0 0 15px 0; line-height: 1.6; color: #334155;">${data.text || "(لا يوجد نص)"}</p>
-                        <div style="width: 100%; display: block; text-align: right;">
-                            ${(data.imgs || []).map(img => `<div style="display: inline-block; width: 30%; margin-left: 1.5%; margin-bottom: 10px; vertical-align: top;"><img src="${img}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" /></div>`).join('')}
-                        </div>
-                    </div>`;
+                  const txt = extraNotes[b]?.[i] || "";
+                  if (!txt) return "";
+                  return `<div style="padding:15px; border-bottom:1px solid #eee; page-break-inside:avoid; font-family: Cairo;"><b>الملاحظة ${i}:</b><p style="font-size:13px; margin:8px 0;">${txt}</p></div>`;
               }).join('');
-
-              const hasData = [1, 2, 3].some(i => (extraNotes[b]?.[i]?.text || (extraNotes[b]?.[i]?.imgs && extraNotes[b]?.[i]?.imgs.length > 0)));
-              if (!hasData) return "";
-
-              return `<div style="page-break-inside: avoid; clear: both;"><div style="margin-top: 35px; border-right: 10px solid #d1ba89; background: #f0fdf4; padding: 15px; font-weight: 900; font-size: 18px; color: #004b47; font-family: 'Cairo';">فرع: ${b}</div>${bContent}</div>`;
+              return `<div style="font-family: Cairo; margin-top:25px; border-right:10px solid #d1ba89; background:#f0fdf4; padding:15px; font-weight:900; font-size:18px;">فرع: ${b}</div>${bContent || '<p style="padding:10px; color:#999; font-family: Cairo;">لا توجد ملاحظات</p>'}`;
           }).join('');
-
-          const html = `
-            <div style="width: 800px; margin: 0 auto; padding: 45px; background: white; direction: rtl; text-align: right; box-sizing: border-box; font-family: 'Cairo', sans-serif;">
-                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 15px;" />
-                    <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 6px solid #d1ba89; display: inline-block; padding-bottom: 12px; margin-top: 10px;">سجل ملاحظات الفروع المجمع</div>
-                    <p style="margin-top: 15px; color: #64748b; font-size: 14px;">نظام VERRA PRO للمتابعة الميدانية - تاريخ التقرير: ${timestamp}</p>
-                </div>
-                ${content || '<p style="text-align:center; padding:50px; color:#94a3b8;">لم يتم تسجيل أي ملاحظات اليوم.</p>'}
-            </div>`;
-          html2pdf().from(html).set({ margin:10, filename:`Global_Notes.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:2, useCORS:true, letterRendering:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).save();
+          const html = `<div style="width:750px; margin:0 auto; padding:45px; direction:rtl; text-align:right; font-family:'Cairo', sans-serif;"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet"><div style="text-align:center; border-bottom:5px solid #004b47; padding-bottom:20px; margin-bottom:30px;"><img src="${LOGO_URL}" style="height:90px;"/><h1 style="color:#004b47; font-size:28px; font-weight:900; margin-top:10px;">سجل ملاحظات الفروع المجمّع</h1><p>التاريخ: ${timestamp}</p></div>${content}</div>`;
+          html2pdf().from(html).set({ margin:10, filename:`Global_Notes.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:2}, jsPDF:{unit:'mm', format:'a4'} }).save();
       };
 
       const handleFinalSubmit = async () => {
-          if(!branch) return alert("اختر المنشأة أولاً");
+          if(!branch) return alert("اختر المنشأة");
           if(submitting) return; setSubmitting(true);
           const score = getScore(); const rId = Date.now().toString();
           try {
@@ -281,32 +236,33 @@
           } catch (e) { alert("⚠️ خطأ في الإرسال"); } finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">جاري تحميل نظام إشراف الفروع...</div>;
-      if (!user) return <div className="p-20 text-center font-bold">يرجى تسجيل الدخول من البوابة.</div>;
+      const getScore = () => {
+        const vals = Object.values(answers);
+        const yes = vals.filter(v => v === 'yes').length;
+        const total = vals.filter(v => v !== 'na' && v !== undefined).length;
+        return total > 0 ? Math.round((yes / total) * 100) : 0;
+      };
+
+      if (loading) return <div style={{height:'100vh', display:'flex', alignItems:'center', justifyContent:'center', color:'#004b47', fontWeight:'bold', fontFamily:'Cairo'}}>جاري التحميل...</div>;
+      if (!user) return <div className="p-20 text-center font-bold">يرجى تسجيل الدخول.</div>;
 
       if (view === "notes") {
           return (
             <div className="notes-overlay text-right">
-                <div className="verra-gradient p-8 text-center text-white sticky top-0 z-[210] shadow-lg flex justify-between items-center px-6 text-right">
+                <div className="verra-gradient p-8 text-center text-white sticky top-0 z-[210] shadow-lg flex justify-between items-center px-6">
                     <button onClick={() => setView('main')} className="bg-white/20 p-2 rounded-xl text-xs font-bold px-4">← رجوع</button>
                     <h2 className="font-black text-lg text-right">سجل الملاحظات العامة</h2>
                     <button onClick={generateNotesPDF} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl text-[10px] font-black shadow-sm">تحميل PDF 📄</button>
                 </div>
                 <main className="p-5 max-w-2xl mx-auto space-y-8">
                     {branchesList.map(b => (
-                        <div key={b} className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-100 text-right">
-                            <div className="bg-[#e8f5ee] p-4 border-r-8 border-[#d1ba89] font-black text-[#004b47] text-right">{b}</div>
-                            <div className="p-4 space-y-6 text-right">
+                        <div key={b} className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-100">
+                            <div className="bg-[#e8f5ee] p-4 border-r-8 border-[#d1ba89] font-black text-[#004b47]">{b}</div>
+                            <div className="p-4 space-y-6">
                                 {[1, 2, 3].map(i => (
                                     <div key={i} className="border-b border-gray-50 pb-4 last:border-0 text-right">
                                         <textarea className="notes-input w-full p-3 rounded-xl border border-gray-200 text-sm mb-3" placeholder={`اكتب ملاحظة ${i} هنا...`}
-                                            value={extraNotes[b]?.[i]?.text || ""} 
-                                            onChange={e => setExtraNotes(prev => ({...prev, [b]: {...(prev[b] || {}), [i]: {...(prev[b]?.[i] || {}), text: e.target.value}}}))} />
-                                        <div className="flex flex-wrap gap-2 items-center justify-end text-right">
-                                            <div className="flex gap-1 mr-auto text-right">{(extraNotes[b]?.[i]?.imgs || []).map((img, ix) => ( <img key={ix} src={img} className="w-12 h-12 object-cover rounded-lg border shadow-sm" /> ))}</div>
-                                            <label className="upload-btn bg-green-50 text-green-700 border-green-100 shadow-sm text-right">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(0, e, true, b, i)} /></label>
-                                            <label className="upload-btn shadow-sm text-right">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(0, e, true, b, i)} /></label>
-                                        </div>
+                                            value={extraNotes[b]?.[i] || ""} onChange={e => setExtraNotes({...extraNotes, [b]: {...(extraNotes[b] || {}), [i]: e.target.value}})} />
                                     </div>
                                 ))}
                             </div>
@@ -317,41 +273,34 @@
           );
       }
 
-      const getScoreValue = () => {
-        const vals = Object.values(answers);
-        const yesCount = vals.filter(v => v === 'yes').length;
-        const totalItems = vals.filter(v => v !== 'na' && v !== undefined).length;
-        return totalItems > 0 ? Math.round((yesCount / totalItems) * 100) : 0;
-      };
-
       return (
-        <div className="pb-40 text-right text-right">
-          <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[3rem] relative text-right text-right">
-            <img src={LOGO_URL} className="h-24 mx-auto mb-4 drop-shadow-2xl text-right text-right" />
+        <div className="pb-40 text-right">
+          <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[3rem] relative">
+            <img src={LOGO_URL} className="h-24 mx-auto mb-4 drop-shadow-2xl" />
             <div className="flex flex-col items-center gap-3 text-white">
                 <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-right">👤 {user.email}</span>
                 <div className="flex gap-2">
                     <button onClick={() => setView('notes')} className="nav-btn bg-[#d1ba89] text-[#004b47] px-4 py-1 rounded-lg font-black shadow">📝 الملاحظات</button>
-                    {userRole === 'admin' && <button onClick={() => window.location.href='admin.html'} className="nav-btn bg-white/20 px-4 py-1 rounded-lg text-xs font-bold">🏠 الإدارة</button>}
+                    {userRole === 'admin' && <button onClick={() => window.location.href='admin.html'} className="nav-btn bg-white/20 px-4 py-1 rounded-lg text-xs font-bold text-right">🏠 الإدارة</button>}
                     <button onClick={() => auth.signOut()} className="nav-btn logout-btn px-4">خروج ↪</button>
                 </div>
             </div>
           </div>
-          <div className="sticky-header flex justify-between items-center shadow-md text-right">
+          <div className="sticky-header flex justify-between items-center shadow-md">
             <div className="text-right">
                 <p className="text-[10px] font-bold text-gray-400 uppercase leading-none text-right">Score</p>
-                <p className="text-3xl font-black text-green-700 mt-1 text-right">{getScoreValue()}%</p>
+                <p className="text-3xl font-black text-green-700 mt-1 text-right">{getScore()}%</p>
             </div>
-            <div className="flex gap-2">
-                <button onClick={handlePreview} className="nav-btn preview-btn bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl shadow-lg font-black text-right text-right">معاينة</button>
+            <div className="flex gap-2 text-right">
+                <button onClick={handlePreview} className="nav-btn preview-btn bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl shadow-lg font-black">معاينة</button>
                 <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-2 rounded-xl font-black shadow-lg text-xs`}>{submitting ? 'جاري...' : 'إرسال'}</button>
             </div>
           </div>
-          <main className="p-5 max-w-3xl mx-auto space-y-6 text-right">
+          <main className="p-5 max-w-3xl mx-auto space-y-6">
             <div className="item-card p-6 border-r-[10px] border-[#004b47] shadow-xl text-right"><select className="w-full text-xl font-black bg-transparent text-right outline-none" value={branch} onChange={e=>setBranch(e.target.value)}><option value="">-- اختر الفرع للتفتيش اليومي --</option>{branches.map(b => <option key={b} value={b}>{b}</option>)}</select></div>
             {sectionsData.map(sec => (
               <div key={sec.title}>
-                <div className="section-title flex justify-between items-center px-4" onClick={() => {
+                <div className="section-title flex justify-between items-center px-4 shadow-sm" onClick={() => {
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}><span>{sec.title}</span><span>{expanded.has(sec.title) ? '▲' : '▼'}</span></div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
@@ -373,13 +322,15 @@
                 ))}
               </div>
             ))}
-            <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner text-right"><h3 className="font-black text-green-900 mb-4 text-center underline decoration-[#d1ba89]">توقيع المسؤول المعتمد</h3><canvas ref={canvasRef} className="w-full h-40 bg-gray-50 rounded-2xl border shadow-inner text-right"></canvas><button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs mt-3 underline font-bold text-right text-right">مسح التوقيع</button></div>
+            <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner text-right"><h3 className="font-black text-green-900 mb-4 text-center underline decoration-[#d1ba89]">توقيع المسؤول المعتمد</h3><canvas ref={canvasRef} className="w-full h-40 bg-gray-50 rounded-2xl border shadow-inner"></canvas><button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs mt-3 underline font-bold text-right text-right text-right">مسح التوقيع</button></div>
           </main>
         </div>
       );
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
   </script>
 </body>
 </html>
