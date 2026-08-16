@@ -7,192 +7,163 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
     body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; text-align: right; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .branch-card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     .note-box { background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 15px; }
-    .notes-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; font-family: 'Cairo'; text-align: right; }
-    .upload-btn { background: #f1f5f9; color: #475569; padding: 10px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; border: 1px solid #e2e8f0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-    .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; border: 2px solid white; shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .notes-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; font-family: 'Cairo'; text-align: right; min-height: 80px; }
+    /* تنسيق الطباعة المخفي لضمان الجودة */
+    #pdf-template { display: none; }
   </style>
 </head>
-<body class="text-right">
+<body>
   <div id="root"></div>
 
   <script type="text/babel">
     const { useState, useEffect } = React;
-    const firebaseConfig = {
-      apiKey: "AIzaSyA_-10rTZAM_aJnYiyivMx-yQY7tU6l3K0",
-      authDomain: "verra-system-828f2.firebaseapp.com",
-      projectId: "verra-system-828f2",
-      storageBucket: "verra-system-828f2.firebasestorage.app",
-      messagingSenderId: "961104891607",
-      appId: "1:961104891607:web:5ffd3af4983a8b015b6a92"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
-    const branches = ["VERRA-Mekkah", "VERRA-Batterjie", "VERRA-Obhur", "VERRA-Kaust"];
+    const branchesList = ["VERRA-Mekkah", "VERRA-Batterjie", "VERRA-Obhur", "VERRA-Kaust"];
 
     function App() {
-      const [notesData, setNotesData] = useState({}); 
+      // بنية البيانات: تخزين النصوص والصور لكل فرع
+      const [notesData, setNotesData] = useState({
+          "VERRA-Mekkah": {1:{text:"", imgs:[]}, 2:{text:"", imgs:[]}, 3:{text:"", imgs:[]}},
+          "VERRA-Batterjie": {1:{text:"", imgs:[]}, 2:{text:"", imgs:[]}, 3:{text:"", imgs:[]}},
+          "VERRA-Obhur": {1:{text:"", imgs:[]}, 2:{text:"", imgs:[]}, 3:{text:"", imgs:[]}},
+          "VERRA-Kaust": {1:{text:"", imgs:[]}, 2:{text:"", imgs:[]}, 3:{text:"", imgs:[]}}
+      });
       const [isGenerating, setIsGenerating] = useState(false);
 
-      const compress = (file) => {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = (e) => {
-            const img = new Image(); img.src = e.target.result;
-            img.onload = () => {
-              const canvas = document.createElement('canvas');
-              const MAX_W = 280; const scale = MAX_W / img.width;
-              canvas.width = MAX_W; canvas.height = img.height * scale;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              resolve(canvas.toDataURL('image/jpeg', 0.15));
-            };
-          };
-        });
-      };
-
-      const handleAction = async (branch, noteIdx, e) => {
-        const file = e.target.files[0]; if (!file) return;
-        const compressed = await compress(file);
-        setNotesData(prev => {
-            const bData = { ...(prev[branch] || {}) };
-            const nData = { ...(bData[noteIdx] || { text: "", imgs: [] }) };
-            nData.imgs = [...nData.imgs, compressed].slice(0, 3);
-            bData[noteIdx] = nData;
-            return { ...prev, [branch]: bData };
-        });
-      };
-
-      const handleText = (branch, noteIdx, text) => {
-          setNotesData(prev => {
-              const bData = { ...(prev[branch] || {}) };
-              const nData = { ...(bData[noteIdx] || { text: "", imgs: [] }) };
-              nData.text = text;
-              bData[noteIdx] = nData;
-              return { ...prev, [branch]: bData };
-          });
-      };
-
       const downloadPDF = async () => {
-          if (Object.keys(notesData).length === 0) return alert("يرجى كتابة ملاحظات أولاً");
-          setIsGenerating(true);
+          // التحقق من وجود أي محتوى قبل الطباعة
+          const hasAnyContent = Object.values(notesData).some(b => 
+              Object.values(b).some(n => n.text.trim() !== "")
+          );
           
-          let contentHtml = branches.map(b => {
-              let bContent = [1, 2, 3].map(i => {
-                  const data = notesData[b]?.[i];
-                  if (!data || (!data.text && (!data.imgs || data.imgs.length === 0))) return "";
+          if (!hasAnyContent) return alert("يرجى كتابة ملاحظة واحدة على الأقل قبل التحميل.");
+
+          setIsGenerating(true);
+          const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
+
+          // بناء محتوى الفروع
+          let branchesHtml = branchesList.map(b => {
+              let notesHtml = [1, 2, 3].map(i => {
+                  const data = notesData[b][i];
+                  if (!data.text.trim()) return "";
                   return `
-                    <div style="padding:15px; border-bottom:1px solid #f1f5f9; page-break-inside:avoid; display:block; clear:both; width:100%;">
-                        <b style="font-size:14px; color:#004b47; display:block; margin-bottom:8px; font-family:'Cairo';">الملاحظة ${i}:</b>
-                        <p style="font-size:13px; margin:0 0 10px 0; line-height:1.6; color:#334155; font-family:'Cairo';">${data.text || "(بدون نص)"}</p>
-                        <div style="width:100%; display:block; text-align:right;">
-                            ${(data.imgs || []).map(img => `
-                                <div style="display:inline-block; width:30%; margin-left:1.5%; margin-bottom:10px; vertical-align:top;">
-                                    <img src="${img}" style="width:100%; height:160px; object-fit:cover; border-radius:12px; border:2px solid #eee; display:block;"/>
-                                </div>`).join('')}
-                        </div>
+                    <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; page-break-inside: avoid; display: block; clear: both; width: 100%;">
+                        <b style="font-size: 14px; color: #004b47; display: block; margin-bottom: 8px; font-family: 'Cairo', sans-serif;">الملاحظة ${i}:</b>
+                        <p style="font-size: 13px; margin: 0; line-height: 1.6; color: #334155; font-family: 'Cairo', sans-serif;">${data.text}</p>
                     </div>`;
               }).join('');
 
-              if (!bContent.replace(/\s/g, "")) return "";
+              if (!notesHtml.trim()) return "";
 
               return `
-                <div style="page-break-inside:avoid; clear:both;">
-                    <div style="margin-top:35px; border-right:10px solid #d1ba89; background:#f0fdf4; padding:15px; font-weight:900; font-size:18px; color:#004b47; font-family:'Cairo';">فرع: ${b}</div>
-                    ${bContent}
+                <div style="page-break-inside: avoid; clear: both;">
+                    <div style="margin-top: 30px; border-right: 10px solid #d1ba89; background: #f0fdf4; padding: 12px 15px; font-weight: 900; font-size: 18px; color: #004b47; font-family: 'Cairo', sans-serif;">
+                        فرع: ${b}
+                    </div>
+                    ${notesHtml}
                 </div>`;
           }).join('');
 
-          const html = `
-            <div style="width:800px; margin:0 auto; padding:45px; background:white; direction:rtl; text-align:right; box-sizing:border-box; font-family:'Cairo', sans-serif;">
+          const fullHtml = `
+            <div style="width: 780px; margin: 0 auto; padding: 45px; background: white; direction: rtl; text-align: right; box-sizing: border-box;">
                 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-                <div style="text-align:center; margin-bottom:40px;">
-                    <img src="${LOGO_URL}" style="height:100px; margin-bottom:15px;"/>
-                    <div style="clear:both;"></div>
-                    <div style="color:#004b47; font-size:32px; font-weight:900; border-bottom:6px solid #d1ba89; display:inline-block; padding-bottom:12px; margin-top:10px;">سجل ملاحظات الفروع المجمّع</div>
-                    <p style="margin-top:15px; color:#64748b; font-size:14px; font-weight:bold;">نظام VERRA PRO للمتابعة الميدانية</p>
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 15px;"/>
+                    <div style="clear: both;"></div>
+                    <div style="color: #004b47; font-family: 'Cairo', sans-serif; font-size: 32px; font-weight: 900; border-bottom: 6px solid #d1ba89; display: inline-block; padding-bottom: 12px; margin-top: 10px;">
+                        سجل ملاحظات الفروع المجمّع
+                    </div>
+                    <p style="margin-top: 15px; color: #64748b; font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: bold;">
+                        نظام VERRA PRO للمتابعة الميدانية - تاريخ التقرير: ${timestamp}
+                    </p>
                 </div>
-                ${contentHtml || '<p style="text-align:center; padding:50px; color:#94a3b8; font-family:Cairo;">لم يتم تسجيل أي ملاحظات اليوم.</p>'}
-                <div style="margin-top:60px; border-top:1px solid #eee; padding-top:30px; text-align:center; color:#94a3b8; font-size:11px; font-family:Cairo;">تم توليد التقرير آلياً بواسطة VERRA PRO</div>
+                ${branchesHtml}
+                <div style="margin-top: 60px; border-top: 1px solid #eee; padding-top: 25px; text-align: center; color: #94a3b8; font-family: 'Cairo', sans-serif; font-size: 11px;">
+                    تم توليد التقرير آلياً بواسطة منصة VERRA PRO المركزية
+                </div>
             </div>`;
 
-          const opt = { 
-              margin: 10, 
-              filename: `Verra_Notes_${Date.now()}.pdf`, 
-              image: { type: 'jpeg', quality: 1.0 }, 
-              html2canvas: { scale: 1.5, useCORS: true, letterRendering: true }, 
-              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+          const opt = {
+              margin: [10, 10, 10, 10],
+              filename: `Verra_Notes_${Date.now()}.pdf`,
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
           };
-          
-          await html2pdf().from(html).set(opt).save();
-          setIsGenerating(false);
+
+          try {
+              await html2pdf().from(fullHtml).set(opt).save();
+          } catch (err) {
+              console.error(err);
+              alert("حدث خطأ أثناء تحميل الملف. يرجى المحاولة مرة أخرى.");
+          } finally {
+              setIsGenerating(false);
+          }
+      };
+
+      const handleTextUpdate = (branch, noteIdx, val) => {
+          setNotesData(prev => ({
+              ...prev,
+              [branch]: {
+                  ...prev[branch],
+                  [noteIdx]: { ...prev[branch][noteIdx], text: val }
+              }
+          }));
       };
 
       return (
-        <div className="min-h-screen pb-20">
-          <header className="verra-gradient p-10 text-center text-white rounded-b-[3rem] shadow-xl sticky top-0 z-50">
+        <div className="min-h-screen">
+          <header className="verra-gradient p-10 text-center text-white rounded-b-[3.5rem] shadow-xl sticky top-0 z-50">
             <div className="flex justify-between items-center max-w-3xl mx-auto">
-              <button onClick={() => window.history.back()} className="bg-white/20 px-4 py-2 rounded-xl text-xs font-bold transition active:scale-95">← رجوع</button>
+              <button onClick={() => window.history.back()} className="bg-white/20 px-5 py-2 rounded-xl text-xs font-bold transition active:scale-95">← رجوع</button>
               <h1 className="text-xl font-black italic">VERRA <span className="text-[#d1ba89]">NOTES</span></h1>
-              <button onClick={downloadPDF} disabled={isGenerating} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl text-xs font-black shadow-lg active:scale-95 transition">
-                {isGenerating ? "جاري البناء..." : "تحميل PDF 📄"}
+              <button onClick={downloadPDF} disabled={isGenerating} className="bg-[#d1ba89] text-[#004b47] px-5 py-2 rounded-xl text-xs font-black shadow-lg transition active:scale-95">
+                {isGenerating ? "جاري التحميل..." : "تحميل PDF 📄"}
               </button>
             </div>
           </header>
 
           <main className="p-5 max-w-3xl mx-auto mt-6">
-            {branches.map(b => (
+            {branchesList.map(b => (
                 <div key={b} className="branch-card">
-                  <div className="bg-[#e8f5ee] -m-5 mb-5 p-4 border-r-8 border-[#d1ba89] font-black text-[#004b47] text-lg rounded-tr-3xl">{b}</div>
+                  <div className="bg-[#e8f5ee] -m-5 mb-6 p-4 border-r-8 border-[#d1ba89] font-black text-[#004b47] text-lg rounded-tr-3xl shadow-sm">
+                    🏢 {b}
+                  </div>
                   {[1, 2, 3].map(i => (
                     <div key={i} className="note-box text-right">
-                      <p className="text-[10px] font-black text-gray-400 mb-2 uppercase">ملاحظة رقم {i}</p>
+                      <p className="text-[10px] font-black text-gray-400 mb-2 uppercase tracking-widest">الملاحظة {i}</p>
                       <textarea 
-                        className="notes-input mb-4" 
-                        placeholder="دون الملاحظة هنا..."
-                        value={notesData[b]?.[i]?.text || ""}
-                        onChange={(e) => handleText(b, i, e.target.value)}
+                        className="notes-input" 
+                        placeholder="أدخل نص الملاحظة هنا..."
+                        value={notesData[b][i].text}
+                        onChange={(e) => handleTextUpdate(b, i, e.target.value)}
                       />
-                      <div className="flex flex-wrap gap-2 items-center justify-end">
-                        <div className="flex gap-1 mr-auto">
-                           {(notesData[b]?.[i]?.imgs || []).map((img, ix) => (
-                             <div key={ix} className="relative">
-                               <img src={img} className="photo-thumb border shadow-sm" />
-                               <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-[8px] flex items-center justify-center" onClick={() => {
-                                   setNotesData(prev => {
-                                       const bData = {...prev[b]};
-                                       bData[i].imgs = bData[i].imgs.filter((_, idx) => idx !== ix);
-                                       return {...prev, [b]: bData};
-                                   });
-                               }}>×</div>
-                             </div>
-                           ))}
-                        </div>
-                        <label className="upload-btn bg-green-50 border-green-100 text-green-700 active:scale-95 transition">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={(e) => handleAction(b, i, e)} /></label>
-                        <label className="upload-btn active:scale-95 transition">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={(e) => handleAction(b, i, e)} /></label>
-                      </div>
                     </div>
                   ))}
                 </div>
             ))}
           </main>
+
+          <footer className="p-10 text-center text-gray-400 text-[10px] font-bold">
+             VERRA PRO ADMINISTRATION SYSTEM © 2026
+          </footer>
         </div>
       );
     }
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
