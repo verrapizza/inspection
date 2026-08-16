@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   
+  <!-- المكتبات الأساسية -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -22,7 +23,7 @@
   <style>
     body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; -webkit-tap-highlight-color: transparent; text-align: right; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
-    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 14px; border-radius: 12px; font-weight: 900; color: #004b47; margin: 25px 0 12px; }
+    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 14px; border-radius: 12px; font-weight: 900; color: #004b47; margin: 25px 0 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
     .item-card { background: white; border-radius: 25px; padding: 22px; margin-bottom: 15px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
     .ans-btn { width: 65px; height: 45px; border-radius: 12px; font-weight: 700; font-size: 11px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.2s; font-family: 'Cairo', sans-serif; }
     .btn-yes.active { background: #1C780B !important; color: white; border-color: #166534; box-shadow: 0 4px 10px rgba(28, 120, 11, 0.3); }
@@ -31,15 +32,17 @@
     .notes-input { width: 100%; margin-top: 12px; padding: 12px; border-radius: 15px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; font-family: 'Cairo', sans-serif; text-align: right; }
     .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; border: 2px solid white; shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 20px; }
-    .nav-btn { font-family: 'Cairo', sans-serif; padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: bold; transition: 0.3s; }
+    .nav-btn { font-family: 'Cairo', sans-serif; padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: bold; }
     .logout-btn { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
-    .home-btn { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-    .notes-page-btn { background: #d1ba89; color: #004b47; font-weight: 900; }
     .upload-btn { background: #f1f5f9; color: #475569; padding: 10px 16px; border-radius: 14px; font-size: 11px; font-weight: bold; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
   </style>
 </head>
 <body class="text-right">
-  <div id="root"></div>
+  <div id="root">
+    <div style="height: 100vh; display: flex; align-items: center; justify-content: center; font-family: Cairo; font-weight: bold; color: #004b47;">
+       جاري تحميل نظام إشراف الفروع...
+    </div>
+  </div>
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
@@ -59,7 +62,7 @@
     const LOGO_URL = "https://verrapizza.github.io/inspection/verralogo.png";
     const ADMIN_MAIN = "ch3f.ramzi@gmail.com";
 
-    // البنود الأصلية لمشرف الفروع (18 بنداً) كاملة
+    // البنود الأصلية الـ 18
     const sectionsData = [
       { 
         title: "الواجهة والصالات | Front & Lounge", 
@@ -75,10 +78,10 @@
         title: "قسم الإدارة والتشغيل | Admin & Operation", 
         items: [
           {id:4, en:"checks, the cashier department (net + phone + cashier + applications)", ar:"تشيك قسم الكاشير ( نت + تلفون + متابعة عهدة الكاشير + تشيك على نظام فودو في الكاشير + التشيك على نظاف فيد اس + متابعة الدوامات في مواقع التطبيقات )"},
-          {id:5, en:"Monitor and Google Maps.", ar:"( متابعة قوقل ماب )"},
-          {id:10, en:"Check and monitor all plants/trees in the branch, if available.", ar:"( تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع . )"},
-          {id:16, en:"Check attendance and leave", ar:"تشيك ( كشف الحضور )"},
-          {id:17, en:"Has a meeting been conducted with all employees today?", ar:"( هل تم الاجتماع مع جميع الموظفين اليوم )"},
+          {id:5, en:"Monitor and Google Maps.", ar:"متابعة قوقل ماب"},
+          {id:10, en:"Check and monitor all plants/trees in the branch, if available.", ar:"تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع ."},
+          {id:16, en:"Check attendance and leave", ar:"تشيك كشف الحضور والانصراف"},
+          {id:17, en:"Has a meeting been conducted with all employees today?", ar:"هل تم الاجتماع مع جميع الموظفين اليوم؟"},
           {id:18, en:"Follow-up on branch supervisors' daily tasks", ar:"متابعة مهام مشرفين الفروع"}
         ]
       },
@@ -111,6 +114,7 @@
       const [notes, setNotes] = useState({});
       const [photos, setPhotos] = useState({});
       const [submitting, setSubmitting] = useState(false);
+      const [expanded, setExpanded] = useState(new Set(sectionsData.map(s => s.title)));
       const canvasRef = useRef(null);
       const sigPad = useRef(null);
 
@@ -129,7 +133,7 @@
                       } else { window.location.href = "index.html"; }
                   } else { auth.signOut(); }
               } else { setUser(null); }
-            } catch (e) { console.error(e); } finally { setLoading(false); }
+            } catch(e) { console.error(e); } finally { setLoading(false); }
         });
         return () => unsubscribe();
       }, []);
@@ -171,24 +175,25 @@
       const handlePreview = () => {
         if (!branch) return alert("اختر المنشأة أولاً");
         const score = getScore();
-        const sig = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
-        
+        const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
+        const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
+
         let reportContent = sectionsData.filter(sec => sec.items.some(i => answers[i.id])).map(sec => {
           let items = sec.items.filter(i => answers[i.id]).map(i => {
             const ans = answers[i.id]; const note = notes[i.id] || ""; const pics = photos[i.id] || [];
             let sColor = ans === 'yes' ? '#1C780B' : ans === 'no' ? '#D91414' : '#64748b';
             return `
-              <div style="padding: 15px; border-bottom: 1px solid #eee; text-align: right; page-break-inside: avoid;">
-                <div style="font-size: 10px; color: #666; direction: ltr; text-align: left;">${i.en || ""}</div>
-                <div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b;">${i.ar}</div>
-                <div style="margin: 8px 0;"><span style="font-size: 12px; color: ${sColor}; font-weight: bold;">الحالة: ${ans==='yes'?'مطابق ✅':'مخالفة ❌'}</span></div>
-                ${note ? `<div style="background:#fff9e6; padding:8px; border-radius:8px; font-size:11px; margin-bottom:10px; font-family: 'Cairo';"><b>الملاحظة:</b> ${note}</div>` : ""}
-                <div style="width: 100%; display: block;">
-                    ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; vertical-align: top;"><img src="${p}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 12px; border: 1px solid #eee;" /></div>`).join('')}
+              <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; width: 100%;">
+                <div style="font-family: 'Cairo', sans-serif; font-size: 11px; color: #64748b; direction: ltr; text-align: left; margin-bottom: 4px;">${i.en || ""}</div>
+                <div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right; line-height: 1.6; margin-bottom: 10px;">${i.ar || i.q}</div>
+                <div style="margin-bottom: 10px;"><span style="font-size: 12px; color: ${sColor}; font-weight: bold; background: ${sColor}10; padding: 4px 12px; border-radius: 6px;">الحالة: ${ans === 'yes' ? 'مطابق ✅' : 'مخالفة ❌'}</span></div>
+                ${note ? `<div style="background:#fff9e6; padding:8px; border-radius:8px; font-size:11px; margin-bottom:10px; color:#92400e; font-family: 'Cairo', sans-serif;"><b>الملاحظة:</b> ${note}</div>` : ""}
+                <div style="width: 100%; display: block; text-align: right; clear: both;">
+                    ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; margin-bottom: 10px; vertical-align: top;"><img src="${p}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" /></div>`).join('')}
                 </div>
               </div>`;
           }).join("");
-          return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 12px; border-right: 8px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 25px;">${sec.title}</div>${items}</div>`;
+          return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 12px 20px; border-right: 10px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 30px; text-align: right; font-size: 18px; font-family: 'Cairo', sans-serif;">${sec.title}</div>${items}</div>`;
         }).join("");
 
         const html = `
@@ -199,12 +204,16 @@
                 <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير إشراف الفروع الرسمي</div>
             </div>
             <div style="background: #f8fafc; padding: 25px; border-radius: 20px; margin-bottom: 40px; display: table; width: 100%;">
-                <div style="display: table-cell; width: 70%; line-height: 2.2;"><b>🏢 المنشأة:</b> ${branch}<br><b>👤 المسؤول:</b> ${user.email}<br><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB')}</div>
-                <div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;"><div style="font-size: 55px; font-weight: 900; color: ${score >= 70 ? '#1C780B':'#D91414'}">${score}%</div></div>
+                <div style="display: table-cell; width: 70%; line-height: 2.2; vertical-align: middle; text-align: right;"><b>🏢 المنشأة:</b> ${branch}<br><b>👤 المسؤول:</b> ${user.email}<br><b>📅 التاريخ:</b> ${timestamp}</div>
+                <div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;">
+                    <p style="font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 900; color: #64748b;">الامتثال</p>
+                    <div style="font-size: 55px; font-weight: 900; color: ${score >= 70 ? '#1C780B':'#D91414'}">${score}%</div>
+                </div>
             </div>
             ${reportContent}
             <div style="margin-top: 60px; border-top: 3px solid #eee; padding-top: 30px; page-break-inside: avoid; text-align: right;">
-                <p style="font-weight: 900; font-size: 20px;">التوقيع:</p><img src="${sig}" style="width: 320px; height: 110px; object-fit: contain;" />
+                <p style="font-family: 'Cairo', sans-serif; font-weight: 900; color: #004b47; font-size: 20px; margin-bottom: 20px;">توقيع المشرف المعتمد:</p>
+                <div style="background: #fafafa; padding: 15px; border-radius: 20px; display: inline-block; border: 1px solid #f1f5f9;"><img src="${signatureImg}" style="width: 350px; height: 130px; object-fit: contain; display: block;" /></div>
             </div>
           </div>`;
         html2pdf().from(html).set({ margin:10, filename:`Report_${branch}.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:1.5, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).save();
@@ -228,24 +237,22 @@
           } catch (e) { alert("⚠️ خطأ في الإرسال"); } finally { setSubmitting(false); }
       };
 
-      if (loading) return <div style={{height:'100vh', display:'flex', alignItems:'center', justifyContent:'center', color:'#004b47', fontWeight:'bold', fontFamily:'Cairo'}}>جاري التحميل...</div>;
-      if (!user) return <div className="p-20 text-center font-bold text-red-500">يرجى تسجيل الدخول من البوابة الرئيسية.</div>;
+      if (loading) return <div style={{height:'100vh', display:'flex', alignItems:'center', justifyContent:'center', color:'#004b47', fontWeight:'bold', fontFamily:'Cairo'}}>جاري تحميل نظام إشراف الفروع...</div>;
+      if (!user) return <div className="p-20 text-center font-bold">يرجى تسجيل الدخول من البوابة.</div>;
 
       return (
         <div className="pb-40 text-right">
           <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[3rem] relative">
             <img src={LOGO_URL} className="h-24 mx-auto mb-4 drop-shadow-2xl" />
             <div className="flex flex-col items-center gap-3 text-white">
-                <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] font-bold">👤 {user.email}</span>
+                <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-right">👤 {user.email}</span>
                 <div className="flex gap-2">
-                    {/* الزر المطلوب: الملاحظات العامة */}
-                    <button onClick={() => window.location.href='notes.html'} className="nav-btn notes-page-btn px-4 py-1 rounded-lg shadow-md">📝 الملاحظات العامة</button>
-                    {userRole === 'admin' && <button onClick={() => window.location.href='admin.html'} className="nav-btn home-btn px-4 font-bold text-xs">🏠 الإدارة</button>}
+                    <button onClick={() => window.location.href='notes.html'} className="nav-btn bg-[#d1ba89] text-[#004b47] px-4 py-1 rounded-lg font-black shadow">📝 الملاحظات العامة</button>
+                    {userRole === 'admin' && <button onClick={() => window.location.href='admin.html'} className="nav-btn bg-white/20 px-4 py-1 rounded-lg text-xs font-bold">🏠 الإدارة</button>}
                     <button onClick={() => auth.signOut()} className="nav-btn logout-btn px-4">خروج ↪</button>
                 </div>
             </div>
           </div>
-          
           <div className="sticky-header flex justify-between items-center shadow-md">
             <div className="text-right">
                 <p className="text-[10px] font-bold text-gray-400 uppercase leading-none">Score</p>
@@ -253,16 +260,14 @@
             </div>
             <div className="flex gap-2">
                 <button onClick={handlePreview} className="nav-btn bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl shadow-lg font-black">معاينة</button>
-                <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-2 rounded-xl font-black shadow-lg text-xs`}>{submitting ? 'جاري...' : 'إرسال'}</button>
+                <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-2 rounded-xl font-black shadow-lg text-xs`}>{submitting ? '...' : 'إرسال'}</button>
             </div>
           </div>
-
           <main className="p-5 max-w-3xl mx-auto space-y-6">
             <div className="item-card p-6 border-r-[10px] border-[#004b47] shadow-xl text-right"><select className="w-full text-xl font-black bg-transparent text-right outline-none" value={branch} onChange={e=>setBranch(e.target.value)}><option value="">-- اختر الفرع للتفتيش اليومي --</option>{branches.map(b => <option key={b} value={b}>{b}</option>)}</select></div>
-            
             {sectionsData.map(sec => (
               <div key={sec.title}>
-                <div className="section-title flex justify-between items-center px-4 shadow-sm" onClick={() => {
+                <div className="section-title flex justify-between items-center px-4" onClick={() => {
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}><span>{sec.title}</span><span>{expanded.has(sec.title) ? '▲' : '▼'}</span></div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
@@ -284,8 +289,7 @@
                 ))}
               </div>
             ))}
-
-            <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner text-right"><h3 className="font-black text-green-900 mb-4 text-center">توقيع المسؤول المعتمد</h3><canvas ref={canvasRef} className="w-full h-40 bg-gray-50 rounded-2xl border shadow-inner"></canvas><button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs mt-3 underline font-bold">مسح التوقيع</button></div>
+            <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner text-right"><h3 className="font-black text-green-900 mb-4 text-center underline decoration-[#d1ba89]">توقيع المسؤول المعتمد</h3><canvas ref={canvasRef} className="w-full h-40 bg-gray-50 rounded-2xl border shadow-inner"></canvas><button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs mt-3 underline font-bold">مسح التوقيع</button></div>
           </main>
         </div>
       );
