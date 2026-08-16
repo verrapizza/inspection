@@ -17,22 +17,24 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; -webkit-tap-highlight-color: transparent; text-align: right; }
+    body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; -webkit-tap-highlight-color: transparent; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
-    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; cursor: pointer; }
-    .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
-    .ans-btn { width: 60px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 10px; background: #f1f5f9; border: 1px solid #e2e8f0; transition: 0.2s; }
-    .btn-yes.active { background: #1C780B !important; color: white; }
-    .btn-no.active { background: #D91414 !important; color: white; }
+    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 14px; border-radius: 12px; font-weight: 900; color: #004b47; margin: 25px 0 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .item-card { background: white; border-radius: 25px; padding: 22px; margin-bottom: 15px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    .ans-btn { width: 65px; height: 45px; border-radius: 12px; font-weight: 700; font-size: 11px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.2s; }
+    .btn-yes.active { background: #1C780B !important; color: white; border-color: #166534; box-shadow: 0 4px 10px rgba(28, 120, 11, 0.3); }
+    .btn-no.active { background: #D91414 !important; color: white; border-color: #991b1b; box-shadow: 0 4px 10px rgba(217, 20, 20, 0.3); }
     .btn-na.active { background: #64748b !important; color: white; }
-    .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
-    .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; border: 2px solid white; shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
-    .nav-btn { padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: bold; }
-    .upload-btn { background: #f8fafc; color: #475569; padding: 10px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 6px; }
+    .notes-input { width: 100%; margin-top: 12px; padding: 12px; border-radius: 15px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; transition: 0.3s; }
+    .notes-input:focus { border-color: #004b47; box-shadow: 0 0 0 3px rgba(0,75,71,0.05); }
+    .photo-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 12px; border: 2px solid white; shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 20px; }
+    .upload-btn { background: #f1f5f9; color: #475569; padding: 10px 16px; border-radius: 14px; font-size: 11px; font-weight: bold; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 6px; }
+    .logout-btn { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
+    .home-btn { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
   </style>
 </head>
-<body>
+<body class="text-right">
   <div id="root"></div>
 
   <script type="text/babel">
@@ -54,7 +56,7 @@
     const ADMIN_MAIN = "ch3f.ramzi@gmail.com";
     const branchesList = ["VERRA-Mekkah", "VERRA-Batterjie", "VERRA-Obhur", "VERRA-Kaust"];
 
-    // القائمة الكاملة لبنود التفتيش (18 بنداً)
+    // بنود مشرف الفروع الأصلية (18 بنداً)
     const sectionsData = [
       { 
         title: "الواجهة والصالات | Front & Lounge", 
@@ -108,7 +110,7 @@
       const [notes, setNotes] = useState({});
       const [photos, setPhotos] = useState({});
       const [extraNotes, setExtraNotes] = useState({});
-      const [expanded, setExpanded] = useState(new Set(sectionsData.map(s => s.title))); // الكل مفتوح افتراضياً
+      const [expanded, setExpanded] = useState(new Set(sectionsData.map(s => s.title)));
       const canvasRef = useRef(null);
       const sigPad = useRef(null);
 
@@ -165,6 +167,13 @@
         }
       };
 
+      const getScore = () => {
+        const vals = Object.values(answers);
+        const yes = vals.filter(v => v === 'yes').length;
+        const total = vals.filter(v => v !== 'na' && v !== undefined).length;
+        return total > 0 ? Math.round((yes / total) * 100) : 0;
+      };
+
       const handlePreview = () => {
         if (!branch) return alert("اختر المنشأة أولاً");
         const score = getScore();
@@ -175,7 +184,7 @@
           let items = sec.items.map(i => {
             const ans = answers[i.id]; const note = notes[i.id] || ""; const pics = photos[i.id] || [];
             let sColor = ans === 'yes' ? '#1C780B' : ans === 'no' ? '#D91414' : '#64748b';
-            let sTxt = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'N/A';
+            let sTxt = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'غير متوفر';
             return `
               <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; width: 100%;">
                 <div style="font-size: 11px; color: #64748b; direction: ltr; text-align: left; margin-bottom: 4px;">${i.en || ""}</div>
@@ -231,10 +240,10 @@
           if(submitting) return; setSubmitting(true);
           const score = getScore(); const reportId = Date.now().toString();
           try {
-              const photoEntries = Object.entries(photos);
-              const mid = Math.ceil(photoEntries.length / 2);
-              const p1 = Object.fromEntries(photoEntries.slice(0, mid));
-              const p2 = Object.fromEntries(photoEntries.slice(mid));
+              const pEntries = Object.entries(photos);
+              const mid = Math.ceil(pEntries.length / 2);
+              const p1 = Object.fromEntries(pEntries.slice(0, mid));
+              const p2 = Object.fromEntries(pEntries.slice(mid));
               await db.collection("inspections").doc(reportId).set({
                   branch, score, inspector: user.email, date: new Date().toLocaleString('en-GB'), timestamp: Date.now(),
                   signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos: p1, type: "Branch Report", hasExtra: true
@@ -244,15 +253,8 @@
           } catch (e) { alert("⚠️ خطأ في الإرسال"); } finally { setSubmitting(false); }
       };
 
-      const getScore = () => {
-        const vals = Object.values(answers);
-        const yes = vals.filter(v => v === 'yes').length;
-        const total = vals.filter(v => v !== 'na' && v !== undefined).length;
-        return total > 0 ? Math.round((yes / total) * 100) : 0;
-      };
-
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">جاري التحميل...</div>;
-      if (!user) return <div className="p-20 text-center font-bold text-red-500">يرجى تسجيل الدخول.</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse uppercase text-xl">جاري التحقق...</div>;
+      if (!user) return <div className="p-20 text-center font-bold">يرجى تسجيل الدخول.</div>;
 
       if (view === "notes") {
           return (
@@ -261,19 +263,19 @@
                     <div className="flex justify-between items-center max-w-2xl mx-auto">
                         <button onClick={() => setView('main')} className="bg-white/20 p-2 rounded-xl text-xs font-bold px-4">← رجوع</button>
                         <h2 className="font-black text-lg">سجل الملاحظات العامة</h2>
-                        <button onClick={generateNotesPDF} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl text-[10px] font-black shadow-sm">تحميل PDF 📄</button>
+                        <button onClick={generateNotesPDF} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl text-[10px] font-black">تحميل PDF 📄</button>
                     </div>
                 </div>
                 <main className="p-5 max-w-2xl mx-auto space-y-8">
                     {branchesList.map(b => (
-                        <div key={b} className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-100 text-right text-right">
-                            <div className="bg-[#e8f5ee] p-4 border-r-8 border-[#d1ba89] font-black text-[#004b47] text-right">{b}</div>
+                        <div key={b} className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-100">
+                            <div className="bg-[#e8f5ee] p-4 border-r-8 border-[#d1ba89] font-black text-[#004b47]">{b}</div>
                             <div className="p-4 space-y-6">
                                 {[1, 2, 3].map(i => (
-                                    <div key={i} className="border-b border-gray-50 pb-4 last:border-0 text-right">
+                                    <div key={i} className="border-b border-gray-50 pb-4 last:border-0">
                                         <textarea className="notes-input w-full p-3 rounded-xl border border-gray-200 text-sm mb-3" placeholder={`اكتب ملاحظة ${i} هنا...`}
                                             value={extraNotes[b]?.[i]?.text || ""} onChange={e => setExtraNotes({...extraNotes, [b]: {...extraNotes[b], [i]: {...extraNotes[b]?.[i], text: e.target.value}}})} />
-                                        <div className="flex flex-wrap gap-2 items-center justify-end text-right">
+                                        <div className="flex flex-wrap gap-2 items-center justify-end">
                                             <div className="flex gap-1 mr-auto">{(extraNotes[b]?.[i]?.imgs || []).map((img, ix) => ( <img key={ix} src={img} className="w-12 h-12 object-cover rounded-lg border shadow-sm" /> ))}</div>
                                             <label className="upload-btn bg-green-50 text-green-700 border-green-100">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(0, e, true, b, i)} /></label>
                                             <label className="upload-btn">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(0, e, true, b, i)} /></label>
@@ -290,24 +292,24 @@
 
       return (
         <div className="pb-40 text-right">
-          <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[3rem]">
-            <img src={LOGO_URL} className="h-24 mx-auto mb-4" />
+          <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[3rem] relative">
+            <img src={LOGO_URL} className="h-24 mx-auto mb-4 drop-shadow-2xl" />
             <div className="flex flex-col items-center gap-3 text-white">
                 <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] font-bold">👤 {user.email}</span>
                 <div className="flex gap-2">
-                    <button onClick={() => setView('notes')} className="nav-btn notes-page-btn px-4">📝 الملاحظات العامة</button>
-                    {userRole === 'admin' && <button onClick={() => window.location.href='admin.html'} className="nav-btn home-btn px-4">🏠 الإدارة</button>}
-                    <button onClick={() => auth.signOut()} className="nav-btn logout-btn px-4">خروج ↪</button>
+                    <button onClick={() => setView('notes')} className="nav-btn notes-page-btn px-4 shadow-sm">📝 الملاحظات</button>
+                    {userRole === 'admin' && <button onClick={() => window.location.href='admin.html'} className="nav-btn home-btn px-4 font-bold text-xs">🏠 الإدارة</button>}
+                    <button onClick={() => auth.signOut()} className="nav-btn logout-btn px-4 shadow-sm">خروج ↪</button>
                 </div>
             </div>
           </div>
           <div className="sticky-header flex justify-between items-center shadow-md">
             <div className="text-right">
-                <p className="text-[10px] font-bold text-gray-400 uppercase leading-none">Overall Score</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase leading-none">Score</p>
                 <p className="text-3xl font-black text-green-700 mt-1">{getScore()}%</p>
             </div>
             <div className="flex gap-2">
-                <button onClick={handlePreview} className="nav-btn preview-btn bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl">معاينة</button>
+                <button onClick={handlePreview} className="nav-btn preview-btn bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl shadow-lg font-black">معاينة</button>
                 <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-2 rounded-xl font-black shadow-lg text-xs`}>{submitting ? 'جاري...' : 'إرسال'}</button>
             </div>
           </div>
@@ -315,12 +317,12 @@
             <div className="item-card p-6 border-r-[10px] border-[#004b47] shadow-xl"><select className="w-full text-xl font-black bg-transparent text-right outline-none" value={branch} onChange={e=>setBranch(e.target.value)}><option value="">-- اختر الفرع للتفتيش اليومي --</option>{branches.map(b => <option key={b} value={b}>{b}</option>)}</select></div>
             {sectionsData.map(sec => (
               <div key={sec.title}>
-                <div className="section-title flex justify-between items-center px-4" onClick={() => {
+                <div className="section-title flex justify-between items-center px-4 shadow-sm" onClick={() => {
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}><span>{sec.title}</span><span>{expanded.has(sec.title) ? '▲' : '▼'}</span></div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
                   <div key={i.id} className="item-card shadow-md">
-                    <p className="font-bold text-gray-800 mb-4 leading-relaxed text-right whitespace-pre-line text-right">{i.q}</p>
+                    <p className="text-sm font-black text-green-950 mb-4 leading-relaxed text-right whitespace-pre-line">{i.q}</p>
                     <div className="flex gap-2 justify-end mb-4">
                       <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn ${answers[i.id]==='yes'?'active btn-yes':''}`}>نعم</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn ${answers[i.id]==='no'?'active btn-no':''}`}>لا</button>
@@ -342,9 +344,7 @@
       );
     }
 
-    const container = document.getElementById('root');
-    const root = ReactDOM.createRoot(container);
-    root.render(<App />);
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 </html>
