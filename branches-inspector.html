@@ -8,14 +8,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   
-  <!-- المكتبات الأساسية -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -23,16 +21,16 @@
   <style>
     body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; -webkit-tap-highlight-color: transparent; text-align: right; }
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
-    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 14px; border-radius: 12px; font-weight: 900; color: #004b47; margin: 25px 0 12px; }
+    .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 14px; border-radius: 12px; font-weight: 900; color: #004b47; margin: 25px 0 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
     .item-card { background: white; border-radius: 25px; padding: 22px; margin-bottom: 15px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
     .ans-btn { width: 65px; height: 45px; border-radius: 12px; font-weight: 700; font-size: 11px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.2s; font-family: 'Cairo', sans-serif; }
     .btn-yes.active { background: #1C780B !important; color: white; border-color: #166534; box-shadow: 0 4px 10px rgba(28, 120, 11, 0.3); }
     .btn-no.active { background: #D91414 !important; color: white; border-color: #991b1b; box-shadow: 0 4px 10px rgba(217, 20, 20, 0.3); }
     .btn-na.active { background: #64748b !important; color: white; }
-    .notes-input { width: 100%; margin-top: 12px; padding: 12px; border-radius: 15px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; font-family: 'Cairo', sans-serif; text-align: right; }
+    .notes-input { width: 100%; margin-top: 12px; padding: 12px; border-radius: 15px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; font-family: 'Cairo', sans-serif; }
     .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 10px; border: 2px solid white; shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 20px; }
-    .upload-btn { background: #f1f5f9; color: #475569; padding: 10px 16px; border-radius: 14px; font-size: 11px; font-weight: bold; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+    .nav-btn { font-family: 'Cairo', sans-serif; padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: bold; transition: 0.3s; }
     .notes-overlay { position: fixed; inset: 0; background: #f1f5f9; z-index: 200; overflow-y: auto; }
   </style>
 </head>
@@ -63,39 +61,39 @@
       { 
         title: "الواجهة والصالات | Front & Lounge", 
         items: [
-          {id:1, en:"check the restaurant front section (restaurant front + entrance floor + thermometer + air curtain)", ar:"تشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
-          {id:2, en:"Check lounge section 1 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
-          {id:3, en:"check bathroom hall 1 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
-          {id:8, en:"Check lounge section 2 (tables + Chairs + walls and floor + air conditioning)", ar:"تشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
-          {id:9, en:"check bathroom hall 2 (general cleaning + tissue machine + soap machine + perfume machine)", ar:"تشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"}
+          {id:1, en:"check restaurant front", ar:"تشيك قسم واجهة المطعم ( نظافة واجهة المطعم + أرضية المدخل + الستارة القماش + الستارة الهوائية + تشيك على اللوحة بداية ونهاية الدوام )"},
+          {id:2, en:"Check lounge section 1", ar:"تشيك قسم صالة 1 ( طاولات + كراسي + جدران و الأرضية + تكيف + مكينة المعطر + طفايات )"},
+          {id:3, en:"check bathroom hall 1", ar:"تشيك الحمام صالة 1 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"},
+          {id:8, en:"Check lounge section 2", ar:"تشيك قسم صالة 2 ( طاولات + كراسي + جدران والأرضية + تكيف + طفايات )"},
+          {id:9, en:"check bathroom hall 2", ar:"تشيك الحمام صالة 2 ( نظافة عامة + مكينة المناديل + مكينة الصابون + مكينة المعطر + متابعة جدول النظافة )"}
         ]
       },
       { 
         title: "قسم الإدارة والتشغيل | Admin & Operation", 
         items: [
-          {id:4, en:"checks, the cashier department (net + phone + cashier + applications)", ar:"تشيك قسم الكاشير ( نت + تلفون + متابعة عهدة الكاشير + تشيك على نظام فودو في الكاشير + التشيك على نظاف فيد اس + متابعة الدوامات في مواقع التطبيقات )"},
-          {id:5, en:"Monitor and Google Maps.", ar:"( متابعة قوقل ماب )"},
-          {id:10, en:"Check and monitor all plants/trees in the branch, if available.", ar:"( تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع . )"},
-          {id:16, en:"Check attendance and leave", ar:"تشيك ( كشف الحضور )"},
-          {id:17, en:"Has a meeting been conducted with all employees today?", ar:"( هل تم الاجتماع مع جميع الموظفين اليوم )"},
-          {id:18, en:"Follow-up on branch supervisors' daily tasks", ar:"متابعة مهام مشرفين الفروع"}
+          {id:4, en:"checks cashier department", ar:"تشيك قسم الكاشير ( نت + تلفون + متابعة عهدة الكاشير + تشيك على نظام فودو في الكاشير + التشيك على نظاف فيد اس + متابعة الدوامات في مواقع التطبيقات )"},
+          {id:5, en:"Monitor Google Maps", ar:"متابعة قوقل ماب"},
+          {id:10, en:"Check plants/trees", ar:"تشيك على الأشجار ومتابعتها بالكامل ان وجد في الفرع ."},
+          {id:16, en:"Check attendance", ar:"تشيك كشف الحضور والانصراف"},
+          {id:17, en:"Daily meeting today", ar:"هل تم الاجتماع مع جميع الموظفين اليوم؟"},
+          {id:18, en:"Follow-up supervisors", ar:"متابعة مهام مشرفين الفروع"}
         ]
       },
       { 
         title: "الإنتاج والمخزون | Production & Store", 
         items: [
-          {id:6, en:"Check the juices section (mixers + Pepsi machine + gas tube + chiller + dates)", ar:"تشيك قسم العصائر ( تشيك الخلاطات + نظافة مكينة البيبسي + كراتين التابعة للمكينة مع الغاز + ثلاجة العصائر + تواريخ )"},
-          {id:7, en:"Check the store section (elevator + store arrangement + cleaning + stacking + date control + store under the stairs)", ar:"تشيك قسم المستودع ( المصعد + ترتيب المستودع + نظافة + التكديس + مراقبة التواريخ + مستودع تحت الدرج مكة )"},
-          {id:11, en:"Check Restaurant, back side (general cleaning + air curtains)", ar:"تشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية + الغاز )"},
-          {id:13, en:"Send orders according to schedule", ar:"رفع الطلبات حسب الجدول"},
+          {id:6, en:"Check juices section", ar:"تشيك قسم العصائر ( تشيك الخلاطات + نظافة مكينة البيبسي + كراتين التابعة للمكينة مع الغاز + ثلاجة العصائر + تواريخ )"},
+          {id:7, en:"Check store section", ar:"تشيك قسم المستودع ( المصعد + ترتيب المستودع + نظافة + التكديس + مراقبة التواريخ + مستودع تحت الدرج مكة )"},
+          {id:11, en:"Check Restaurant back side", ar:"تشيك القسم الخلفي للمطعم ( نظافة عامة + ستاير هوائية + الغاز )"},
+          {id:13, en:"Send orders schedule", ar:"رفع الطلبات حسب الجدول"},
           {id:14, en:"check requests", ar:"تشيك الطلبات"}
         ]
       },
       { 
         title: "العمال والمرافق | Staff & Facilities", 
         items: [
-          {id:12, en:"Check the employees (personal hygiene * uniform hygiene * nails * smell * health certificate * masks * gloves * harnet)", ar:"تشيك العمال ( النظافة الشخصية * نظافة اليونفرم * اظافر * ريحة * كرت البلدية * الكمام * قلفزات * هرنت )"},
-          {id:15, en:"General check (sanitary facilities + all lamps + tiles + Damaged or broken equipment + Damaged or broken tools)", ar:"تشيك عام ( مرافق صحية + جميع اللمبات + البلاط + المكاين الخربانة او المكسرة + أدوات الخربانة او المكسرة )"}
+          {id:12, en:"Check employees hygiene", ar:"تشيك العمال ( النظافة الشخصية * نظافة اليونفرم * اظافر * ريحة * كرت البلدية * الكمام * قلفزات * هرنت )"},
+          {id:15, en:"General facility check", ar:"تشيك عام ( مرافق صحية + جميع اللمبات + البلاط + المكاين الخربانة او المكسرة + أدوات الخربانة او المكسرة )"}
         ]
       }
     ];
@@ -103,15 +101,15 @@
     function App() {
       const [user, setUser] = useState(null);
       const [userRole, setUserRole] = useState("");
-      const [view, setView] = useState("main");
+      const [view, setView] = useState("main"); // "main" or "notes"
       const [loading, setLoading] = useState(true);
-      const [submitting, setSubmitting] = useState(false);
       const [branch, setBranch] = useState("");
       const [branches, setBranches] = useState([]);
       const [answers, setAnswers] = useState({});
       const [notes, setNotes] = useState({});
       const [photos, setPhotos] = useState({});
       const [extraNotes, setExtraNotes] = useState({});
+      const [submitting, setSubmitting] = useState(false);
       const canvasRef = useRef(null);
       const sigPad = useRef(null);
 
@@ -120,24 +118,22 @@
             try {
               if (u) {
                   const uEmail = u.email.toLowerCase().trim();
-                  const authSnap = await db.collection("authorized_users").where("email", "==", uEmail).get();
-                  if (uEmail === ADMIN_MAIN || !authSnap.empty) {
-                      const role = uEmail === ADMIN_MAIN ? 'admin' : authSnap.docs[0].data().role;
+                  const snap = await db.collection("authorized_users").where("email", "==", uEmail).get();
+                  if (uEmail === ADMIN_MAIN || !snap.empty) {
+                      const role = uEmail === ADMIN_MAIN ? 'admin' : snap.docs[0].data().role;
                       setUserRole(role);
-                      if (role === 'admin' || role === 'supervisor') {
-                          setUser(u);
-                          db.collection("branches").orderBy("name").onSnapshot(snap => setBranches(snap.docs.map(d => d.data().name)));
-                      } else { window.location.href = "index.html"; }
-                  } else { auth.signOut(); }
+                      db.collection("branches").orderBy("name").onSnapshot(s => setBranches(s.docs.map(d => d.data().name)));
+                      setUser(u);
+                  } else { window.location.href = "index.html"; }
               } else { setUser(null); }
-            } catch(e) { console.error(e); } finally { setLoading(false); }
+            } finally { setLoading(false); }
         });
         return () => unsubscribe();
       }, []);
 
       useEffect(() => { if (user && canvasRef.current && view === "main") sigPad.current = new SignaturePad(canvasRef.current); }, [user, view]);
 
-      const compressImage = (file) => {
+      const compress = (file) => {
         return new Promise((resolve) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
@@ -146,7 +142,7 @@
             img.src = e.target.result;
             img.onload = () => {
               const canvas = document.createElement('canvas');
-              const MAX_W = 280; const scale = MAX_W / img.width;
+              const MAX_W = 250; const scale = MAX_W / img.width;
               canvas.width = MAX_W; canvas.height = img.height * scale;
               const ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -158,7 +154,7 @@
 
       const handlePhotoAction = async (id, e, isExtra = false, bKey = "", nIdx = 0) => {
         const file = e.target.files[0]; if (!file) return;
-        const compressed = await compressImage(file);
+        const compressed = await compress(file);
         if (isExtra) {
             setExtraNotes(prev => {
                 const bData = { ...(prev[bKey] || {}) };
@@ -172,86 +168,6 @@
         }
       };
 
-      const handlePreview = () => {
-        if (!branch) return alert("اختر المنشأة أولاً");
-        const score = getScore();
-        const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
-        const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
-
-        let reportContent = sectionsData.filter(sec => sec.items.some(i => answers[i.id])).map(sec => {
-          let items = sec.items.filter(i => answers[i.id]).map(i => {
-            const ans = answers[i.id]; const note = notes[i.id] || ""; const pics = photos[i.id] || [];
-            let sColor = ans === 'yes' ? '#1C780B' : ans === 'no' ? '#D91414' : '#64748b';
-            let sTxt = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'غير متوفر';
-            return `
-              <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; width: 100%;">
-                <div style="font-size: 11px; color: #64748b; direction: ltr; text-align: left; margin-bottom: 4px;">${i.en || ""}</div>
-                <div style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right; line-height: 1.6; margin-bottom: 10px;">${i.ar || i.q}</div>
-                <div style="margin-bottom: 10px;"><span style="font-size: 12px; color: ${sColor}; font-weight: bold; background: ${sColor}10; padding: 4px 12px; border-radius: 6px;">الحالة: ${sTxt}</span></div>
-                ${note ? `<div style="background:#fff9e6; padding:8px; border-radius:8px; font-size:11px; margin-bottom:10px; color:#92400e; font-family: 'Cairo', sans-serif;"><b>الملاحظة:</b> ${note}</div>` : ""}
-                <div style="width: 100%; display: block; text-align: right; clear: both;">
-                    ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; margin-bottom: 10px; vertical-align: top;"><img src="${p}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" /></div>`).join('')}
-                </div>
-              </div>`;
-          }).join("");
-          return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 12px 20px; border-right: 10px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 30px; text-align: right; font-size: 18px;">${sec.title}</div>${items}</div>`;
-        }).join("");
-
-        const html = `
-          <div style="width: 800px; margin: 0 auto; padding: 45px; background: white; direction: rtl; text-align: right; box-sizing: border-box; font-family: sans-serif;">
-            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 15px;" />
-                <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير إشراف الفروع الرسمي</div>
-            </div>
-            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 40px; display: table; width: 100%;">
-                <div style="display: table-cell; width: 70%; line-height: 2.2; vertical-align: middle; text-align: right;"><b>🏢 المنشأة:</b> ${branch}<br><b>👤 المسؤول:</b> ${user.email}<br><b>📅 التاريخ:</b> ${timestamp}</div>
-                <div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;">
-                    <p style="font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 900; color: #64748b;">الامتثال</p>
-                    <div style="font-size: 55px; font-weight: 900; color: ${score >= 70 ? '#1C780B':'#D91414'}">${score}%</div>
-                </div>
-            </div>
-            ${reportContent}
-            <div style="margin-top: 60px; border-top: 4px solid #004b47; padding-top: 30px; page-break-inside: avoid; text-align: right;">
-                <p style="font-family: 'Cairo', sans-serif; font-weight: 900; color: #004b47; font-size: 20px; margin-bottom: 20px;">توقيع المشرف المعتمد:</p>
-                <div style="background: #fafafa; padding: 15px; border-radius: 20px; display: inline-block; border: 1px solid #f1f5f9;"><img src="${signatureImg}" style="width: 350px; height: 130px; object-fit: contain; display: block;" /></div>
-            </div>
-          </div>`;
-        html2pdf().from(html).set({ margin:10, filename:`Report_${branch}.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:1.5, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).save();
-      };
-
-      const generateNotesPDF = () => {
-          const timestamp = new Date().toLocaleString('en-GB');
-          let content = branchesList.map(b => {
-              let bContent = [1, 2, 3].map(i => {
-                  const data = extraNotes[b]?.[i] || { text: "", imgs: [] };
-                  if (!data.text && data.imgs.length === 0) return "";
-                  return `<div style="padding:15px; border-bottom:1px solid #eee; page-break-inside:avoid; font-family: 'Cairo', sans-serif;"><b>ملاحظة ${i}:</b><p style="font-size:13px; margin:8px 0;">${data.text || ""}</p><div style="margin-top:10px;">${data.imgs.map(img => `<img src="${img}" style="width:180px; height:150px; object-fit:cover; margin:5px; border-radius:12px; border:1px solid #eee;"/>`).join('')}</div></div>`;
-              }).join('');
-              return `<div style="font-family: 'Cairo', sans-serif; margin-top:25px; border-right:10px solid #d1ba89; background:#f0fdf4; padding:15px; font-weight:900; font-size:18px;">فرع: ${b}</div>${bContent || '<p style="padding:10px; color:#999; font-family: Cairo;">لا توجد ملاحظات</p>'}`;
-          }).join('');
-          const html = `<div style="width:750px; margin:0 auto; padding:45px; direction:rtl; text-align:right; font-family:'Cairo', sans-serif;"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet"><div style="text-align:center; border-bottom:5px solid #004b47; padding-bottom:20px; margin-bottom:30px;"><img src="${LOGO_URL}" style="height:90px;"/><h1 style="color:#004b47; font-size:28px; font-weight:900; margin-top:10px;">سجل ملاحظات الفروع المجمّع</h1><p>التاريخ: ${timestamp}</p></div>${content}</div>`;
-          html2pdf().from(html).set({ margin:10, filename:`Global_Notes.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:2}, jsPDF:{unit:'mm', format:'a4'} }).save();
-      };
-
-      const handleFinalSubmit = async () => {
-          if(!branch) return alert("اختر المنشأة");
-          if(submitting) return; setSubmitting(true);
-          const score = getScore(); const reportId = Date.now().toString();
-          try {
-              const pEntries = Object.entries(photos);
-              const mid = Math.ceil(pEntries.length / 2);
-              const p1 = Object.fromEntries(pEntries.slice(0, mid));
-              const p2 = Object.fromEntries(pEntries.slice(mid));
-              await db.collection("inspections").doc(reportId).set({
-                  branch, score, inspector: user.email, date: new Date().toLocaleString('en-GB'), timestamp: Date.now(),
-                  signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos: p1, type: "Branch Report", hasExtra: true
-              });
-              await db.collection("inspection_attachments").doc(reportId).set({ reportId, photos: p2 });
-              alert("✅ تم الإرسال بنجاح!"); window.location.reload();
-          } catch (e) { alert("⚠️ خطأ في الإرسال"); } finally { setSubmitting(false); }
-      };
-
       const getScore = () => {
         const vals = Object.values(answers);
         const yes = vals.filter(v => v === 'yes').length;
@@ -259,32 +175,88 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">...VERRA PRO LOADING</div>;
-      if (!user) return <div className="p-20 text-center font-bold">يرجى تسجيل الدخول.</div>;
+      const handlePreview = () => {
+        if (!branch) return alert("اختر المنشأة أولاً");
+        const score = getScore();
+        const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
+        
+        let reportContent = sectionsData.filter(sec => sec.items.some(i => answers[i.id])).map(sec => {
+          let items = sec.items.filter(i => answers[i.id]).map(i => {
+            const ans = answers[i.id]; const note = notes[i.id] || ""; const pics = photos[i.id] || [];
+            let sColor = ans === 'yes' ? '#1C780B' : ans === 'no' ? '#D91414' : '#64748b';
+            return `
+              <div style="padding: 15px; border-bottom: 1px solid #eee; text-align: right; page-break-inside: avoid; width: 100%;">
+                <div style="font-size: 10px; color: #666; direction: ltr; text-align: left;">${i.en || ""}</div>
+                <div style="font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; text-align: right;">${i.ar || i.q}</div>
+                <div style="margin: 8px 0;"><span style="font-size: 12px; color: ${sColor}; font-weight: bold; background: ${sColor}10; padding: 4px 10px; border-radius: 6px;">الحالة: ${ans==='yes'?'مطابق ✅':'مخالفة ❌'}</span></div>
+                ${note ? `<div style="background:#fff9e6; padding:8px; border-radius:8px; font-size:11px; margin-bottom:10px;"><b>الملاحظة:</b> ${note}</div>` : ""}
+                <div style="width: 100%; display: block;">
+                    ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; vertical-align: top;"><img src="${p}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 12px; border: 1px solid #eee;" /></div>`).join('')}
+                </div>
+              </div>`;
+          }).join("");
+          return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 12px; border-right: 8px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 25px;">${sec.title}</div>${items}</div>`;
+        }).join("");
+
+        const html = `<div style="width: 800px; margin: 0 auto; padding: 45px; background: white; direction: rtl; text-align: right; box-sizing: border-box; font-family: sans-serif;"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet"><div style="text-align: center; margin-bottom: 30px;"><img src="${LOGO_URL}" style="height: 100px;" /><div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير إشراف الفروع الرسمي</div></div><div style="background: #f8fafc; padding: 25px; border-radius: 20px; margin-bottom: 40px; display: table; width: 100%;"><div style="display: table-cell; width: 70%; line-height: 2.2;"><b>🏢 المنشأة:</b> ${branch}<br><b>👤 المسؤول:</b> ${user.email}<br><b>📅 التاريخ:</b> ${new Date().toLocaleString('en-GB')}</div><div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;"><div style="font-size: 55px; font-weight: 900; color: ${score >= 70 ? '#1C780B':'#D91414'}">${score}%</div></div></div>${reportContent}<div style="margin-top: 60px; border-top: 3px solid #eee; padding-top: 30px; page-break-inside: avoid; text-align: right;"><p style="font-weight: 900; font-size: 20px;">التوقيع:</p><img src="${signatureImg}" style="width: 320px; height: 110px; object-fit: contain;" /></div></div>`;
+        html2pdf().from(html).set({ margin:10, filename:`Report_${branch}.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:1.5, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).save();
+      };
+
+      const generateNotesPDF = () => {
+          let content = branchesList.map(b => {
+              let bContent = [1, 2, 3].map(i => {
+                  const data = extraNotes[b]?.[i] || { text: "", imgs: [] };
+                  if (!data.text && data.imgs.length === 0) return "";
+                  return `<div style="padding:15px; border-bottom:1px solid #eee; page-break-inside:avoid;"><b>ملاحظة ${i}:</b><p style="font-size:13px; margin:8px 0;">${data.text || ""}</p><div style="margin-top:10px;">${data.imgs.map(img => `<img src="${img}" style="width:180px; height:150px; object-fit:cover; margin:5px; border-radius:12px; border:1px solid #eee;"/>`).join('')}</div></div>`;
+              }).join('');
+              return `<div style="margin-top:25px; border-right:10px solid #d1ba89; background:#f0fdf4; padding:15px; font-weight:900; font-size:18px;">فرع: ${b}</div>${bContent || '<p style="padding:10px; color:#999;">لا توجد ملاحظات</p>'}`;
+          }).join('');
+          const html = `<div style="width:750px; margin:0 auto; padding:45px; direction:rtl; text-align:right; font-family:sans-serif;"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet"><div style="text-align:center; border-bottom:5px solid #004b47; padding-bottom:20px; margin-bottom:30px;"><img src="${LOGO_URL}" style="height:90px;"/><h1 style="color:#004b47; font-size:28px; font-weight:900; margin-top:10px;">سجل ملاحظات الفروع المجمّع</h1></div>${content}</div>`;
+          html2pdf().from(html).set({ margin:10, filename:`Global_Notes.pdf`, image:{type:'jpeg', quality:1.0}, html2canvas:{scale:2}, jsPDF:{unit:'mm', format:'a4'} }).save();
+      };
+
+      const handleFinalSubmit = async () => {
+          if(!branch) return alert("اختر المنشأة");
+          if(submitting) return; setSubmitting(true);
+          const score = getScore(); const rId = Date.now().toString();
+          try {
+              const pEntries = Object.entries(photos);
+              const mid = Math.ceil(pEntries.length / 2);
+              const p1 = Object.fromEntries(pEntries.slice(0, mid));
+              const p2 = Object.fromEntries(pEntries.slice(mid));
+              await db.collection("inspections").doc(rId).set({
+                  branch, score, inspector: user.email, date: new Date().toLocaleString('en-GB'), timestamp: Date.now(),
+                  signature: sigPad.current ? sigPad.current.toDataURL() : "", answers, notes, photos: p1, type: "Branch Report", hasExtra: true
+              });
+              await db.collection("inspection_attachments").doc(rId).set({ reportId: rId, photos: p2 });
+              alert("✅ تم الإرسال بنجاح!"); window.location.reload();
+          } catch (e) { alert("⚠️ خطأ في الإرسال"); } finally { setSubmitting(false); }
+      };
+
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">جاري التحميل...</div>;
+      if (!user) return <div className="p-20 text-center font-bold text-red-500">يرجى تسجيل الدخول.</div>;
 
       if (view === "notes") {
           return (
             <div className="notes-overlay text-right">
-                <div className="verra-gradient p-8 text-center text-white sticky top-0 z-[110] shadow-lg">
-                    <div className="flex justify-between items-center max-w-2xl mx-auto text-right">
-                        <button onClick={() => setView('main')} className="bg-white/20 p-2 rounded-xl text-xs font-bold px-4">← رجوع</button>
-                        <h2 className="font-black text-lg">سجل الملاحظات العامة</h2>
-                        <button onClick={generateNotesPDF} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl text-[10px] font-black shadow-sm">تحميل PDF 📄</button>
-                    </div>
+                <div className="verra-gradient p-8 text-center text-white sticky top-0 z-[210] shadow-lg flex justify-between items-center px-6">
+                    <button onClick={() => setView('main')} className="bg-white/20 p-2 rounded-xl text-xs font-bold px-4">← رجوع</button>
+                    <h2 className="font-black text-lg">سجل الملاحظات العامة</h2>
+                    <button onClick={generateNotesPDF} className="bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl text-[10px] font-black">تحميل PDF 📄</button>
                 </div>
-                <main className="p-5 max-w-2xl mx-auto space-y-8 text-right">
+                <main className="p-5 max-w-2xl mx-auto space-y-8">
                     {branchesList.map(b => (
                         <div key={b} className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-100">
                             <div className="bg-[#e8f5ee] p-4 border-r-8 border-[#d1ba89] font-black text-[#004b47]">{b}</div>
                             <div className="p-4 space-y-6">
                                 {[1, 2, 3].map(i => (
-                                    <div key={i} className="border-b border-gray-50 pb-4 last:border-0 text-right">
+                                    <div key={i} className="border-b border-gray-50 pb-4 last:border-0">
                                         <textarea className="notes-input w-full p-3 rounded-xl border border-gray-200 text-sm mb-3" placeholder={`اكتب ملاحظة ${i} هنا...`}
-                                            value={extraNotes[b]?.[i]?.text || ""} onChange={e => setExtraNotes(prev => ({...prev, [b]: {...prev[b], [i]: {...prev[b]?.[i], text: e.target.value}}}))} />
-                                        <div className="flex flex-wrap gap-2 items-center justify-end">
+                                            value={extraNotes[b]?.[i]?.text || ""} onChange={e => setExtraNotes({...extraNotes, [b]: {...(extraNotes[b] || {}), [i]: {...(extraNotes[b]?.[i] || {}), text: e.target.value}}})} />
+                                        <div className="flex flex-wrap gap-2 items-center justify-end text-right">
                                             <div className="flex gap-1 mr-auto">{(extraNotes[b]?.[i]?.imgs || []).map((img, ix) => ( <img key={ix} src={img} className="w-12 h-12 object-cover rounded-lg border shadow-sm" /> ))}</div>
-                                            <label className="upload-btn bg-green-50 text-green-700 border-green-100 shadow-sm">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(0, e, true, b, i)} /></label>
-                                            <label className="upload-btn shadow-sm">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(0, e, true, b, i)} /></label>
+                                            <label className="upload-btn bg-green-50 text-green-700 border-green-100">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(0, e, true, b, i)} /></label>
+                                            <label className="upload-btn">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(0, e, true, b, i)} /></label>
                                         </div>
                                     </div>
                                 ))}
@@ -296,8 +268,6 @@
           );
       }
 
-      const fixNums = (str) => str ? str.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)) : "0";
-
       return (
         <div className="pb-40 text-right">
           <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[3rem] relative">
@@ -305,19 +275,16 @@
             <div className="flex flex-col items-center gap-3 text-white">
                 <span className="bg-white/10 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-right">👤 {user.email}</span>
                 <div className="flex gap-2">
-                    <button onClick={() => setView('notes')} className="nav-btn notes-page-btn px-4 shadow-sm text-right">📝 الملاحظات</button>
-                    {userRole === 'admin' && <button onClick={() => window.location.href='admin.html'} className="nav-btn home-btn px-4 font-bold text-xs">🏠 الإدارة</button>}
-                    <button onClick={() => auth.signOut()} className="nav-btn logout-btn px-4">خروج ↪</button>
+                    <button onClick={() => setView('notes')} className="nav-btn bg-[#d1ba89] text-[#004b47] px-4 py-1 rounded-lg">📝 الملاحظات</button>
+                    {userRole === 'admin' && <button onClick={() => window.location.href='admin.html'} className="nav-btn bg-white/20 px-4 py-1 rounded-lg text-xs font-bold">🏠 الإدارة</button>}
+                    <button onClick={() => auth.signOut()} className="nav-btn logout-btn px-4 py-1 rounded-lg">خروج ↪</button>
                 </div>
             </div>
           </div>
           <div className="sticky-header flex justify-between items-center shadow-md">
-            <div className="text-right">
-                <p className="text-[10px] font-bold text-gray-400 uppercase leading-none">Score</p>
-                <p className="text-3xl font-black text-green-700 mt-1">{getScore()}%</p>
-            </div>
+            <div className="text-right"><p className="text-[10px] font-bold text-gray-400 uppercase leading-none text-right">Overall Score</p><p className="text-3xl font-black text-green-700 mt-1">{getScore()}%</p></div>
             <div className="flex gap-2">
-                <button onClick={handlePreview} className="nav-btn preview-btn bg-[#d1ba89] text-[#004b47] px-4 py-2 rounded-xl shadow-lg font-black">معاينة</button>
+                <button onClick={handlePreview} className="nav-btn preview-btn px-4 py-2 rounded-xl shadow-lg">معاينة</button>
                 <button onClick={handleFinalSubmit} disabled={submitting} className={`${submitting ? 'bg-gray-400':'verra-gradient'} text-white px-5 py-2 rounded-xl font-black shadow-lg text-xs`}>{submitting ? 'جاري...' : 'إرسال'}</button>
             </div>
           </div>
@@ -325,23 +292,23 @@
             <div className="item-card p-6 border-r-[10px] border-[#004b47] shadow-xl text-right"><select className="w-full text-xl font-black bg-transparent text-right outline-none" value={branch} onChange={e=>setBranch(e.target.value)}><option value="">-- اختر الفرع للتفتيش اليومي --</option>{branches.map(b => <option key={b} value={b}>{b}</option>)}</select></div>
             {sectionsData.map(sec => (
               <div key={sec.title}>
-                <div className="section-title flex justify-between items-center px-4" onClick={() => {
+                <div className="section-title flex justify-between items-center px-4 shadow-sm" onClick={() => {
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}><span>{sec.title}</span><span>{expanded.has(sec.title) ? '▲' : '▼'}</span></div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
                   <div key={i.id} className="item-card shadow-md">
                     <p className="text-[10px] text-gray-400 mb-1 text-left font-bold" style={{direction:'ltr'}}>{i.en || ""}</p>
                     <p className="text-sm font-black text-green-950 mb-4 leading-relaxed text-right whitespace-pre-line">{i.ar || ""}</p>
-                    <div className="flex gap-2 justify-end mb-4 text-right">
+                    <div className="flex gap-2 justify-end mb-4">
                       <button onClick={()=>setAnswers({...answers, [i.id]:'yes'})} className={`ans-btn ${answers[i.id]==='yes'?'active btn-yes':''}`}>نعم</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'no'})} className={`ans-btn ${answers[i.id]==='no'?'active btn-no':''}`}>لا</button>
                       <button onClick={()=>setAnswers({...answers, [i.id]:'na'})} className={`ans-btn ${answers[i.id]==='na'?'active btn-na':''}`}>N/A</button>
                     </div>
                     <textarea className="notes-input text-right" placeholder="ملاحظات..." value={notes[i.id]||""} onChange={e=>setNotes({...notes, [i.id]:e.target.value})} />
-                    <div className="mt-4 flex flex-wrap gap-2 items-center justify-end">
+                    <div className="mt-4 flex flex-wrap gap-2 items-center justify-end text-right">
                         <div className="flex gap-1 mr-auto">{(photos[i.id] || []).map((img, idx) => ( <img key={idx} src={img} className="photo-thumb shadow-sm" /> ))}</div>
-                        <label className="upload-btn active:scale-95 bg-green-50 border-green-100 text-green-700 shadow-sm">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
-                        <label className="upload-btn active:scale-95 shadow-sm">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
+                        <label className="upload-btn active:scale-95 bg-green-50 border-green-100 text-green-700 shadow-sm text-right">📷 كاميرا<input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => handlePhotoAction(i.id, e)} /></label>
+                        <label className="upload-btn active:scale-95 shadow-sm text-right">🖼️ معرض<input type="file" className="hidden" accept="image/*" onChange={e => handlePhotoAction(i.id, e)} /></label>
                     </div>
                   </div>
                 ))}
