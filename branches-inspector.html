@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>نظام VERRA PRO - إشراف الفروع المطور</title>
+  <title>نظام VERRA PRO - إشراف الفروع</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -19,13 +19,13 @@
     .verra-gradient { background: linear-gradient(135deg, #004b47 0%, #002b29 100%); }
     .section-title { background: #e8f5ee; border-right: 8px solid #d1ba89; padding: 12px; border-radius: 10px; font-weight: 900; color: #004b47; margin: 20px 0 10px; cursor: pointer; }
     .item-card { background: white; border-radius: 15px; padding: 18px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
-    .ans-btn { width: 55px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 10px; background: #f1f5f9; border: 1px solid #e2e8f0; transition: 0.2s; }
-    .btn-yes.active { background: #10b981 !important; color: white; border-color: #059669; }
-    .btn-no.active { background: #ef4444 !important; color: white; border-color: #dc2626; }
+    .ans-btn { width: 55px; height: 40px; border-radius: 8px; font-weight: 700; font-size: 10px; background: #f1f5f9; border: 1px solid #e2e8f0; }
+    .btn-yes.active { background: #10b981 !important; color: white; }
+    .btn-no.active { background: #ef4444 !important; color: white; }
     .btn-na.active { background: #64748b !important; color: white; }
     .notes-input { width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #d1ba89; background: #fffdf5; font-size: 13px; outline: none; }
-    .photo-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 10px; border: 1px solid #ddd; }
-    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 50; cursor: pointer; }
+    .photo-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+    .del-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; z-index: 50; cursor: pointer; }
     .upload-btn { background: #e8f5ee; color: #004b47; padding: 8px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #c8ddd3; display: inline-flex; align-items: center; gap: 4px; }
     .sticky-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 2px solid #004b47; padding: 12px 15px; }
   </style>
@@ -125,12 +125,12 @@
             img.src = e.target.result;
             img.onload = () => {
               const canvas = document.createElement('canvas');
-              const MAX_W = 250; 
+              const MAX_W = 220; // تقليل العرض أكثر لضمان نجاح الـ PDF
               const scale = MAX_W / img.width;
               canvas.width = MAX_W; canvas.height = img.height * scale;
               const ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              resolve(canvas.toDataURL('image/jpeg', 0.15));
+              resolve(canvas.toDataURL('image/jpeg', 0.1)); // ضغط 10% فقط
             };
           };
         });
@@ -149,14 +149,14 @@
         return total > 0 ? Math.round((yes / total) * 100) : 0;
       };
 
-      // --- الوظيفة الاحترافية لإنشاء الـ PDF (نفس كود Quality Inspection) ---
-      const generatePDF = () => {
-        if (!branch) return alert("يرجى اختيار المنشأة");
+      // --- محرك PDF الاحترافي (حل مشكلة الصفحات البيضاء) ---
+      const handleGeneratePDF = () => {
+        if (!branch) return alert("اختر المنشأة أولاً");
         const score = getScore();
         const signatureImg = sigPad.current && !sigPad.current.isEmpty() ? sigPad.current.toDataURL() : "";
-        const timestamp = new Date().toLocaleString('en-GB', { hour12: true });
+        const timestamp = new Date().toLocaleString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true });
 
-        // بناء محتوى التقرير (نفس أسلوب الجودة)
+        // بناء المحتوى باستخدام جداول بسيطة (أكثر استقراراً للـ PDF)
         let reportHTML = sectionsData.map(sec => {
             const items = sec.items.map(i => {
                 const ans = answers[i.id];
@@ -168,57 +168,60 @@
                 const statusText = ans === 'yes' ? 'مطابق ✅' : ans === 'no' ? 'مخالفة ❌' : 'N/A';
 
                 return `
-                <div style="padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: right; page-break-inside: avoid; clear: both; width: 100%;">
-                    <div style="font-family: sans-serif; font-weight: 900; font-size: 14px; color: #1e293b; direction: rtl; line-height: 1.6; margin-bottom: 10px;">${i.q.replace(/\n/g, '<br>')}</div>
-                    <div style="margin-bottom: 15px;"><span style="font-size: 12px; color: ${statusColor}; font-weight: bold; background: ${statusColor}10; padding: 4px 12px; border-radius: 6px;">الحالة: ${statusText}</span></div>
-                    ${note ? `<div style="background: #fff9e6; padding: 10px; border-radius: 8px; font-size: 11px; border: 1px solid #fde68a; margin-bottom: 15px; color: #92400e;"><b>الملاحظة:</b> ${note}</div>` : ""}
-                    <div style="width: 100%; display: block; text-align: right; clear: both;">
-                        ${pics.map(p => `<div style="display: inline-block; width: 30%; margin-left: 1%; margin-bottom: 10px; vertical-align: top;"><img src="${p}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px; border: 2px solid #eee; display: block;" /></div>`).join('')}
+                <div style="padding: 10px; border-bottom: 1px solid #eee; page-break-inside: avoid; clear: both;">
+                    <div style="font-weight: bold; font-size: 13px; color: #333; margin-bottom: 5px;">${i.q.replace(/\n/g, '<br>')}</div>
+                    <div style="margin-bottom: 5px;"><span style="font-size: 11px; color: ${statusColor}; font-weight: bold;">الحالة: ${statusText}</span></div>
+                    ${note ? `<div style="background: #fff9e6; padding: 5px; font-size: 10px; border: 1px solid #fde68a; margin-bottom: 10px;"><b>ملاحظة:</b> ${note}</div>` : ""}
+                    <div style="display: block; margin-top: 5px;">
+                        ${pics.map(p => `<img src="${p}" style="width: 130px; height: 100px; object-fit: cover; border: 1px solid #ddd; margin: 2px; float: right;" />`).join('')}
+                        <div style="clear: both;"></div>
                     </div>
                 </div>`;
             }).join("");
 
-            return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 12px 20px; border-right: 10px solid #d1ba89; color: #004b47; font-weight: 900; margin-top: 30px; text-align: right; font-size: 18px;">${sec.title}</div>${items}</div>`;
+            return `<div style="page-break-inside: avoid; clear: both;"><div style="background: #f0fdf4; padding: 8px; border-right: 8px solid #d1ba89; color: #004b47; font-weight: bold; margin-top: 20px; font-size: 15px;">${sec.title}</div>${items}</div>`;
         }).join("");
 
-        const finalTemplate = `
-          <div style="width: 800px; margin: 0 auto; padding: 45px; background: white; direction: rtl; text-align: right; box-sizing: border-box; font-family: 'Cairo', sans-serif;">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <img src="${LOGO_URL}" style="height: 100px; margin-bottom: 15px;" />
-                <div style="color: #004b47; font-size: 32px; font-weight: 900; border-bottom: 5px solid #d1ba89; display: inline-block; padding-bottom: 8px;">تقرير إشراف الفروع الرسمي</div>
+        const container = document.createElement('div');
+        container.innerHTML = `
+          <div style="width: 700px; margin: 0 auto; padding: 20px; background: white; direction: rtl; text-align: right; font-family: sans-serif;">
+            <div style="text-align: center; border-bottom: 3px solid #004b47; padding-bottom: 10px; margin-bottom: 20px;">
+                <img src="${LOGO_URL}" style="height: 70px;" />
+                <h2 style="color: #004b47; font-size: 20px; margin: 5px 0;">تقرير إشراف الفروع الرسمي</h2>
             </div>
-            <div style="background: #f8fafc; padding: 25px; border-radius: 20px; margin-bottom: 40px; display: table; width: 100%;">
-                <div style="display: table-cell; width: 70%; line-height: 2.2; vertical-align: middle;">
-                    <p style="margin:0; font-size:16px;"><b>🏢 المنشأة:</b> ${branch}</p>
-                    <p style="margin:0; font-size:16px;"><b>👤 المفتش المسؤول:</b> ${user.email}</p>
-                    <p style="margin:0; font-size:16px;"><b>📅 التاريخ:</b> ${timestamp}</p>
-                </div>
-                <div style="display: table-cell; width: 30%; text-align: center; border-right: 4px solid #004b47; vertical-align: middle;">
-                    <p style="font-size: 14px; font-weight: 900; color: #64748b;">الامتثال</p>
-                    <div style="font-size: 55px; font-weight: 900; color: ${score >= 70 ? '#1C780B':'#D91414'};">${score}%</div>
-                </div>
-            </div>
+            <table style="width: 100%; background: #f8fafc; border: 1px solid #eee; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                <tr>
+                    <td style="line-height: 1.8;">
+                        <p style="margin:0;"><b>🏢 المنشأة:</b> ${branch}</p>
+                        <p style="margin:0;"><b>👤 المفتش:</b> ${user.email}</p>
+                        <p style="margin:0;"><b>📅 التاريخ:</b> ${timestamp}</p>
+                    </td>
+                    <td style="width: 100px; text-align: center; border-right: 2px solid #004b47;">
+                        <p style="font-size: 35px; font-weight: bold; margin:0; color: ${score >= 70 ? '#059669' : '#dc2626'}">${score}%</p>
+                    </td>
+                </tr>
+            </table>
             ${reportHTML}
-            <div style="margin-top: 60px; border-top: 3px solid #eee; padding-top: 30px; page-break-inside: avoid; text-align: right;">
-                <p style="font-weight: 900; color: #004b47; font-size: 20px; margin-bottom: 20px;">توقيع المفتش المعتمد:</p>
-                <div style="background: #fafafa; padding: 15px; border-radius: 20px; display: inline-block; border: 1px solid #f1f5f9;"><img src="${signatureImg}" style="width: 350px; height: 130px; object-fit: contain; display: block;" /></div>
+            <div style="margin-top: 30px; border-top: 2px solid #004b47; padding-top: 15px; page-break-inside: avoid;">
+                <p style="font-weight: bold; color: #004b47;">توقيع المفتش المعتمد:</p>
+                <img src="${signatureImg}" style="width: 200px; border-bottom: 1px solid #004b47;" />
             </div>
           </div>`;
 
         const opt = {
-          margin: [10, 10],
+          margin: 10,
           filename: `Branch_Report_${branch}.pdf`,
-          image: { type: 'jpeg', quality: 1.0 },
-          html2canvas: { scale: 2, useCORS: true, logging: false },
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 1.5, useCORS: true },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        alert("جاري توليد التقرير الاحترافي...");
-        html2pdf().from(finalTemplate).set(opt).save();
+        alert("جاري التحميل... يرجى الانتظار قليلاً");
+        html2pdf().from(container).set(opt).save();
       };
 
       const handleFinalSubmit = async () => {
-          if(!branch) return alert("يرجى اختيار الفرع");
+          if(!branch) return alert("اختر المنشأة");
           setSubmitting(true);
           const reportId = Date.now().toString();
           try {
@@ -237,36 +240,36 @@
               if (photoEntries.length > mid) {
                 await db.collection("inspection_attachments").doc(reportId).set({ reportId, photos: part2 });
               }
-              alert("✅ تم إرسال البيانات للسحابة بنجاح!");
+              alert("✅ تم الإرسال بنجاح!");
               window.location.reload();
-          } catch (e) { alert("⚠️ فشل الإرسال."); }
+          } catch (e) { alert("⚠️ خطأ في الإرسال."); }
           finally { setSubmitting(false); }
       };
 
-      if (loading) return <div className="h-screen flex items-center justify-center font-black animate-pulse text-[#004b47]">VERRA SYSTEM...</div>;
+      if (loading) return <div className="h-screen flex items-center justify-center font-bold text-[#004b47] animate-pulse">VERRA PRO...</div>;
       if (!user) return <Login auth={auth} logo={LOGO_URL} />;
 
       return (
-        <div className="pb-40">
+        <div className="pb-40 text-right">
           <div className="verra-gradient p-10 text-center shadow-xl rounded-b-[4rem]">
             <img src={LOGO_URL} className="h-24 mx-auto mb-4" />
             <div className="flex flex-col items-center gap-2">
                 <span className="text-white text-[10px] font-bold uppercase">{user.email}</span>
-                <button onClick={() => auth.signOut()} className="bg-red-500/20 text-red-300 rounded-lg px-4 py-1 text-[10px]">تسجيل الخروج</button>
+                <button onClick={() => auth.signOut()} className="bg-red-500/20 text-red-300 rounded-lg px-4 py-1 text-[10px]">خروج</button>
             </div>
           </div>
 
           <div className="sticky-header flex justify-between items-center shadow-lg">
-            <p className="text-4xl font-black text-green-700 leading-none">{getScore()}%</p>
+            <p className="text-3xl font-black text-green-700 leading-none">{getScore()}%</p>
             <div className="flex gap-2">
-                <button onClick={generatePDF} className="bg-[#d1ba89] text-[#004b47] px-5 py-2.5 rounded-xl font-black text-xs">PDF معاينة</button>
+                <button onClick={handleGeneratePDF} className="bg-[#d1ba89] text-[#004b47] px-5 py-2.5 rounded-xl font-bold text-xs">PDF معاينة</button>
                 <button onClick={handleFinalSubmit} disabled={submitting} className="verra-gradient text-white px-5 py-2.5 rounded-xl font-black text-xs">
-                    {submitting ? 'جاري الرفع...' : 'إرسال التقرير'}
+                    {submitting ? '...' : 'إرسال'}
                 </button>
             </div>
           </div>
 
-          <main className="p-5 max-w-3xl mx-auto space-y-8 mt-4 text-right">
+          <main className="p-5 max-w-3xl mx-auto space-y-8 mt-4">
             <div className="item-card p-7 border-r-[15px] border-green-800 shadow-xl">
                 <select className="w-full text-xl font-black outline-none bg-transparent" value={branch} onChange={e=>setBranch(e.target.value)}>
                     <option value="">-- اختر المنشأة --</option>
@@ -280,7 +283,7 @@
                   const n = new Set(expanded); n.has(sec.title) ? n.delete(sec.title) : n.add(sec.title); setExpanded(n);
                 }}>
                     <span>{sec.title}</span>
-                    <span className="text-[10px] uppercase">{expanded.has(sec.title) ? 'إخفاء' : 'إظهار'}</span>
+                    <span className="text-[10px] uppercase font-bold">{expanded.has(sec.title) ? 'إخفاء' : 'إظهار'}</span>
                 </div>
                 {expanded.has(sec.title) && sec.items.map((i) => (
                   <div key={i.id} className="item-card shadow-lg">
@@ -309,7 +312,7 @@
             ))}
             
             <div className="item-card p-10 border-2 border-dashed border-gray-300 text-center shadow-inner">
-              <h3 className="font-black text-green-900 mb-6 text-sm uppercase">توقيع المفتش المعتمد</h3>
+              <h3 className="font-black text-green-900 mb-6 text-sm uppercase">توقيع المفتش</h3>
               <canvas ref={canvasRef} className="w-full h-48 border rounded-3xl bg-gray-50 shadow-inner"></canvas>
               <button onClick={()=>sigPad.current.clear()} className="text-red-500 text-xs font-bold mt-5 underline">مسح التوقيع</button>
             </div>
@@ -322,10 +325,10 @@
       const [email, setEmail] = useState(""); const [pass, setPass] = useState("");
       return (
         <div className="h-screen verra-gradient flex items-center justify-center p-6 text-right">
-           <form onSubmit={(e)=>{e.preventDefault(); auth.signInWithEmailAndPassword(email.trim(), pass).catch(()=>alert("خطأ في البيانات"));}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-sm text-center">
-              <img src={logo} className="h-24 mx-auto mb-10" />
-              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right outline-none font-bold" placeholder="الإيميل" value={email} onChange={v=>setEmail(v.target.value)} />
-              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right outline-none font-bold" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
+           <form onSubmit={(e)=>{e.preventDefault(); auth.signInWithEmailAndPassword(email.trim(), pass).catch(()=>alert("خطأ"));}} className="bg-white p-12 rounded-[4rem] shadow-2xl w-full max-w-sm text-center">
+              <img src={logo} className="h-20 mx-auto mb-10" />
+              <input className="w-full border-2 p-5 rounded-2xl mb-4 text-right" placeholder="الإيميل" value={email} onChange={v=>setEmail(v.target.value)} />
+              <input className="w-full border-2 p-5 rounded-2xl mb-8 text-right" type="password" placeholder="كلمة المرور" value={pass} onChange={v=>setPass(v.target.value)} />
               <button type="submit" className="w-full bg-[#004b47] text-white font-bold py-5 rounded-3xl text-xl">دخول</button>
            </form>
         </div>
